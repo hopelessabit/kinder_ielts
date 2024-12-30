@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  admission-portal:
+    image: kinderielts/kinderielts:latest
+    container_name: kinderielts_app
+    restart: always
+    ports:
+      - "${SERVER_PORT:-8080}:${SERVER_PORT:-8080}"
+    volumes:
+      - ./keystore.p12:/app/resources/keystore.p12:ro
+    env_file:
+      - ./key.env
+    networks:
+      - my-network
+
+networks:
+  my-network:
+    driver: bridge
