@@ -1,7 +1,5 @@
 package com.kinder.kinder_ielts.controller;
 
-import com.azure.core.credential.TokenCredential;
-import com.azure.identity.ClientSecretCredentialBuilder;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.kinder.kinder_ielts.constant.IsDelete;
 import com.kinder.kinder_ielts.dto.ResponseData;
@@ -14,21 +12,19 @@ import com.kinder.kinder_ielts.service.base.BaseCourseService;
 import com.kinder.kinder_ielts.service.implement.CourseServiceImpl;
 import com.kinder.kinder_ielts.service.implement.StudyScheduleServiceImpl;
 import com.kinder.kinder_ielts.util.ResponseUtil;
-import com.microsoft.graph.models.*;
-import com.microsoft.graph.serviceclient.GraphServiceClient;
-import com.microsoft.graph.users.item.sendmail.SendMailPostRequestBody;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.ZonedDateTime;
-import java.util.LinkedList;
 import java.util.List;
 
 @RestController()
+@Slf4j
 @RequestMapping("/api/v1/test")
 @RequiredArgsConstructor
 @SecurityRequirement(name = "Bearer")
@@ -63,7 +59,7 @@ public class TestController {
     // Receive ZonedDateTime from Frontend
     @PostMapping("/api/submit-time")
     public String receiveTime(@RequestBody ZonedDateTime clientTime) {
-        System.out.println("Received Time: " + clientTime);
+        log.info("Received Time: " + clientTime);
         return "Received time: " + clientTime;
     }
 
@@ -79,6 +75,6 @@ public class TestController {
 
     @GetMapping("/study-schedule/all")
     public ResponseEntity<ResponseData<List<StudyScheduleResponse>>> get() {
-        return ResponseUtil.getResponse(() -> studyScheduleService.getAllInfo(), StudyScheduleMessage.CREATED);
+        return ResponseUtil.getResponse(studyScheduleService::getAllInfo, StudyScheduleMessage.CREATED);
     }
 }
