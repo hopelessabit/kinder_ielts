@@ -28,6 +28,7 @@ public class TutorResponse {
     private Double listening;
     private Double writing;
     private Double speaking;
+    private Double overall;
     private String firstName;
     private String middleName;
     private String lastName;
@@ -59,6 +60,7 @@ public class TutorResponse {
         this.listening = tutor.getListening();
         this.writing = tutor.getWriting();
         this.speaking = tutor.getSpeaking();
+        this.overall = tutor.getOverall();
         this.country = tutor.getCountry() != null ? new CountryResponse(tutor.getCountry()) : null;
         this.certificates = tutor.getCertificates() != null
                 ? tutor.getCertificates().stream().map(TutorCertificateResponse::new).toList()

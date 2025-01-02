@@ -75,6 +75,9 @@ public class Tutor extends BaseEntity {
     @Column(name = "speaking")
     private Double speaking;
 
+    @Column(name = "overall")
+    private Double overall;
+
     @Size(max = 32)
     @Enumerated(EnumType.STRING)
     @Column(name = "country")
