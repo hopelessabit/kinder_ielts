@@ -1,7 +1,9 @@
 package com.kinder.kinder_ielts.entity;
 
 import com.kinder.kinder_ielts.constant.CourseStatus;
+import com.kinder.kinder_ielts.constant.CourseType;
 import com.kinder.kinder_ielts.entity.base.BaseEntity;
+import com.kinder.kinder_ielts.entity.course_template.TemplateStudySchedule;
 import com.kinder.kinder_ielts.entity.join_entity.CourseStudent;
 import com.kinder.kinder_ielts.entity.join_entity.CourseTutor;
 import jakarta.persistence.*;
@@ -51,6 +53,10 @@ public class  Course extends BaseEntity {
     @Column(name = "status", nullable = true)
     private CourseStatus status;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type", nullable = true)
+    private CourseType type;
+
     @OneToMany(mappedBy = "belongToCourse", orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Classroom> classrooms;
 
@@ -59,4 +65,7 @@ public class  Course extends BaseEntity {
 
     @OneToMany(mappedBy = "course", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CourseStudent> courseStudents;
+
+    @OneToMany(mappedBy = "course", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TemplateStudySchedule> templates;
 }
