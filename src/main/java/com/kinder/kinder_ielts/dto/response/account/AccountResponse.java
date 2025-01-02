@@ -15,6 +15,7 @@ public class AccountResponse {
     private String id;
     private String username;
     private RoleResponse role;
+    private String avatar;
     private AccountStatusResponse status;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private ZonedDateTime createTime;
@@ -30,6 +31,7 @@ public class AccountResponse {
     public AccountResponse(Account account, boolean includeInfoForAdmin) {
         this.id = account.getId();
         this.username = account.getUsername();
+        this.avatar = account.getAvatar();
         this.role = RoleResponse.from(account.getRole());
         this.status = AccountStatusResponse.from(account.getStatus());
         this.isDeleted = IsDeletedResponse.from(account.getIsDeleted());
