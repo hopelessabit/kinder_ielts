@@ -6,12 +6,9 @@ import com.kinder.kinder_ielts.entity.join_entity.CourseStudent;
 import com.kinder.kinder_ielts.repository.BaseEntityRepository;
 import com.kinder.kinder_ielts.repository.CourseStudentRepository;
 import com.kinder.kinder_ielts.service.base.BaseCourseStudentService;
-import com.kinder.kinder_ielts.service.base.BaseEntityService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor

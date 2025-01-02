@@ -11,4 +11,8 @@ public class SecurityContextHolderUtil {
     public static String getAccountId(){
         return ((Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
     }
+
+    public static Account getAccount(){
+        return ((Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+    }
 }

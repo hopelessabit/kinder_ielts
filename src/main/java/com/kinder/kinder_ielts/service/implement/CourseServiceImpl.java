@@ -5,8 +5,11 @@ import com.kinder.kinder_ielts.constant.IsDelete;
 import com.kinder.kinder_ielts.dto.request.add_student.AddStudentRequest;
 import com.kinder.kinder_ielts.dto.request.course.CreateCourseRequest;
 import com.kinder.kinder_ielts.dto.request.course.UpdateCourseInfoRequest;
+import com.kinder.kinder_ielts.dto.request.course.UpdateCourseStudent;
+import com.kinder.kinder_ielts.dto.request.course.UpdateCourseTutors;
 import com.kinder.kinder_ielts.dto.response.course.CourseResponse;
 import com.kinder.kinder_ielts.entity.*;
+import com.kinder.kinder_ielts.entity.id.CourseTutorId;
 import com.kinder.kinder_ielts.entity.join_entity.CourseStudent;
 import com.kinder.kinder_ielts.entity.join_entity.CourseTutor;
 import com.kinder.kinder_ielts.mapper.ModelMapper;
@@ -59,7 +62,7 @@ public class CourseServiceImpl implements CourseService {
             ZonedDateTime currentTime = ZonedDateTime.now();
 
             tutors.forEach(tutor -> {
-                courseTutorList.add(new CourseTutor(course, tutor, currentTime));
+                courseTutorList.add(new CourseTutor(course, tutor, account, currentTime));
                 log.debug("[CREATE COURSE] Added tutor with ID: {} to course.", tutor.getId());
             });
             baseCourseTutorService.create(courseTutorList, CourseMessage.CREATE_FAILED);
@@ -158,5 +161,122 @@ public class CourseServiceImpl implements CourseService {
         List<CourseStudent> courseStudents = request.getStudentIds().stream()
                 .map(studentId -> new CourseStudent(courseId, studentId, now))
                 .toList();
+    }
+
+    /**
+     * Update course tutors.
+     */
+    public CourseResponse updateCourseTutor(String id, UpdateCourseTutors request, String failMessage) {
+        log.info("[UPDATE COURSE TUTORS] Updating tutors for Course ID: {}", id);
+        Account actor = SecurityContextHolderUtil.getAccount();
+        ZonedDateTime currentTime = ZonedDateTime.now();
+
+        Course course = baseCourseService.get(id, IsDelete.NOT_DELETED, failMessage);
+        List<CourseTutor> courseTutors = course.getCourseTutors();
+
+        performRemoveTutor(courseTutors, request.getRemove(), actor, currentTime, failMessage);
+
+        performAddTutor(course, courseTutors, request.getAdd(), actor, currentTime, failMessage);
+
+        course.setCourseTutors(courseTutors);
+        log.info("[UPDATE COURSE TUTORS] Successfully updated tutors for Course ID: {}", id);
+        return CourseResponse.detail(baseCourseService.update(course, CourseMessage.UPDATE_TUTORS_SUCCESSFULLY));
+    }
+
+    public void performAddTutor(Course course, List<CourseTutor> courseTutors, List<String> tutorIds, Account actor, ZonedDateTime currentTime, String failMessage) {
+        if (tutorIds == null || tutorIds.isEmpty()) {
+            return;
+        }
+        List<Tutor> addTutors = baseTutorService.get(tutorIds, AccountStatus.ACTIVE, failMessage);
+
+
+        List<CourseTutor> existed = courseTutors.stream()
+                .filter(courseTutor -> tutorIds.contains(courseTutor.getId().getTutorId()))
+                .toList();
+        courseTutors.removeAll(existed);
+        List<String> exitedTutorIds = existed.stream()
+                .map(CourseTutor::getId)
+                .map(CourseTutorId::getTutorId)
+                .toList();
+        if (!exitedTutorIds.isEmpty()) {
+            existed.forEach(courseTutor -> {
+                courseTutor.setIsDeleted(IsDelete.NOT_DELETED);
+                courseTutor.setModifyTime(currentTime);
+                courseTutor.setModifyBy(actor);
+            });
+            courseTutors.addAll(existed);
+        }
+
+
+        List<CourseTutor> addCourseTutor = new ArrayList<>(tutorIds.stream()
+                .filter(tutorId -> !exitedTutorIds.contains(tutorId))
+                .map(tutorId -> new CourseTutor(course, addTutors.stream().filter(tutor -> tutor.getId().equals(tutorId)).findFirst().get(), actor, currentTime))
+                .toList());
+        addCourseTutor.addAll(existed);
+        baseCourseTutorService.create(addCourseTutor, failMessage);
+        courseTutors.addAll(addCourseTutor);
+    }
+
+    public void performRemoveTutor(List<CourseTutor> courseTutors, List<String> tutorIds, Account actor, ZonedDateTime currentTime, String failMessage) {
+        if (tutorIds == null || tutorIds.isEmpty()) {
+            return;
+        }
+        List<CourseTutor> removeCourseTutors = courseTutors.stream()
+                .filter(courseTutor -> courseTutor.getIsDeleted().equals(IsDelete.NOT_DELETED) && tutorIds.contains(courseTutor.getId().getTutorId()))
+                .toList();
+
+        if (removeCourseTutors.isEmpty()) {
+            return;
+        }
+
+        baseCourseTutorService.removeEntities(removeCourseTutors, failMessage);
+        courseTutors.removeAll(removeCourseTutors);
+        courseTutors.removeAll(removeCourseTutors);
+        removeCourseTutors.forEach(courseTutor -> {
+            courseTutor.setIsDeleted(IsDelete.DELETED);
+            courseTutor.setModifyBy(actor);
+            courseTutor.setModifyTime(currentTime);
+        });
+        courseTutors.addAll(removeCourseTutors);
+    }
+
+    /**
+     * Update course students.
+     */
+    public CourseResponse updateCourseStudent(String id, UpdateCourseStudent request, String failMessage) {
+        log.info("[UPDATE COURSE STUDENTS] Updating students for Course ID: {}", id);
+
+        Course course = baseCourseService.get(id, IsDelete.NOT_DELETED, failMessage);
+        List<CourseStudent> courseStudents = course.getCourseStudents();
+
+        performRemoveStudent(courseStudents, request.getRemove(), failMessage);
+
+        performAddStudent(course, courseStudents, request.getAdd(), failMessage);
+
+        course.setCourseStudents(courseStudents);
+        log.info("[UPDATE COURSE STUDENTS] Successfully updated students for Course ID: {}", id);
+        return CourseResponse.detail(baseCourseService.update(course, CourseMessage.UPDATE_TUTORS_SUCCESSFULLY));
+    }
+
+    public void performAddStudent(Course course, List<CourseStudent> courseStudents, List<String> studentIds, String failMessage) {
+        if (studentIds == null || studentIds.isEmpty()) {
+            return;
+        }
+        ZonedDateTime currentTime = ZonedDateTime.now();
+        List<Student> addStudents = baseStudentService.get(studentIds, AccountStatus.ACTIVE, failMessage);
+        List<CourseStudent> addCourseStudent = studentIds.stream()
+                .map(tutorId -> new CourseStudent(course, addStudents.stream().filter(tutor -> tutor.getId().equals(tutorId)).findFirst().get(), currentTime))
+                .toList();
+        baseCourseStudentService.create(addCourseStudent, failMessage);
+        courseStudents.addAll(addCourseStudent);
+    }
+
+    public void performRemoveStudent(List<CourseStudent> courseStudents, List<String> studentIds, String failMessage) {
+        if (studentIds == null || studentIds.isEmpty()) {
+            return;
+        }
+        List<CourseStudent> removeCourseStudents = courseStudents.stream().filter(courseStudent -> studentIds.contains(courseStudent.getId().getStudentId())).toList();
+        baseCourseStudentService.remove(removeCourseStudents.stream().map(CourseStudent::getId).toList(), failMessage);
+        courseStudents.removeAll(removeCourseStudents);
     }
 }

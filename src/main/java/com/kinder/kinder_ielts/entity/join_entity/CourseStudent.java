@@ -48,4 +48,11 @@ public class CourseStudent extends BaseEntity {
         this.id = new CourseStudentId(courseId, studentId);
         this.assignedDate = assignedDate;
     }
+
+    public CourseStudent(Course course, Student student, ZonedDateTime assignedDate) {
+        this.id = new CourseStudentId(course.getId(), student.getId());
+        this.course = course;
+        this.student = student;
+        this.assignedDate = assignedDate;
+    }
 }

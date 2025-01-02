@@ -122,6 +122,20 @@ public abstract class BaseEntityServiceImpl<T, ID> implements BaseEntityService<
         }
     }
 
+    // Update entities
+    public List<T> update(List<T> entities, String message) {
+        log.info("Updating {} with ID: {}", getEntityName(), entities);
+        get(entities.stream().map(this::getEntityId).toList(), List.of(IsDelete.NOT_DELETED), message);
+        try {
+            List<T> updatedEntities = getRepository().saveAll(entities);
+            log.info("Successfully updated {}: {}", getEntityName(), updatedEntities);
+            return updatedEntities;
+        } catch (Exception e) {
+            log.error("Error updating {}: {}", getEntityName(), e.getMessage());
+            throw new SqlException(message, Error.build("Error updating " + getEntityName(), Map.of("cause", e.getMessage())));
+        }
+    }
+
     // Delete an entity
     public void delete(ID id, String message) {
         log.info("Deleting {} with ID: {}", getEntityName(), id);
@@ -165,11 +179,23 @@ public abstract class BaseEntityServiceImpl<T, ID> implements BaseEntityService<
 
     public void remove(List<ID> ids, String message){
         log.info("Remove {} with IDs: {}", getEntityName(), ids);
-        List<T> entities = get(ids, null, null);
+        List<T> entities = get(ids, List.of(IsDelete.NOT_DELETED, IsDelete.DELETED), message);
         entities.forEach(this::markAsDeleted);
         try {
             getRepository().saveAll(entities);
             log.info("Successfully removed {} with IDs: {}", getEntityName(), ids);
+        } catch (Exception e) {
+            log.error("Error removing {}: {}", getEntityName(), e.getMessage());
+            throw new SqlException(message, Error.build("Error removing " + getEntityName() + "s", Map.of("cause", e.getMessage())));
+        }
+    }
+
+    public void removeEntities(List<T> entities, String message){
+        log.info("Remove {} with IDs: {}", getEntityName(), entities);
+        entities.forEach(this::markAsDeleted);
+        try {
+            getRepository().saveAll(entities);
+            log.info("Successfully removed {} with IDs: {}", getEntityName(), entities);
         } catch (Exception e) {
             log.error("Error removing {}: {}", getEntityName(), e.getMessage());
             throw new SqlException(message, Error.build("Error removing " + getEntityName() + "s", Map.of("cause", e.getMessage())));

@@ -60,6 +60,8 @@ public interface BaseEntityService<T, ID> {
      */
     T update(T entity, String message);
 
+    List<T> update(List<T> entities, String message);
+
     /**
      * Delete an entity by its ID.
      *
@@ -91,6 +93,14 @@ public interface BaseEntityService<T, ID> {
      * @param message Custom error message for exceptions.
      */
     void remove(List<ID> ids, String message);
+
+    /**
+     * Physically remove many entities by their IDs.
+     *
+     * @param entities The list of entities to remove.
+     * @param message Custom error message for exceptions.
+     */
+    void removeEntities(List<T> entities, String message);
 
     /**
      * Get all entities

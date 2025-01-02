@@ -1,5 +1,7 @@
 package com.kinder.kinder_ielts.entity.join_entity;
 
+import com.kinder.kinder_ielts.constant.IsDelete;
+import com.kinder.kinder_ielts.entity.Account;
 import com.kinder.kinder_ielts.entity.Course;
 import com.kinder.kinder_ielts.entity.Tutor;
 import com.kinder.kinder_ielts.entity.base.BaseEntity;
@@ -48,10 +50,13 @@ public class CourseTutor extends BaseEntity {
         this.assignedDate = assignedDate;
     }
 
-    public CourseTutor(Course course, Tutor tutor, ZonedDateTime assignedDate){
+    public CourseTutor(Course course, Tutor tutor, Account actor, ZonedDateTime assignedDate){
         this.id = new CourseTutorId(course.getId(), tutor.getId());
         this.assignedDate = assignedDate;
         this.course = course;
         this.tutor = tutor;
+        this.setCreateBy(actor);
+        this.setCreateTime(assignedDate);
+        this.setIsDeleted(IsDelete.NOT_DELETED);
     }
 }

@@ -1,5 +1,6 @@
 package com.kinder.kinder_ielts.dto.response.course;
 
+import com.kinder.kinder_ielts.constant.IsDelete;
 import com.kinder.kinder_ielts.dto.response.classroom.ClassroomResponse;
 import com.kinder.kinder_ielts.dto.response.tutor.TutorResponse;
 import com.kinder.kinder_ielts.entity.Course;
@@ -19,7 +20,7 @@ public class CourseDetailInfoResponse {
         this.sale = course.getSale();
         this.classrooms = course.getClassrooms() != null ? course.getClassrooms().stream().map(ClassroomResponse::info).toList() : null;
         this.tutors = course.getCourseTutors() != null
-                ? course.getCourseTutors().stream().map(CourseTutor::getTutor).map(TutorResponse::withNoAccountInfo).toList()
+                ? course.getCourseTutors().stream().filter(courseTutor -> courseTutor.getIsDeleted().equals(IsDelete.NOT_DELETED)).map(CourseTutor::getTutor).map(TutorResponse::withNoAccountInfo).toList()
                 : null;
     }
 

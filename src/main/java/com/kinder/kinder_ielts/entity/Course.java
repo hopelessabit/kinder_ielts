@@ -57,7 +57,7 @@ public class  Course extends BaseEntity {
     @Column(name = "type", nullable = true)
     private CourseType type;
 
-    @OneToMany(mappedBy = "belongToCourse", orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "course", orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Classroom> classrooms;
 
     @OneToMany(mappedBy = "course", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
