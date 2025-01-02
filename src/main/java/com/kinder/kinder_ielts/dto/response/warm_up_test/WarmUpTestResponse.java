@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.kinder.kinder_ielts.constant.WarmUpTestStatus;
+import com.kinder.kinder_ielts.dto.response.BaseEntityResponse;
 import com.kinder.kinder_ielts.dto.response.StatusResponse;
 import com.kinder.kinder_ielts.dto.response.account.SubAccountResponse;
 import com.kinder.kinder_ielts.dto.response.constant.IsDeletedResponse;
@@ -22,19 +23,10 @@ public class WarmUpTestResponse {
     private String description;
     private String link;
     private StatusResponse<WarmUpTestStatus> status;
-    @JsonBackReference
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private StudyScheduleResponse beLongTo;
+    private StudyScheduleResponse studySchedule;
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private ZonedDateTime createTime;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private SubAccountResponse createBy;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private ZonedDateTime modifyTime;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private SubAccountResponse modifyBy;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private IsDeletedResponse isDeleted;
+    private BaseEntityResponse extendDetail;
 
     public WarmUpTestResponse(WarmUpTest warmUpTest, boolean includeInfoForAdmin, boolean includeStudySchedule) {
         this.id = warmUpTest.getId();
@@ -43,23 +35,11 @@ public class WarmUpTestResponse {
         this.link = warmUpTest.getLink();
         this.status = StatusResponse.from(warmUpTest.getStatus());
 
-        if (includeStudySchedule){
-            this.beLongTo = StudyScheduleResponse.info(warmUpTest.getBeLongTo());
-        }
+        if (includeStudySchedule)
+            this.studySchedule = StudyScheduleResponse.info(warmUpTest.getBeLongTo());
 
-        if (includeInfoForAdmin) {
-            this.createTime = warmUpTest.getCreateTime() != null
-                    ? warmUpTest.getCreateTime()
-                    : null;
-
-            this.modifyTime = warmUpTest.getModifyTime() != null
-                    ? warmUpTest.getModifyTime()
-                    : null;
-
-            this.createBy = SubAccountResponse.from(warmUpTest.getCreateBy());
-
-            this.modifyBy = SubAccountResponse.from(warmUpTest.getModifyBy());
-        }
+        if (includeInfoForAdmin)
+            this.extendDetail = BaseEntityResponse.from(warmUpTest);
     }
 
     public static WarmUpTestResponse infoWithStudySchedule(WarmUpTest warmUpTest) {

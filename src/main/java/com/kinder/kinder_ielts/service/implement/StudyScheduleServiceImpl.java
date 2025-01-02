@@ -25,7 +25,7 @@ public class StudyScheduleServiceImpl {
     private final BaseStudyScheduleService baseStudyScheduleService;
     private final BaseAccountService baseAccountService;
     private final BaseClassroomService baseClassroomService;
-    public StudyScheduleResponse createStudySchedule(CreateStudyScheduleRequest request, String failMessage) {
+    public StudyScheduleResponse createStudySchedule(String classroomId, CreateStudyScheduleRequest request, String failMessage) {
         StudySchedule studySchedule = ModelMapper.map(request);
 
         String createBy = SecurityContextHolderUtil.getAccountId();
@@ -33,7 +33,7 @@ public class StudyScheduleServiceImpl {
         Account creator = baseAccountService.get(createBy, IsDelete.NOT_DELETED, failMessage);
         studySchedule.setCreateBy(creator);
 
-        Classroom classroom = baseClassroomService.get(request.getClassroomId(), IsDelete.NOT_DELETED, failMessage);
+        Classroom classroom = baseClassroomService.get(classroomId, IsDelete.NOT_DELETED, failMessage);
         studySchedule.setBelongToClassroom(classroom);
 
         return StudyScheduleResponse.detailWithDetail(baseStudyScheduleService.create(studySchedule, failMessage));

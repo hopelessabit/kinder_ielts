@@ -10,7 +10,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.OffsetTime;
+import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.TimeZone;
 
 @Getter
 @Setter
@@ -27,9 +30,18 @@ public class Classroom extends BaseEntity {
     @Column(name = "description", nullable = false)
     private String description;
 
-    @Size(max = 70)
-    @Column(name = "time_description", nullable = false)
-    private String timeDescription;
+    @Size(max = 20)
+    @Column(name = "code", nullable = true)
+    private String code;
+
+    @Column(name = "from_time", nullable = true)
+    private OffsetTime fromTime;
+
+    @Column(name = "to_time", nullable = true)
+    private OffsetTime toTime;
+
+    @Column(name = "start_date", nullable = true)
+    private ZonedDateTime startDate;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "course_id")

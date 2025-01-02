@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.kinder.kinder_ielts.dto.response.BaseEntityResponse;
 import com.kinder.kinder_ielts.dto.response.account.SubAccountResponse;
 import com.kinder.kinder_ielts.dto.response.classroom.ClassroomResponse;
 import com.kinder.kinder_ielts.dto.response.classroom_link.ClassroomLinkResponse;
@@ -26,22 +27,10 @@ public class StudyScheduleResponse {
     private ZonedDateTime dateTime;
     private String title;
     private String description;
-    private List<ClassroomLinkResponse> classroomLinks;
-    private List<WarmUpTestResponse> warmUpTests;
-    private List<HomeworkResponse> homeworks;
-    private List<StudyMaterialResponse> studyMaterials;
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private ClassroomResponse belongToClass;
+    private StudyScheduleDetailInfoResponse detailInfo;
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private ZonedDateTime createTime;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private SubAccountResponse createBy;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private ZonedDateTime modifyTime;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private SubAccountResponse modifyBy;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private IsDeletedResponse isDeleted;
+    private BaseEntityResponse extendDetail;
 
     public StudyScheduleResponse(StudySchedule studySchedule, boolean includeInfoForAdmin, boolean includeDetail) {
         this.id = studySchedule.getId();
@@ -49,39 +38,11 @@ public class StudyScheduleResponse {
         this.title = studySchedule.getTitle();
         this.description = studySchedule.getDescription();
 
-        if (includeDetail) {
-            if (studySchedule.getClassroomLinks() != null)
-                this.classroomLinks = studySchedule.getClassroomLinks().stream().map(ClassroomLinkResponse::info).toList();
-            else
-                this.classroomLinks = new ArrayList<>();
-            if (studySchedule.getWarmUpTests() != null)
-                this.warmUpTests = studySchedule.getWarmUpTests().stream().map(WarmUpTestResponse::info).toList();
-            else
-                this.warmUpTests = new ArrayList<>();
-            if (studySchedule.getHomework() != null)
-                this.homeworks = studySchedule.getHomework().stream().map(HomeworkResponse::info).toList();
-            else
-                this.homeworks = new ArrayList<>();
-            if (studySchedule.getClassroomLinks() != null)
-                this.studyMaterials = studySchedule.getStudyMaterials().stream().map(StudyMaterialResponse::info).toList();
-            else
-                this.studyMaterials = new ArrayList<>();
-            this.belongToClass = ClassroomResponse.info(studySchedule.getBelongToClassroom());
-        }
+        if (includeDetail)
+            this.detailInfo = StudyScheduleDetailInfoResponse.from(studySchedule);
 
-        if (includeInfoForAdmin) {
-            this.createTime = studySchedule.getCreateTime() != null
-                    ? studySchedule.getCreateTime()
-                    : null;
-
-            this.modifyTime = studySchedule.getModifyTime() != null
-                    ? studySchedule.getModifyTime()
-                    : null;
-
-            this.createBy = SubAccountResponse.from(studySchedule.getCreateBy());
-
-            this.modifyBy = SubAccountResponse.from(studySchedule.getModifyBy());
-        }
+        if (includeInfoForAdmin)
+            this.extendDetail = BaseEntityResponse.from(studySchedule);
     }
 
     public static StudyScheduleResponse infoWithDetail(StudySchedule studySchedule) {

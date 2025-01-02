@@ -17,11 +17,11 @@ import org.springframework.web.bind.annotation.*;
 public class ClassroomController {
     private final ClassroomService classroomService;
 
-    @PostMapping
+    @PostMapping("/course/{id}")
     @SecurityRequirement(name = "Bearer")
     @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR')")
-    public ResponseEntity<ResponseData<ClassroomResponse>> create(@RequestBody CreateClassroomRequest request){
-        return ResponseUtil.getResponse(() -> classroomService.createClassroom(request, ClassroomMessage.CREATE_FAILED), ClassroomMessage.CREATED);
+    public ResponseEntity<ResponseData<ClassroomResponse>> create(@PathVariable String courseId, @RequestBody CreateClassroomRequest request){
+        return ResponseUtil.getResponse(() -> classroomService.createClassroom(courseId, request, ClassroomMessage.CREATE_FAILED), ClassroomMessage.CREATED);
     }
 
     @GetMapping("/{id}")

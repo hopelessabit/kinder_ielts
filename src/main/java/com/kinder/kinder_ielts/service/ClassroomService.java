@@ -48,7 +48,7 @@ public interface ClassroomService {
      * }
      * </pre>
      */
-    ClassroomResponse createClassroom(CreateClassroomRequest request, String message);
+    ClassroomResponse createClassroom(String courseId, CreateClassroomRequest request, String message);
 
     /**
      * Fetch basic information of a classroom by its ID.

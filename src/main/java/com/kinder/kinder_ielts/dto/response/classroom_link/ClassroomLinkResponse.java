@@ -1,8 +1,7 @@
 package com.kinder.kinder_ielts.dto.response.classroom_link;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.kinder.kinder_ielts.dto.response.BaseEntityResponse;
 import com.kinder.kinder_ielts.dto.response.account.SubAccountResponse;
 import com.kinder.kinder_ielts.dto.response.constant.IsDeletedResponse;
 import com.kinder.kinder_ielts.dto.response.study_schedule.StudyScheduleResponse;
@@ -19,17 +18,9 @@ public class ClassroomLinkResponse {
     private String link;
     private ClassroomLinkStatusResponse status;
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private StudyScheduleResponse beLongTo;
+    private StudyScheduleResponse studySchedule;
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private ZonedDateTime createTime;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private SubAccountResponse createBy;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private ZonedDateTime modifyTime;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private SubAccountResponse modifyBy;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private IsDeletedResponse isDeleted;
+    private BaseEntityResponse extendDetail;
 
     public ClassroomLinkResponse(ClassroomLink classroomLink, boolean includeInfoForAdmin, boolean includeStudySchedule) {
         this.id = classroomLink.getId();
@@ -38,23 +29,11 @@ public class ClassroomLinkResponse {
         this.link = classroomLink.getLink();
         this.status = ClassroomLinkStatusResponse.from(classroomLink.getStatus());
 
-        if (includeStudySchedule){
-            this.beLongTo = StudyScheduleResponse.info(classroomLink.getBeLongToStudySchedule());
-        }
+        if (includeStudySchedule)
+            this.studySchedule = StudyScheduleResponse.info(classroomLink.getBeLongToStudySchedule());
 
-        if (includeInfoForAdmin) {
-            this.createTime = classroomLink.getCreateTime() != null
-                    ? classroomLink.getCreateTime()
-                    : null;
-
-            this.modifyTime = classroomLink.getModifyTime() != null
-                    ? classroomLink.getModifyTime()
-                    : null;
-
-            this.createBy = SubAccountResponse.from(classroomLink.getCreateBy());
-
-            this.modifyBy = SubAccountResponse.from(classroomLink.getModifyBy());
-        }
+        if (includeInfoForAdmin)
+            this.extendDetail = BaseEntityResponse.from(classroomLink);
     }
 
     public static ClassroomLinkResponse infoWithStudySchedule(ClassroomLink classroomLink) {

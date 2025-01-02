@@ -10,15 +10,14 @@ import com.kinder.kinder_ielts.dto.request.study_material.CreateStudyMaterialReq
 import com.kinder.kinder_ielts.dto.request.study_schedule.CreateStudyScheduleRequest;
 import com.kinder.kinder_ielts.dto.request.warm_up_test.CreateWarmUpTestRequest;
 import com.kinder.kinder_ielts.entity.*;
-import com.kinder.kinder_ielts.util.TimeZoneUtil;
+import com.kinder.kinder_ielts.util.IdUtil;
 
 import java.time.ZonedDateTime;
-import java.util.UUID;
 
 public class ModelMapper {
     public static Account map (CreateAccountRequest request, Account createBy){
         Account account = new Account();
-        account.setId(UUID.randomUUID().toString() + TimeZoneUtil.getCurrentDateTime());
+        account.setId(IdUtil.generateId());
         account.setCreateTime(ZonedDateTime.now());
         account.setCreateBy(createBy);
         account.setModifyTime(ZonedDateTime.now());
@@ -29,27 +28,31 @@ public class ModelMapper {
     }
     public static Course map (CreateCourseRequest request){
         Course course = new Course();
-        course.setId(UUID.randomUUID() + TimeZoneUtil.getCurrentDateTime());
+        course.setId(IdUtil.generateId());
+        course.setSlots(request.getSlots());
         course.setCreateTime(ZonedDateTime.now());
         course.setIsDeleted(IsDelete.NOT_DELETED);
         course.setDescription(request.getDescription());
         course.setDetail(request.getDetail());
         course.setPrice(request.getPrice());
         course.setSale(request.getSale());
+        course.setStatus(CourseStatus.INACTIVE);
         return course;
     }
     public static Classroom map (CreateClassroomRequest request, ZonedDateTime createTime){
         Classroom classroom = new Classroom();
-        classroom.setId(UUID.randomUUID() + TimeZoneUtil.getCurrentDateTime());
-        classroom.setTimeDescription(request.getTimeDescription());
+        classroom.setId(IdUtil.generateId());
         classroom.setCreateTime(createTime);
         classroom.setIsDeleted(IsDelete.NOT_DELETED);
         classroom.setDescription(request.getDescription());
+        classroom.setFromTime(request.getFromTime());
+        classroom.setToTime(request.getToTime());
+        classroom.setStartDate(request.getStartDate());
         return classroom;
     }
     public static StudySchedule map(CreateStudyScheduleRequest request){
         StudySchedule studySchedule = new StudySchedule();
-        studySchedule.setId(UUID.randomUUID() + TimeZoneUtil.getCurrentDateTime());
+        studySchedule.setId(IdUtil.generateId());
         studySchedule.setCreateTime(ZonedDateTime.now());
         studySchedule.setIsDeleted(IsDelete.NOT_DELETED);
         studySchedule.setDescription(request.getDescription());
@@ -59,7 +62,7 @@ public class ModelMapper {
     }
     public static ClassroomLink map(CreateClassroomLinkRequest request){
         ClassroomLink classroomLink = new ClassroomLink();
-        classroomLink.setId(UUID.randomUUID() + TimeZoneUtil.getCurrentDateTime());
+        classroomLink.setId(IdUtil.generateId());
         classroomLink.setCreateTime(ZonedDateTime.now());
         classroomLink.setIsDeleted(IsDelete.NOT_DELETED);
         classroomLink.setDescription(request.getDescription());
@@ -70,7 +73,7 @@ public class ModelMapper {
     }
     public static WarmUpTest map(CreateWarmUpTestRequest request){
         WarmUpTest warmUpTest = new WarmUpTest();
-        warmUpTest.setId(UUID.randomUUID() + TimeZoneUtil.getCurrentDateTime());
+        warmUpTest.setId(IdUtil.generateId());
         warmUpTest.setCreateTime(ZonedDateTime.now());
         warmUpTest.setIsDeleted(IsDelete.NOT_DELETED);
         warmUpTest.setDescription(request.getDescription());
@@ -81,7 +84,7 @@ public class ModelMapper {
     }
     public static Homework map(CreateHomeworkRequest request){
         Homework homework = new Homework();
-        homework.setId(UUID.randomUUID() + TimeZoneUtil.getCurrentDateTime());
+        homework.setId(IdUtil.generateId());
         homework.setCreateTime(ZonedDateTime.now());
         homework.setIsDeleted(IsDelete.NOT_DELETED);
         homework.setDescription(request.getDescription());
@@ -94,7 +97,7 @@ public class ModelMapper {
     }
     public static StudyMaterial map(CreateStudyMaterialRequest request){
         StudyMaterial studyMaterial = new StudyMaterial();
-        studyMaterial.setId(UUID.randomUUID() + TimeZoneUtil.getCurrentDateTime());
+        studyMaterial.setId(IdUtil.generateId());
         studyMaterial.setCreateTime(ZonedDateTime.now());
         studyMaterial.setIsDeleted(IsDelete.NOT_DELETED);
         studyMaterial.setDescription(request.getDescription());

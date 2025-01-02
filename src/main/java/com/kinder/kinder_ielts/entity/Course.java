@@ -20,7 +20,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "course")
-public class Course extends BaseEntity {
+public class  Course extends BaseEntity {
     @Id
     @Size(max = 255)
     @Column(name = "id", nullable = false)
@@ -43,6 +43,9 @@ public class Course extends BaseEntity {
 
     @Column(name = "sale", precision = 12, scale = 2)
     private BigDecimal sale;
+
+    @Column(name = "slots")
+    private Integer slots;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = true)

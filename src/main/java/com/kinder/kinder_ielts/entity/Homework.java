@@ -57,15 +57,6 @@ public class Homework extends BaseEntity {
     @JoinColumn(name = "study_schedule_id", nullable = false)
     private StudySchedule beLongTo;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("createBy")
-    @JoinColumn(
-            name = "create_by",
-            nullable = false,
-            foreignKey = @ForeignKey(name = "fk_homework_assign_by")
-    )
-    private Tutor assignBy;
-
     @OneToMany(mappedBy = "homework", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<StudentHomework> studentHomeworks;
 

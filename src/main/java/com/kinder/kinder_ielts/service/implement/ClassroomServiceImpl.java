@@ -46,7 +46,7 @@ public class ClassroomServiceImpl implements ClassroomService {
     /**
      * Create a new Classroom.
      */
-    public ClassroomResponse createClassroom(CreateClassroomRequest request, String message) {
+    public ClassroomResponse createClassroom(String courseId, CreateClassroomRequest request, String message) {
         log.info("Starting process to create a new Classroom.");
         ZonedDateTime createTime = ZonedDateTime.now();
         Classroom classroom = ModelMapper.map(request, createTime);
@@ -58,8 +58,8 @@ public class ClassroomServiceImpl implements ClassroomService {
         classroom.setCreateBy(account);
         log.debug("Account fetched successfully and assigned to classroom creator.");
 
-        log.debug("Fetching course with ID: {}", request.getCourseId());
-        Course belongToCourse = baseCourseService.get(request.getCourseId(), IsDelete.NOT_DELETED, message);
+        log.debug("Fetching course with ID: {}", courseId);
+        Course belongToCourse = baseCourseService.get(courseId, IsDelete.NOT_DELETED, message);
         classroom.setBelongToCourse(belongToCourse);
         log.debug("Course fetched successfully and assigned to the classroom.");
 
@@ -128,7 +128,6 @@ public class ClassroomServiceImpl implements ClassroomService {
     public void performUpdateInfo(Classroom classroom, UpdateClassroomRequest request) {
         log.debug("Performing updates on Classroom fields.");
         classroom.setDescription(CompareUtil.compare(request.getDescription(), classroom.getDescription()));
-        classroom.setTimeDescription(CompareUtil.compare(request.getTimeDescription(), classroom.getTimeDescription()));
         log.debug("Classroom fields updated successfully.");
     }
 

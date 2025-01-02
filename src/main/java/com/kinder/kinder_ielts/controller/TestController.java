@@ -6,12 +6,15 @@ import com.kinder.kinder_ielts.dto.ResponseData;
 import com.kinder.kinder_ielts.dto.request.course.CreateCourseRequest;
 import com.kinder.kinder_ielts.dto.response.course.CourseResponse;
 import com.kinder.kinder_ielts.dto.response.study_schedule.StudyScheduleResponse;
+import com.kinder.kinder_ielts.repository.CourseRepository;
 import com.kinder.kinder_ielts.response_message.CourseMessage;
 import com.kinder.kinder_ielts.response_message.StudyScheduleMessage;
 import com.kinder.kinder_ielts.service.base.BaseCourseService;
 import com.kinder.kinder_ielts.service.implement.CourseServiceImpl;
 import com.kinder.kinder_ielts.service.implement.StudyScheduleServiceImpl;
+import com.kinder.kinder_ielts.util.IdUtil;
 import com.kinder.kinder_ielts.util.ResponseUtil;
+import com.kinder.kinder_ielts.util.TimeZoneUtil;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @RestController()
 @Slf4j
@@ -33,15 +37,20 @@ public class TestController {
     private final BaseCourseService baseCourseService;
     private final CourseServiceImpl courseService;
     private final StudyScheduleServiceImpl studyScheduleService;
+    private final CourseRepository courseRepository;
 
-    @GetMapping("/info")
-    public CourseResponse getInfo() {
-        return CourseResponse.info(baseCourseService.get("0", IsDelete.NOT_DELETED, "hi"));
+    @GetMapping("/course/info/{id}")
+    public ResponseEntity<ResponseData<CourseResponse>> getInfo(@PathVariable String id) {
+        return ResponseUtil.getResponse(() -> courseService.getInfo(id), CourseMessage.FOUND_SUCCESSFULLY);
     }
 
-    @GetMapping("/detail")
-    public CourseResponse getDetail() {
-        return CourseResponse.detail(baseCourseService.get("0", IsDelete.NOT_DELETED, "Hi"));
+    @GetMapping("/course/detail/{id}")
+    public ResponseEntity<ResponseData<CourseResponse>> getDetail(@PathVariable String id) {
+        return ResponseUtil.getResponse(() -> courseService.getDetail(id), CourseMessage.FOUND_SUCCESSFULLY);
+    }
+    @GetMapping("/course/all")
+    public ResponseEntity<ResponseData<List<CourseResponse>>> getAll() {
+        return ResponseUtil.getResponse(() -> courseRepository.findAll().stream().map(CourseResponse::info).toList(), CourseMessage.NOT_FOUND);
     }
 
     @PostMapping("/course")
@@ -70,7 +79,8 @@ public class TestController {
 
     @GetMapping("/str")
     public String str() {
-        return "Hello World";
+        String a = TimeZoneUtil.getCurrentDateTime();
+        return IdUtil.generateId();
     }
 
     @GetMapping("/study-schedule/all")

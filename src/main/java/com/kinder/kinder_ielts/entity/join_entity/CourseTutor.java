@@ -47,4 +47,11 @@ public class CourseTutor extends BaseEntity {
         this.id = new CourseTutorId(courseId, tutorId);
         this.assignedDate = assignedDate;
     }
+
+    public CourseTutor(Course course, Tutor tutor, ZonedDateTime assignedDate){
+        this.id = new CourseTutorId(course.getId(), tutor.getId());
+        this.assignedDate = assignedDate;
+        this.course = course;
+        this.tutor = tutor;
+    }
 }

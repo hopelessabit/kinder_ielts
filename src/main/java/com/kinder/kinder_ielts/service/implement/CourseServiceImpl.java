@@ -7,12 +7,10 @@ import com.kinder.kinder_ielts.dto.request.course.CreateCourseRequest;
 import com.kinder.kinder_ielts.dto.request.course.UpdateCourseInfoRequest;
 import com.kinder.kinder_ielts.dto.response.course.CourseResponse;
 import com.kinder.kinder_ielts.entity.*;
-import com.kinder.kinder_ielts.entity.id.CourseStudentId;
 import com.kinder.kinder_ielts.entity.join_entity.CourseStudent;
 import com.kinder.kinder_ielts.entity.join_entity.CourseTutor;
 import com.kinder.kinder_ielts.mapper.ModelMapper;
 import com.kinder.kinder_ielts.response_message.CourseMessage;
-import com.kinder.kinder_ielts.response_message.CourseStudentMessage;
 import com.kinder.kinder_ielts.service.CourseService;
 import com.kinder.kinder_ielts.service.base.*;
 import com.kinder.kinder_ielts.service.base.BaseCourseTutorService;
@@ -21,6 +19,7 @@ import com.kinder.kinder_ielts.util.SecurityContextHolderUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
 import java.util.*;
@@ -40,6 +39,7 @@ public class CourseServiceImpl implements CourseService {
     /**
      * Create a new Course.
      */
+    @Transactional
     public CourseResponse createCourse(CreateCourseRequest request) {
         log.info("[CREATE COURSE] Start creating course with request: {}", request);
 
@@ -51,6 +51,7 @@ public class CourseServiceImpl implements CourseService {
         course.setCreateBy(account);
         log.debug("[CREATE COURSE] Account successfully assigned to course.");
 
+        baseCourseService.create(course, CourseMessage.CREATE_FAILED);
         if (!request.getTutorIds().isEmpty()) {
             log.debug("[CREATE COURSE] Fetching tutors with IDs: {}", request.getTutorIds());
             List<Tutor> tutors = baseTutorService.get(request.getTutorIds(), AccountStatus.ACTIVE, CourseMessage.CREATE_FAILED);
@@ -58,9 +59,10 @@ public class CourseServiceImpl implements CourseService {
             ZonedDateTime currentTime = ZonedDateTime.now();
 
             tutors.forEach(tutor -> {
-                courseTutorList.add(new CourseTutor(course.getId(), tutor.getId(), currentTime));
+                courseTutorList.add(new CourseTutor(course, tutor, currentTime));
                 log.debug("[CREATE COURSE] Added tutor with ID: {} to course.", tutor.getId());
             });
+            baseCourseTutorService.create(courseTutorList, CourseMessage.CREATE_FAILED);
             course.setCourseTutors(courseTutorList);
         }
 
@@ -69,7 +71,7 @@ public class CourseServiceImpl implements CourseService {
         course.setLevel(courseLevel);
         log.info("[CREATE COURSE] Course successfully created.");
 
-        return CourseResponse.detail(baseCourseService.create(course, "Failed to create course."));
+        return CourseResponse.detail(baseCourseService.update(course, CourseMessage.CREATE_FAILED));
     }
 
     /**
@@ -87,7 +89,7 @@ public class CourseServiceImpl implements CourseService {
      */
     public CourseResponse getDetail(String id) {
         log.info("[GET COURSE DETAIL] Fetching detailed info for Course ID: {}", id);
-        CourseResponse response = CourseResponse.detail(baseCourseService.get(id, IsDelete.NOT_DELETED, CourseMessage.NOT_FOUND));
+        CourseResponse response = CourseResponse.detailWithDetails(baseCourseService.get(id, IsDelete.NOT_DELETED, CourseMessage.NOT_FOUND));
         log.info("[GET COURSE DETAIL] Successfully fetched detailed info for Course ID: {}", id);
         return response;
     }

@@ -3,6 +3,7 @@ package com.kinder.kinder_ielts.dto.response.classroom;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.kinder.kinder_ielts.dto.response.BaseEntityResponse;
 import com.kinder.kinder_ielts.dto.response.study_schedule.StudyScheduleResponse;
 import com.kinder.kinder_ielts.dto.response.account.SubAccountResponse;
 import com.kinder.kinder_ielts.dto.response.constant.IsDeletedResponse;
@@ -23,51 +24,19 @@ public class ClassroomResponse {
     private String description;
     private String timeDescription;
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private CourseResponse belongToCourse;
+    private ClassroomDetailInfoResponse detailInfo;
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private List<StudyScheduleResponse> studySchedules;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private List<TutorResponse> tutorResponses;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private ZonedDateTime createTime;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private SubAccountResponse createBy;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private ZonedDateTime modifyTime;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private SubAccountResponse modifyBy;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private IsDeletedResponse isDeleted;
+    private BaseEntityResponse extendDetail;
 
     public ClassroomResponse(Classroom classroom, boolean includeInfoForAdmin, boolean includeDetail) {
         this.id = classroom.getId();
         this.description = classroom.getDescription();
-        this.timeDescription = classroom.getTimeDescription();
-        this.belongToCourse = CourseResponse.info(classroom.getBelongToCourse());
 
-        if (includeDetail){
-            if (classroom.getStudySchedules() != null)
-                this.studySchedules = classroom.getStudySchedules().stream().map(StudyScheduleResponse::info).toList();
+        if (includeDetail)
+            this.detailInfo = ClassroomDetailInfoResponse.info(classroom);
 
-            this.belongToCourse = CourseResponse.info(classroom.getBelongToCourse());
-
-            if (classroom.getClassroomTutors() != null)
-                this.tutorResponses = classroom.getClassroomTutors().stream().map(ClassroomTutor::getTutor).map(TutorResponse::withNoAccountInfo).toList();
-        }
-
-        if (includeInfoForAdmin) {
-            this.createTime = classroom.getCreateTime() != null
-                    ? classroom.getCreateTime()
-                    : null;
-
-            this.modifyTime = classroom.getModifyTime() != null
-                    ? classroom.getModifyTime()
-                    : null;
-
-            this.createBy = SubAccountResponse.from(classroom.getCreateBy());
-
-            this.modifyBy = SubAccountResponse.from(classroom.getModifyBy());
-        }
+        if (includeInfoForAdmin)
+            this.extendDetail = BaseEntityResponse.from(classroom);
     }
 
     public static ClassroomResponse infoWithDetails(Classroom classroom) {

@@ -18,11 +18,11 @@ import org.springframework.web.bind.annotation.*;
 public class StudyScheduleController {
     private final StudyScheduleServiceImpl studyScheduleService;
 
-    @PostMapping
+    @PostMapping("/classroom/{id}")
     @SecurityRequirement(name = "Bearer")
     @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR')")
-    public ResponseEntity<ResponseData<StudyScheduleResponse>> create(CreateStudyScheduleRequest request) {
-        return ResponseUtil.getResponse(() -> studyScheduleService.createStudySchedule(request, StudyScheduleMessage.CREATE_FAILED), StudyScheduleMessage.CREATED);
+    public ResponseEntity<ResponseData<StudyScheduleResponse>> create(@PathVariable String id ,@RequestBody CreateStudyScheduleRequest request) {
+        return ResponseUtil.getResponse(() -> studyScheduleService.createStudySchedule(id, request, StudyScheduleMessage.CREATE_FAILED), StudyScheduleMessage.CREATED);
     }
 
     @GetMapping("/info/{id}")
