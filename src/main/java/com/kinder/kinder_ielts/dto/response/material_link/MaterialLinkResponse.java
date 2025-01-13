@@ -2,7 +2,6 @@ package com.kinder.kinder_ielts.dto.response.material_link;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.kinder.kinder_ielts.dto.response.BaseEntityResponse;
-import com.kinder.kinder_ielts.dto.response.study_material.StudyMaterialResponse;
 import com.kinder.kinder_ielts.dto.response.template.study_material.TemplateStudyMaterialResponse;
 import com.kinder.kinder_ielts.entity.MaterialLink;
 import lombok.Getter;

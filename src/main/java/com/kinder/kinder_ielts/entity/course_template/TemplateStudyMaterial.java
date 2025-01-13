@@ -39,6 +39,6 @@ public class TemplateStudyMaterial extends BaseEntity {
     @JoinColumn(name = "template_study_schedule_id", nullable = false)
     private TemplateStudySchedule templateStudySchedule;
 
-    @OneToMany(mappedBy = "templateStudyMaterial", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "templateStudyMaterial", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<MaterialLink> materialLinks;
 }

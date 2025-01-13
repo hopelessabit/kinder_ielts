@@ -73,7 +73,7 @@ public class Homework extends BaseEntity {
         homework.setPrivacyStatus(hw.getPrivacyStatus());
         homework.setDueDate(currentTime);
         homework.setStartDate(hw.getStartDate());
-
+        homework.setBeLongTo(studySchedule);
         homework.setCreateBy(account);
         homework.setCreateTime(currentTime);
         homework.setIsDeleted(IsDelete.NOT_DELETED);

@@ -17,7 +17,6 @@ public class StudyMaterialResponse {
     private String title;
     private String description;
     private StatusResponse<StudyMaterialStatus> privacyStatus;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<MaterialLinkResponse> links;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private StudyScheduleResponse studySchedule;
@@ -29,6 +28,7 @@ public class StudyMaterialResponse {
         this.title = studyMaterial.getTitle();
         this.description = studyMaterial.getDescription();
         this.privacyStatus = StatusResponse.from(studyMaterial.getPrivacyStatus());
+        this.links = studyMaterial.getMaterialLinks() != null ? studyMaterial.getMaterialLinks().stream().map(MaterialLinkResponse::infoWithDetails).toList() : null;
 
         mapSubInfo(studyMaterial, includeInfoForAdmin);
         mapDetail(studyMaterial, includeDetails);

@@ -70,7 +70,7 @@ public class StudyMaterial extends BaseEntity {
         studyMaterial.setBeLongTo(studySchedule);
         studyMaterial.setPrivacyStatus(sm.getPrivacyStatus());
 
-        List<MaterialLink> materialLinks = new ArrayList<>(studyMaterial.getMaterialLinks().stream().map(materialLink -> new MaterialLink(materialLink, studyMaterial, account, currentTime)).toList());
+        List<MaterialLink> materialLinks = new ArrayList<>(sm.getMaterialLinks().stream().map(materialLink -> new MaterialLink(materialLink, studyMaterial, account, currentTime)).toList());
         studyMaterial.setMaterialLinks(materialLinks);
 
         studyMaterial.setCreateBy(account);

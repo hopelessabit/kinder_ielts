@@ -11,6 +11,7 @@ import com.kinder.kinder_ielts.dto.response.classroom.ClassroomResponse;
 import com.kinder.kinder_ielts.dto.request.classroom.CreateClassroomRequest;
 import com.kinder.kinder_ielts.entity.*;
 import com.kinder.kinder_ielts.entity.course_template.TemplateClassroom;
+import com.kinder.kinder_ielts.entity.course_template.TemplateStudyMaterial;
 import com.kinder.kinder_ielts.entity.course_template.TemplateStudySchedule;
 import com.kinder.kinder_ielts.entity.id.CourseTutorId;
 import com.kinder.kinder_ielts.entity.join_entity.ClassroomTutor;
@@ -47,6 +48,7 @@ public class ClassroomServiceImpl implements ClassroomService {
     private final BaseClassroomService baseClassroomService;
     private final BaseCourseTutorService baseCourseTutorService;
     private final BaseClassroomTutorService baseClassroomTutorService;
+
 
     /**
      * Create a new Classroom.
@@ -96,6 +98,11 @@ public class ClassroomServiceImpl implements ClassroomService {
                 currentTime,
                 classroom);
 
+        if (request.getTemplateClassroomId() == null) {
+            classroom.setStudySchedules(studySchedules);
+
+            return ClassroomResponse.detailWithDetails(baseClassroomService.update(classroom, message));
+        }
         TemplateClassroom templateClassroom = belongToCourse.getTemplates().stream().filter(tc -> tc.getId().equals(request.getTemplateClassroomId())).findAny().orElseThrow(() -> new NotFoundException(message, Error.build("", List.of(request.getTemplateClassroomId()))));
         addStudyScheduleHaveTemplate(studySchedules, templateClassroom.getStudySchedules(), account, currentTime);
         classroom.setStudySchedules(studySchedules);
@@ -149,6 +156,7 @@ public class ClassroomServiceImpl implements ClassroomService {
         for (int i = 0; i < templateStudySchedules.size(); i++) {
             TemplateStudySchedule templateStudySchedule = templateStudySchedules.get(i);
             StudySchedule studySchedule = studySchedules.get(i);
+            List<TemplateStudyMaterial> a = templateStudySchedule.getStudyMaterials();
             List<ClassroomLink> classroomLinks = templateStudySchedule.getClassroomLinks().stream().map(c -> ClassroomLink.from(c, studySchedule, account, currentTime)).toList();
             List<WarmUpTest> warmUpTests = templateStudySchedule.getWarmUpTests().stream().map(w -> WarmUpTest.from(w, studySchedule, account, currentTime)).toList();
             List<StudyMaterial> studyMaterials = templateStudySchedule.getStudyMaterials().stream().map(sm -> StudyMaterial.from(sm, studySchedule, account, currentTime)).toList();

@@ -31,19 +31,21 @@ public class MaterialLink extends BaseEntity {
     @Column(name = "link", nullable = false)
     private String link;
 
+    // Relationship with StudyMaterial (using join table)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinTable(
             name = "material_link_study_material", // Name of the join table
             joinColumns = @JoinColumn(
-                    name = "study_material_id",
-                    referencedColumnName = "id",
-                    foreignKey = @ForeignKey(name = "fk_m_l_st_m_study_material")
-            ),
-            inverseJoinColumns = @JoinColumn(
                     name = "material_link_id",
                     referencedColumnName = "id",
                     foreignKey = @ForeignKey(name = "fk_m_l_st_m_material_link")
+            ),
+            inverseJoinColumns = @JoinColumn(
+                    name = "study_material_id",
+                    referencedColumnName = "id",
+                    foreignKey = @ForeignKey(name = "fk_m_l_st_m_study_material")
             )
+
     )
     private StudyMaterial studyMaterial;
 
@@ -51,14 +53,14 @@ public class MaterialLink extends BaseEntity {
     @JoinTable(
             name = "material_link_template_study_material", // Name of the join table
             joinColumns = @JoinColumn(
-                    name = "template_study_material_id",
-                    referencedColumnName = "id",
-                    foreignKey = @ForeignKey(name = "fk_m_l_temp_st_m_study_material")
-            ),
-            inverseJoinColumns = @JoinColumn(
                     name = "material_link_id",
                     referencedColumnName = "id",
                     foreignKey = @ForeignKey(name = "fk_m_l_temp_st_m_material_link")
+            ),
+            inverseJoinColumns = @JoinColumn(
+                    name = "template_study_material_id",
+                    referencedColumnName = "id",
+                    foreignKey = @ForeignKey(name = "fk_m_l_temp_st_m_study_material")
             )
     )
     private TemplateStudyMaterial templateStudyMaterial;
