@@ -12,7 +12,8 @@ import java.time.ZonedDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateStudyScheduleRequest {
-    private ZonedDateTime dateTime;
+    private ZonedDateTime fromTime;
+    private ZonedDateTime toTime;
     private String title;
     private String description;
 }

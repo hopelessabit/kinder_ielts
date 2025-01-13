@@ -14,6 +14,7 @@ import com.kinder.kinder_ielts.entity.join_entity.ClassroomTutor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.OffsetTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -23,6 +24,9 @@ public class ClassroomResponse {
     private String id;
     private String description;
     private String timeDescription;
+    private OffsetTime fromTime;
+    private OffsetTime toTime;
+    private ZonedDateTime startDate;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private ClassroomDetailInfoResponse detailInfo;
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -31,7 +35,9 @@ public class ClassroomResponse {
     public ClassroomResponse(Classroom classroom, boolean includeInfoForAdmin, boolean includeDetail) {
         this.id = classroom.getId();
         this.description = classroom.getDescription();
-
+        this.fromTime = classroom.getFromTime();
+        this.toTime = classroom.getToTime();
+        this.startDate = classroom.getStartDate();
         if (includeDetail)
             this.detailInfo = ClassroomDetailInfoResponse.info(classroom);
 

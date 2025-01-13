@@ -3,12 +3,16 @@ package com.kinder.kinder_ielts.controller;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.kinder.kinder_ielts.constant.IsDelete;
 import com.kinder.kinder_ielts.dto.ResponseData;
+import com.kinder.kinder_ielts.dto.request.classroom.CreateClassroomRequest;
 import com.kinder.kinder_ielts.dto.request.course.CreateCourseRequest;
+import com.kinder.kinder_ielts.dto.response.classroom.ClassroomResponse;
 import com.kinder.kinder_ielts.dto.response.course.CourseResponse;
 import com.kinder.kinder_ielts.dto.response.study_schedule.StudyScheduleResponse;
 import com.kinder.kinder_ielts.repository.CourseRepository;
+import com.kinder.kinder_ielts.response_message.ClassroomMessage;
 import com.kinder.kinder_ielts.response_message.CourseMessage;
 import com.kinder.kinder_ielts.response_message.StudyScheduleMessage;
+import com.kinder.kinder_ielts.service.ClassroomService;
 import com.kinder.kinder_ielts.service.base.BaseCourseService;
 import com.kinder.kinder_ielts.service.implement.CourseServiceImpl;
 import com.kinder.kinder_ielts.service.implement.StudyScheduleServiceImpl;
@@ -35,6 +39,7 @@ import java.util.UUID;
 public class TestController {
     private final PasswordEncoder passwordEncoder;
     private final BaseCourseService baseCourseService;
+    private final ClassroomService classroomService;
     private final CourseServiceImpl courseService;
     private final StudyScheduleServiceImpl studyScheduleService;
     private final CourseRepository courseRepository;
@@ -86,5 +91,12 @@ public class TestController {
     @GetMapping("/study-schedule/all")
     public ResponseEntity<ResponseData<List<StudyScheduleResponse>>> get() {
         return ResponseUtil.getResponse(studyScheduleService::getAllInfo, StudyScheduleMessage.CREATED);
+    }
+
+    @PostMapping("/classroom/course/{courseId}")
+    @SecurityRequirement(name = "Bearer")
+    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR')")
+    public ResponseEntity<ResponseData<ClassroomResponse>> create(@PathVariable String courseId, @RequestBody CreateClassroomRequest request){
+        return ResponseUtil.getResponse(() -> classroomService.createClassroom(courseId, request, ClassroomMessage.CREATE_FAILED), ClassroomMessage.CREATED);
     }
 }

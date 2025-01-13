@@ -3,6 +3,7 @@ package com.kinder.kinder_ielts.entity;
 import com.kinder.kinder_ielts.constant.CourseStatus;
 import com.kinder.kinder_ielts.constant.CourseType;
 import com.kinder.kinder_ielts.entity.base.BaseEntity;
+import com.kinder.kinder_ielts.entity.course_template.TemplateClassroom;
 import com.kinder.kinder_ielts.entity.course_template.TemplateStudySchedule;
 import com.kinder.kinder_ielts.entity.join_entity.CourseStudent;
 import com.kinder.kinder_ielts.entity.join_entity.CourseTutor;
@@ -67,5 +68,5 @@ public class  Course extends BaseEntity {
     private List<CourseStudent> courseStudents;
 
     @OneToMany(mappedBy = "course", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<TemplateStudySchedule> templates;
+    private List<TemplateClassroom> templates;
 }

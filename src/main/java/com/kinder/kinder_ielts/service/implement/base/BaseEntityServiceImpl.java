@@ -2,12 +2,14 @@ package com.kinder.kinder_ielts.service.implement.base;
 
 import com.kinder.kinder_ielts.dto.Error;
 import com.kinder.kinder_ielts.constant.IsDelete;
+import com.kinder.kinder_ielts.entity.Account;
 import com.kinder.kinder_ielts.exception.NotFoundException;
 import com.kinder.kinder_ielts.exception.SqlException;
 import com.kinder.kinder_ielts.repository.BaseEntityRepository;
 import com.kinder.kinder_ielts.service.base.BaseEntityService;
 import lombok.extern.slf4j.Slf4j;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -192,7 +194,6 @@ public abstract class BaseEntityServiceImpl<T, ID> implements BaseEntityService<
 
     public void removeEntities(List<T> entities, String message){
         log.info("Remove {} with IDs: {}", getEntityName(), entities);
-        entities.forEach(this::markAsDeleted);
         try {
             getRepository().saveAll(entities);
             log.info("Successfully removed {} with IDs: {}", getEntityName(), entities);

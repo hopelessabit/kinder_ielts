@@ -14,7 +14,6 @@ import com.kinder.kinder_ielts.entity.id.StudentHomeworkId;
 import com.kinder.kinder_ielts.entity.join_entity.ClassroomStudent;
 import com.kinder.kinder_ielts.entity.join_entity.StudentHomework;
 import com.kinder.kinder_ielts.mapper.ModelMapper;
-import com.kinder.kinder_ielts.response_message.ClassroomMessage;
 import com.kinder.kinder_ielts.response_message.HomeworkMessage;
 import com.kinder.kinder_ielts.service.base.BaseAccountService;
 import com.kinder.kinder_ielts.service.base.BaseHomeworkService;
@@ -49,7 +48,7 @@ public class HomeworkServiceImpl implements HomeworkService{
 
         if (request.getStudentIds() != null && !request.getStudentIds().isEmpty()){
             List<StudentHomework> studentHomeworks = studySchedule
-                    .getBelongToClassroom()
+                    .getClassroom()
                     .getClassroomStudents()
                     .stream()
                     .filter(classroomStudent -> classroomStudent.getIsDeleted().equals(IsDelete.NOT_DELETED) && request.getStudentIds().contains(classroomStudent.getId().getStudentId()))

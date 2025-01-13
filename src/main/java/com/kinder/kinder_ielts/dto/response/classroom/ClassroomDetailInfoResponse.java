@@ -15,7 +15,7 @@ public class ClassroomDetailInfoResponse {
     private List<TutorResponse> tutorResponses;
 
     public ClassroomDetailInfoResponse(Classroom classroom) {
-        this.belongToCourse = CourseResponse.info(classroom.getBelongToCourse());
+        this.belongToCourse = CourseResponse.info(classroom.getCourse());
         this.studySchedules = classroom.getStudySchedules() != null ? classroom.getStudySchedules().stream().map(StudyScheduleResponse::infoWithDetail).toList() : null;
         this.tutorResponses = classroom.getClassroomTutors() != null ? classroom.getClassroomTutors().stream()
                 .map(ClassroomTutor::getTutor)

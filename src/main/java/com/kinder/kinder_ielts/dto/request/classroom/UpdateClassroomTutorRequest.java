@@ -11,5 +11,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UpdateClassroomTutorRequest {
-    private List<String> tutorIds;
+    private List<String> add;
+    private List<String> remove;
 }

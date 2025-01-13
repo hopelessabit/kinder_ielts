@@ -106,13 +106,7 @@ public class SecurityConfig {
                 "http://localhost:5173",
                 "https://localhost:5174",
                 "https://localhost:5173",
-                "https://resilient-salmiakki-e634e0.netlify.app",
-                "https://noxinh-admin.netlify.app",
-                "https://symphonious-kheer-4c84b0.netlify.app/",
-                "https://noxinh.net",
-                "https://noxinh.com.vn",
-                "https://noxinh.com",
-                "https://noxinh.vn"));
+                "https://kinder-ielts.netlify.app"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
         configuration.setAllowCredentials(true); // Allow credentials

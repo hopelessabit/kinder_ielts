@@ -6,7 +6,6 @@ import com.kinder.kinder_ielts.entity.Account;
 import com.kinder.kinder_ielts.entity.Classroom;
 import com.kinder.kinder_ielts.entity.StudySchedule;
 import com.kinder.kinder_ielts.mapper.ModelMapper;
-import com.kinder.kinder_ielts.response_message.CourseMessage;
 import com.kinder.kinder_ielts.response_message.StudyScheduleMessage;
 import com.kinder.kinder_ielts.service.base.BaseAccountService;
 import com.kinder.kinder_ielts.service.base.BaseClassroomService;
@@ -34,7 +33,7 @@ public class StudyScheduleServiceImpl {
         studySchedule.setCreateBy(creator);
 
         Classroom classroom = baseClassroomService.get(classroomId, IsDelete.NOT_DELETED, failMessage);
-        studySchedule.setBelongToClassroom(classroom);
+        studySchedule.setClassroom(classroom);
 
         return StudyScheduleResponse.detailWithDetail(baseStudyScheduleService.create(studySchedule, failMessage));
     }

@@ -2,6 +2,8 @@ package com.kinder.kinder_ielts.controller;
 
 import com.kinder.kinder_ielts.dto.ResponseData;
 import com.kinder.kinder_ielts.dto.request.course.CreateCourseRequest;
+import com.kinder.kinder_ielts.dto.request.course.UpdateCourseStudent;
+import com.kinder.kinder_ielts.dto.request.course.UpdateCourseTutors;
 import com.kinder.kinder_ielts.dto.response.course.CourseResponse;
 import com.kinder.kinder_ielts.response_message.CourseMessage;
 import com.kinder.kinder_ielts.service.base.BaseCourseService;
@@ -35,5 +37,19 @@ public class CourseController {
     @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR')")
     public ResponseEntity<ResponseData<CourseResponse>> createCourse(@RequestBody CreateCourseRequest request){
         return ResponseUtil.getResponse(() -> courseService.createCourse(request), CourseMessage.CREATED);
+    }
+
+    @PatchMapping("/{id}/tutors")
+    @SecurityRequirement(name = "Bearer")
+    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR')")
+    public ResponseEntity<ResponseData<Integer>> modifyTutors(@PathVariable String id, @RequestBody UpdateCourseTutors request){
+        return ResponseUtil.getResponse(() -> courseService.updateCourseTutor(id, request, CourseMessage.UPDATE_TUTORS_FAILED), CourseMessage.UPDATE_TUTORS_SUCCESSFULLY);
+    }
+
+    @PatchMapping("/{id}/students")
+    @SecurityRequirement(name = "Bearer")
+    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR')")
+    public ResponseEntity<ResponseData<Integer>> modifyStudents(@PathVariable String id, @RequestBody UpdateCourseStudent request){
+        return ResponseUtil.getResponse(() -> courseService.updateCourseStudent(id, request, CourseMessage.UPDATE_STUDENTS_FAILED), CourseMessage.UPDATE_STUDENTS_SUCCESSFULLY);
     }
 }

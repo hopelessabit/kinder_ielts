@@ -1,6 +1,7 @@
 package com.kinder.kinder_ielts.entity.course_template;
 
 import com.kinder.kinder_ielts.constant.StudyMaterialStatus;
+import com.kinder.kinder_ielts.entity.MaterialLink;
 import com.kinder.kinder_ielts.entity.Student;
 import com.kinder.kinder_ielts.entity.StudySchedule;
 import com.kinder.kinder_ielts.entity.base.BaseEntity;
@@ -26,10 +27,6 @@ public class TemplateStudyMaterial extends BaseEntity {
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Size(max = 255)
-    @Column(name = "link", nullable = false)
-    private String link;
-
     @Size(max = 500)
     @Column(name = "description", nullable = false)
     private String description;
@@ -42,4 +39,6 @@ public class TemplateStudyMaterial extends BaseEntity {
     @JoinColumn(name = "template_study_schedule_id", nullable = false)
     private TemplateStudySchedule templateStudySchedule;
 
+    @OneToMany(mappedBy = "templateStudyMaterial", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<MaterialLink> materialLinks;
 }

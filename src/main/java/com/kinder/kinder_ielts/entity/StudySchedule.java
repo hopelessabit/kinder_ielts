@@ -1,6 +1,9 @@
 package com.kinder.kinder_ielts.entity;
 
+import com.kinder.kinder_ielts.constant.IsDelete;
+import com.kinder.kinder_ielts.constant.StudyScheduleStatus;
 import com.kinder.kinder_ielts.entity.base.BaseEntity;
+import com.kinder.kinder_ielts.util.IdUtil;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -18,8 +21,11 @@ public class StudySchedule extends BaseEntity {
     @Column(name = "id", nullable = false)
     private String id;
 
-    @Column(name = "date_time")
-    private ZonedDateTime dateTime;
+    @Column(name = "from_time")
+    private ZonedDateTime fromTime;
+
+    @Column(name = "to_Time")
+    private ZonedDateTime toTime;
 
     @Size(max = 500)
     @Column(name = "title", nullable = false)
@@ -28,6 +34,10 @@ public class StudySchedule extends BaseEntity {
     @Lob
     @Column(name = "description")
     private String description;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private StudyScheduleStatus status;
 
     @OneToMany(mappedBy = "beLongToStudySchedule", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<ClassroomLink> classroomLinks;
@@ -43,5 +53,19 @@ public class StudySchedule extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "class_id", nullable = false)
-    private Classroom belongToClassroom;
+    private Classroom classroom;
+
+    public StudySchedule(ZonedDateTime fromTime, ZonedDateTime toTime, String title, Account createBy, ZonedDateTime createTime, Classroom classroom) {
+        this.id = IdUtil.generateId();
+        this.setCreateTime(createTime);
+        this.setIsDeleted(IsDelete.NOT_DELETED);
+        this.setCreateBy(createBy);
+        this.fromTime = fromTime;
+        this.toTime = toTime;
+        this.title = title;
+        this.status = StudyScheduleStatus.HIDDEN;
+        this.classroom = classroom;
+    }
+
+    public StudySchedule() {}
 }

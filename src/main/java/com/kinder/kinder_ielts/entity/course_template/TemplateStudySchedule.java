@@ -1,6 +1,7 @@
 package com.kinder.kinder_ielts.entity.course_template;
 
 
+import com.kinder.kinder_ielts.constant.StudyScheduleStatus;
 import com.kinder.kinder_ielts.entity.*;
 import com.kinder.kinder_ielts.entity.base.BaseEntity;
 import jakarta.persistence.*;
@@ -33,6 +34,13 @@ public class TemplateStudySchedule extends BaseEntity {
     @Column(name = "description")
     private String description;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private StudyScheduleStatus status;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private TemplateClassroom templateClassroom;
+
     @OneToMany(mappedBy = "templateStudySchedule", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<TemplateClassroomLink> classroomLinks;
 
@@ -44,8 +52,4 @@ public class TemplateStudySchedule extends BaseEntity {
 
     @OneToMany(mappedBy = "templateStudySchedule", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<TemplateStudyMaterial> studyMaterials;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "course_id", nullable = false)
-    private Course course;
 }

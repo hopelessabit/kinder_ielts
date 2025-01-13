@@ -4,17 +4,21 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.kinder.kinder_ielts.constant.StudyMaterialStatus;
 import com.kinder.kinder_ielts.dto.response.BaseEntityResponse;
 import com.kinder.kinder_ielts.dto.response.StatusResponse;
+import com.kinder.kinder_ielts.dto.response.material_link.MaterialLinkResponse;
 import com.kinder.kinder_ielts.dto.response.study_schedule.StudyScheduleResponse;
 import com.kinder.kinder_ielts.entity.StudyMaterial;
 import lombok.Getter;
+
+import java.util.List;
 
 @Getter
 public class StudyMaterialResponse {
     private String id;
     private String title;
     private String description;
-    private String link;
     private StatusResponse<StudyMaterialStatus> privacyStatus;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private List<MaterialLinkResponse> links;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private StudyScheduleResponse studySchedule;
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -24,7 +28,6 @@ public class StudyMaterialResponse {
         this.id = studyMaterial.getId();
         this.title = studyMaterial.getTitle();
         this.description = studyMaterial.getDescription();
-        this.link = studyMaterial.getLink();
         this.privacyStatus = StatusResponse.from(studyMaterial.getPrivacyStatus());
 
         mapSubInfo(studyMaterial, includeInfoForAdmin);
@@ -37,8 +40,10 @@ public class StudyMaterialResponse {
     }
 
     public void mapDetail(StudyMaterial studyMaterial, boolean includeDetails) {
-        if (includeDetails)
+        if (includeDetails){
             this.studySchedule = StudyScheduleResponse.info(studyMaterial.getBeLongTo());
+            this.links = studyMaterial.getMaterialLinks().stream().map(MaterialLinkResponse::info).toList();
+        }
     }
 
     public static StudyMaterialResponse info(StudyMaterial studyMaterial) {

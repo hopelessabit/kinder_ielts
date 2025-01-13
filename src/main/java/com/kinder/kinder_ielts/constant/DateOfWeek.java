@@ -1,5 +1,8 @@
 package com.kinder.kinder_ielts.constant;
 
+import lombok.Getter;
+
+@Getter
 public enum DateOfWeek {
     MONDAY ("Thứ hai", 1),
     TUESDAY ("Thứ ba", 3),

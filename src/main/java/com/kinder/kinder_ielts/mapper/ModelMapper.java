@@ -8,9 +8,13 @@ import com.kinder.kinder_ielts.dto.request.course.CreateCourseRequest;
 import com.kinder.kinder_ielts.dto.request.homework.CreateHomeworkRequest;
 import com.kinder.kinder_ielts.dto.request.study_material.CreateStudyMaterialRequest;
 import com.kinder.kinder_ielts.dto.request.study_schedule.CreateStudyScheduleRequest;
+import com.kinder.kinder_ielts.dto.request.template.study_schedule.CreateTemplateStudyScheduleRequest;
 import com.kinder.kinder_ielts.dto.request.warm_up_test.CreateWarmUpTestRequest;
 import com.kinder.kinder_ielts.entity.*;
+import com.kinder.kinder_ielts.entity.course_template.TemplateStudySchedule;
 import com.kinder.kinder_ielts.util.IdUtil;
+import com.kinder.kinder_ielts.util.TimeUtil;
+import com.kinder.kinder_ielts.util.TimeZoneUtil;
 
 import java.time.ZonedDateTime;
 
@@ -45,10 +49,22 @@ public class ModelMapper {
         classroom.setCreateTime(createTime);
         classroom.setIsDeleted(IsDelete.NOT_DELETED);
         classroom.setDescription(request.getDescription());
-        classroom.setFromTime(request.getFromTime());
-        classroom.setToTime(request.getToTime());
+        classroom.setFromTime(TimeUtil.convert(request.getFromTime()));
+        classroom.setToTime(TimeUtil.convert(request.getToTime()));
         classroom.setStartDate(request.getStartDate());
+        classroom.setFromTime(TimeUtil.convert(request.getFromTime()));
+        classroom.setToTime(TimeUtil.convert(request.getToTime()));
         return classroom;
+    }
+    public static TemplateStudySchedule map(CreateTemplateStudyScheduleRequest request){
+        TemplateStudySchedule templateStudySchedule = new TemplateStudySchedule();
+        templateStudySchedule.setId(IdUtil.generateId());
+        templateStudySchedule.setCreateTime(ZonedDateTime.now());
+        templateStudySchedule.setIsDeleted(IsDelete.NOT_DELETED);
+        templateStudySchedule.setDescription(request.getDescription());
+        templateStudySchedule.setTitle(request.getTitle());
+        templateStudySchedule.setDateTime(request.getDateTime());
+        return templateStudySchedule;
     }
     public static StudySchedule map(CreateStudyScheduleRequest request){
         StudySchedule studySchedule = new StudySchedule();
@@ -57,7 +73,8 @@ public class ModelMapper {
         studySchedule.setIsDeleted(IsDelete.NOT_DELETED);
         studySchedule.setDescription(request.getDescription());
         studySchedule.setTitle(request.getTitle());
-        studySchedule.setDateTime(request.getDateTime());
+        studySchedule.setFromTime(request.getFromTime());
+        studySchedule.setToTime(request.getToTime());
         return studySchedule;
     }
     public static ClassroomLink map(CreateClassroomLinkRequest request){
@@ -102,7 +119,6 @@ public class ModelMapper {
         studyMaterial.setIsDeleted(IsDelete.NOT_DELETED);
         studyMaterial.setDescription(request.getDescription());
         studyMaterial.setTitle(request.getTitle());
-        studyMaterial.setLink(request.getLink());
         studyMaterial.setPrivacyStatus(request.getPrivacyStatus() != null ? request.getPrivacyStatus() : StudyMaterialStatus.PUBLIC);
         return studyMaterial;
     }

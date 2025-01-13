@@ -13,7 +13,6 @@ import lombok.Setter;
 import java.time.OffsetTime;
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.TimeZone;
 
 @Getter
 @Setter
@@ -45,9 +44,9 @@ public class Classroom extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "course_id")
-    private Course belongToCourse;
+    private Course course;
 
-    @OneToMany(mappedBy = "belongToClassroom", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "classroom", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<StudySchedule> studySchedules;
 
     @OneToMany(mappedBy = "classroom", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)

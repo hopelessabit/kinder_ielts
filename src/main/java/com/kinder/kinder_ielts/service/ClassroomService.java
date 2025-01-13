@@ -130,32 +130,4 @@ public interface ClassroomService {
      */
     ClassroomResponse updateInfo(String id, UpdateClassroomRequest request);
 
-    /**
-     * Update tutors assigned to a classroom.
-     *
-     * <p>This method will:
-     * <ul>
-     *   <li>Validate if the provided tutors exist in the associated course.</li>
-     *   <li>Update the list of assigned tutors for the classroom.</li>
-     * </ul>
-     * </p>
-     *
-     * @param id      The unique identifier of the classroom.
-     * @param request The request object containing the list of tutor IDs to be updated.
-     * @return {@link ClassroomResponse} The response containing updated classroom tutor details.
-     * @throws NotFoundException if the classroom or tutors are not found.
-     * @throws SqlException if an error occurs during database operations.
-     *
-     * @example
-     * <pre>
-     * {@code
-     * String classroomId = "class123";
-     * UpdateClassroomTutorRequest request = new UpdateClassroomTutorRequest();
-     * request.setTutorIds(List.of("tutor1", "tutor2"));
-     * ClassroomResponse response = classroomService.updateTutors(classroomId, request);
-     * System.out.println(response);
-     * }
-     * </pre>
-     */
-    ClassroomResponse updateTutors(String id, UpdateClassroomTutorRequest request);
 }

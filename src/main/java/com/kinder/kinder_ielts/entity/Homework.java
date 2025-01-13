@@ -2,8 +2,11 @@ package com.kinder.kinder_ielts.entity;
 
 import com.kinder.kinder_ielts.constant.HomeworkPrivacyStatus;
 import com.kinder.kinder_ielts.constant.HomeworkStatus;
+import com.kinder.kinder_ielts.constant.IsDelete;
 import com.kinder.kinder_ielts.entity.base.BaseEntity;
+import com.kinder.kinder_ielts.entity.course_template.TemplateHomework;
 import com.kinder.kinder_ielts.entity.join_entity.StudentHomework;
+import com.kinder.kinder_ielts.util.IdUtil;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -60,4 +63,21 @@ public class Homework extends BaseEntity {
     @OneToMany(mappedBy = "homework", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<StudentHomework> studentHomeworks;
 
+    public static Homework from(TemplateHomework hw, StudySchedule studySchedule, Account account, ZonedDateTime currentTime) {
+        Homework homework = new Homework();
+        homework.setId(IdUtil.generateId());
+        homework.setTitle(hw.getTitle());
+        homework.setDescription(hw.getDescription());
+        homework.setLink(hw.getLink());
+        homework.setStatus(hw.getStatus());
+        homework.setPrivacyStatus(hw.getPrivacyStatus());
+        homework.setDueDate(currentTime);
+        homework.setStartDate(hw.getStartDate());
+
+        homework.setCreateBy(account);
+        homework.setCreateTime(currentTime);
+        homework.setIsDeleted(IsDelete.NOT_DELETED);
+
+        return homework;
+    }
 }

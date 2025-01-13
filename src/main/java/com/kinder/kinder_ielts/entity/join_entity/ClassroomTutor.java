@@ -47,7 +47,7 @@ public class ClassroomTutor extends BaseEntity {
         this.assignedDate = assignedDate;
     }
 
-    public ClassroomTutor(Classroom classroom, Tutor tutor, ZonedDateTime assignedDate, Account createBy, ZonedDateTime createTime) {
+    public ClassroomTutor(Classroom classroom, Tutor tutor, Account createBy, ZonedDateTime createTime) {
         this.id = new ClassroomTutorId(classroom.getId(), tutor.getId());
         this.classroom = classroom;
         this.tutor = tutor;
