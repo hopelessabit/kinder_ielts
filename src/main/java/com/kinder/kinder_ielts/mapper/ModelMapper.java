@@ -48,6 +48,7 @@ public class ModelMapper {
         classroom.setId(IdUtil.generateId());
         classroom.setCreateTime(createTime);
         classroom.setIsDeleted(IsDelete.NOT_DELETED);
+        classroom.setCode(request.getCode());
         classroom.setDescription(request.getDescription());
         classroom.setFromTime(TimeUtil.convert(request.getFromTime()));
         classroom.setToTime(TimeUtil.convert(request.getToTime()));

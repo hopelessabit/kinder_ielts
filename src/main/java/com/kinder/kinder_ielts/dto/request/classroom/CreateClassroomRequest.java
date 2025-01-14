@@ -17,6 +17,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class CreateClassroomRequest {
     private String description;
+    private String code;
     private Time fromTime;
     private Time toTime;
     private ZonedDateTime startDate;
