@@ -1,5 +1,6 @@
 package com.kinder.kinder_ielts.controller;
 
+import com.kinder.kinder_ielts.constant.IsDelete;
 import com.kinder.kinder_ielts.dto.ResponseData;
 import com.kinder.kinder_ielts.dto.request.course.CreateCourseRequest;
 import com.kinder.kinder_ielts.dto.request.course.UpdateCourseStudent;
@@ -15,6 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/course")
 @RequiredArgsConstructor
@@ -28,8 +31,22 @@ public class CourseController {
     }
 
     @GetMapping("/detail/{id}")
+    @SecurityRequirement(name = "Bearer")
+    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR')")
     public ResponseEntity<ResponseData<CourseResponse>> getDetail(@PathVariable String id) {
         return ResponseUtil.getResponse(() -> courseService.getDetail(id), CourseMessage.FOUND_SUCCESSFULLY);
+    }
+
+    @GetMapping("/all")
+    @SecurityRequirement(name = "Bearer")
+    public ResponseEntity<ResponseData<List<CourseResponse>>> getAll(@RequestParam(required = false) IsDelete isDelete) {
+        if (isDelete == null){
+            isDelete = IsDelete.NOT_DELETED;
+        }
+
+        IsDelete finalIsDelete = isDelete;
+
+        return ResponseUtil.getResponse(() -> courseService.getAll(finalIsDelete, CourseMessage.NOT_FOUND), CourseMessage.FOUND_SUCCESSFULLY);
     }
 
     @PostMapping("/course")

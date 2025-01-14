@@ -2,7 +2,7 @@ package com.kinder.kinder_ielts.response_message;
 
 public class CourseMessage {
 
-    public static final String FOUND_SUCCESSFULLY = "Lấy thông tin khóa học dùng thành công.";
+    public static final String FOUND_SUCCESSFULLY = "Lấy thông tin khóa học thành công.";
     public static final String MULTIPLE_FOUND_SUCCESSFULLY = "Tìm kiếm nhiều khóa học thành công.";
     public static final String CREATED = "Tạo khóa học thành công";
     public static final String UPDATE_STUDENTS_SUCCESSFULLY = "Cập nhập danh sách học sinh thành công";

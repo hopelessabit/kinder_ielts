@@ -20,6 +20,9 @@ import java.util.List;
 public class TutorResponse {
     private AccountResponse account;
     private String fullName;
+    private String firstName;
+    private String middleName;
+    private String lastName;
     private String email;
     private String citizenIdentification;
     private String phone;
@@ -29,9 +32,6 @@ public class TutorResponse {
     private Double writing;
     private Double speaking;
     private Double overall;
-    private String firstName;
-    private String middleName;
-    private String lastName;
     private CountryResponse country;
     private List<TutorCertificateResponse> certificates;
     @JsonInclude(JsonInclude.Include.NON_NULL)

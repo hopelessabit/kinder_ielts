@@ -42,6 +42,7 @@ public class SecurityConfig {
     private final String TEST_API = BASE_URL_V1 + "/test/**";
     private final String CLASSROOM_API = BASE_URL_V1 + "/classroom/**";
     private final String COURSE_API = BASE_URL_V1 + "/course/**";
+    private final String TUTOR_API = BASE_URL_V1 + "/tutor/**";
     /**
      * Security filter chain security filter chain.
      *
@@ -59,6 +60,7 @@ public class SecurityConfig {
 //                                .requestMatchers(ADMIN_API).hasAuthority("ADMIN")
                                 .requestMatchers(HttpMethod.GET, CLASSROOM_API).permitAll()
                                 .requestMatchers(HttpMethod.GET, COURSE_API).permitAll()
+                                .requestMatchers(HttpMethod.GET, TUTOR_API).permitAll()
                                 .requestMatchers(
                                         AUTHEN_URL,
                                         ACCOUNT_API,

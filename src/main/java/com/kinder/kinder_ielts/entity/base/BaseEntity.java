@@ -34,6 +34,7 @@ public abstract class BaseEntity {
     @NotNull
     @Enumerated(EnumType.ORDINAL)
     @Column(name = "is_deleted", nullable = true)
+    @Basic(fetch = FetchType.EAGER)
     private IsDelete isDeleted = IsDelete.NOT_DELETED;
 
 }

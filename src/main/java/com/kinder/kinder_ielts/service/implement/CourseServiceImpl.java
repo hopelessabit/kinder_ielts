@@ -3,7 +3,6 @@ package com.kinder.kinder_ielts.service.implement;
 import com.kinder.kinder_ielts.constant.AccountStatus;
 import com.kinder.kinder_ielts.constant.IsDelete;
 import com.kinder.kinder_ielts.dto.Error;
-import com.kinder.kinder_ielts.dto.request.add_student.AddStudentRequest;
 import com.kinder.kinder_ielts.dto.request.course.CreateCourseRequest;
 import com.kinder.kinder_ielts.dto.request.course.UpdateCourseInfoRequest;
 import com.kinder.kinder_ielts.dto.request.course.UpdateCourseStudent;
@@ -29,8 +28,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static com.microsoft.graph.models.AttributeMappingSourceType.Function;
 
 @Service
 @RequiredArgsConstructor
@@ -418,6 +415,8 @@ public class CourseServiceImpl implements CourseService {
         return existingStudentsMap.size();
     }
 
-
+    public List<CourseResponse> getAll (IsDelete isDelete, String failMessage){
+        return baseCourseService.get(isDelete, failMessage).stream().map(CourseResponse::infoWithDetail).toList();
+    }
 
 }

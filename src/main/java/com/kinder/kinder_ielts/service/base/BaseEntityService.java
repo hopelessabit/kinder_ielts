@@ -14,6 +14,8 @@ import java.util.List;
  */
 public interface BaseEntityService<T, ID> {
 
+    public List<T> get(IsDelete isDelete, String message);
+
     /**
      * Fetch multiple entities by their IDs and deletion state.
      *

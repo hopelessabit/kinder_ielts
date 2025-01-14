@@ -19,6 +19,7 @@ import java.time.ZonedDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "course_tutor")
+
 public class CourseTutor extends BaseEntity {
 
     @EmbeddedId

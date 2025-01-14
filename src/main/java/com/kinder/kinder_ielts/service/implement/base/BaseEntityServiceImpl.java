@@ -2,14 +2,12 @@ package com.kinder.kinder_ielts.service.implement.base;
 
 import com.kinder.kinder_ielts.dto.Error;
 import com.kinder.kinder_ielts.constant.IsDelete;
-import com.kinder.kinder_ielts.entity.Account;
 import com.kinder.kinder_ielts.exception.NotFoundException;
 import com.kinder.kinder_ielts.exception.SqlException;
 import com.kinder.kinder_ielts.repository.BaseEntityRepository;
 import com.kinder.kinder_ielts.service.base.BaseEntityService;
 import lombok.extern.slf4j.Slf4j;
 
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -21,6 +19,13 @@ public abstract class BaseEntityServiceImpl<T, ID> implements BaseEntityService<
     protected abstract String getEntityName();
 
     protected abstract ID getEntityId(T entity);
+
+    public List<T> get(IsDelete isDelete, String message){
+        log.info("Fetching all {} and deletion states: {}", getEntityName(), isDelete);
+        List<T> entities = getRepository().findByIsDeleted(isDelete);
+        log.info("Successfully fetched {}: {}", getEntityName(), entities);
+        return entities;
+    }
 
     // Fetch multiple entities
     public List<T> get(List<ID> ids, List<IsDelete> isDeletes, String message) {
