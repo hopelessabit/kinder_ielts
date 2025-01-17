@@ -2,6 +2,9 @@ package com.kinder.kinder_ielts.repository;
 
 import com.kinder.kinder_ielts.constant.IsDelete;
 import com.kinder.kinder_ielts.entity.Course;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,4 +16,6 @@ public interface CourseRepository extends BaseEntityRepository<Course, String> {
     Course findFirstByIdAndIsDeleted(String id, IsDelete isDeleted);
 
     List<Course> findByIdInAndIsDeletedIn(Collection<String> ids, List<IsDelete> isDeleted);
+
+    Page<Course> findAll(Specification<Course> spec, Pageable pageable);
 }

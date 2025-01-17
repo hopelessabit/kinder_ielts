@@ -1,7 +1,6 @@
 package com.kinder.kinder_ielts.entity.course_template;
 
 import com.kinder.kinder_ielts.entity.Course;
-import com.kinder.kinder_ielts.entity.StudySchedule;
 import com.kinder.kinder_ielts.entity.base.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
@@ -9,9 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Nationalized;
 
-import java.time.OffsetTime;
-import java.time.ZonedDateTime;
 import java.util.List;
 
 @Getter
@@ -24,6 +22,11 @@ public class TemplateClassroom extends BaseEntity {
     @Size(max = 255)
     @Column(name = "id", nullable = false)
     private String id;
+
+    @Nationalized
+    @Size(max = 255)
+    @Column(name = "name")
+    private String name;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "course_id")

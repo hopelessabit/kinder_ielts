@@ -50,6 +50,11 @@ public class  Course extends BaseEntity {
     @Column(name = "slots")
     private Integer slots;
 
+    @Transient
+    public BigDecimal getFinalPrice() {
+        return (sale != null) ? sale : price;
+    }
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = true)
     private CourseStatus status;

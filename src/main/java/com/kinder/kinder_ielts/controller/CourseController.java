@@ -12,6 +12,8 @@ import com.kinder.kinder_ielts.service.implement.CourseServiceImpl;
 import com.kinder.kinder_ielts.util.ResponseUtil;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +26,17 @@ import java.util.List;
 public class CourseController {
     private final CourseServiceImpl courseService;
     private final BaseCourseService baseCourseService;
+
+    @GetMapping("")
+    public ResponseEntity<ResponseData<Page<CourseResponse>>> search(
+        Pageable pageable,
+        @RequestParam(required = false) String name,
+        @RequestParam(required = false) Float minPrice,
+        @RequestParam(required = false) Float maxPrice,
+        @RequestParam(required = false) String levelId
+    ){
+        return ResponseUtil.getResponse(() -> courseService.get(name, minPrice, maxPrice, levelId, pageable), CourseMessage.FOUND_SUCCESSFULLY);
+    }
 
     @GetMapping("/info/{id}")
     public ResponseEntity<ResponseData<CourseResponse>> getInfo(@PathVariable String id) {

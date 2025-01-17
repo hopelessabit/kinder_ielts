@@ -30,6 +30,8 @@ public class ClassroomController {
     }
 
     @GetMapping("/{id}")
+    @SecurityRequirement(name = "Bearer")
+    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR')")
     public ResponseEntity<ResponseData<ClassroomResponse>> getInfo(@PathVariable String id){
         return ResponseUtil.getResponse(() -> classroomService.getInfo(id), ClassroomMessage.FOUND_SUCCESSFULLY);
     }

@@ -14,14 +14,18 @@ import com.kinder.kinder_ielts.entity.join_entity.CourseStudent;
 import com.kinder.kinder_ielts.entity.join_entity.CourseTutor;
 import com.kinder.kinder_ielts.exception.BadRequestException;
 import com.kinder.kinder_ielts.mapper.ModelMapper;
+import com.kinder.kinder_ielts.repository.CourseRepository;
 import com.kinder.kinder_ielts.response_message.CourseMessage;
 import com.kinder.kinder_ielts.service.CourseService;
 import com.kinder.kinder_ielts.service.base.*;
 import com.kinder.kinder_ielts.service.base.BaseCourseTutorService;
 import com.kinder.kinder_ielts.util.CompareUtil;
 import com.kinder.kinder_ielts.util.SecurityContextHolderUtil;
+import jakarta.persistence.criteria.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.*;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +37,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class CourseServiceImpl implements CourseService {
+    private final CourseRepository courseRepository;
     private final BaseAccountService baseAccountService;
     private final BaseCourseService baseCourseService;
     private final BaseCourseTutorService baseCourseTutorService;
@@ -417,6 +422,76 @@ public class CourseServiceImpl implements CourseService {
 
     public List<CourseResponse> getAll (IsDelete isDelete, String failMessage){
         return baseCourseService.get(isDelete, failMessage).stream().map(CourseResponse::infoWithDetail).toList();
+    }
+
+    public Page<CourseResponse> get(String courseName, Float minPrice, Float maxPrice, String levelId, Pageable pageable) {
+        // Create the Specification with the custom sorting logic
+        Specification<Course> spec = createCourseSpecification(courseName, minPrice, maxPrice, levelId, pageable);
+
+        // Create a new Pageable with unsorted to avoid conflicts with custom sorting logic
+        Pageable unsortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.unsorted());
+
+        // Execute the query with the Specification and the unmodified Pageable (with unsorted)
+        Page<Course> coursePage = courseRepository.findAll(spec, unsortedPageable);
+
+        // Map to CourseResponse and return
+        return coursePage.map(CourseResponse::infoWithDetail);
+    }
+
+    private Specification<Course> createCourseSpecification(String courseName, Float minPrice, Float maxPrice, String levelId, Pageable pageable) {
+        return (root, query, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            // Add dynamic predicates
+            addCourseNamePredicate(courseName, root, cb, predicates);
+            addPriceRangePredicate(minPrice, maxPrice, root, cb, predicates);
+            addLevelPredicate(levelId, root, cb, predicates);
+
+            // Handle sorting logic
+            handleSorting(pageable, root, cb, query);
+
+            return cb.and(predicates.toArray(new Predicate[0]));
+        };
+    }
+
+    private void addCourseNamePredicate(String courseName, Root<Course> root, CriteriaBuilder cb, List<Predicate> predicates) {
+        if (courseName != null && !courseName.isEmpty()) {
+            predicates.add(cb.like(cb.lower(root.get("description")), "%" + courseName.toLowerCase() + "%"));
+        }
+    }
+
+    private void addPriceRangePredicate(Float minPrice, Float maxPrice, Root<Course> root, CriteriaBuilder cb, List<Predicate> predicates) {
+        if (minPrice != null) {
+            predicates.add(cb.greaterThanOrEqualTo(cb.coalesce(root.get("sale"), root.get("price")), minPrice));
+        }
+        if (maxPrice != null) {
+            predicates.add(cb.lessThanOrEqualTo(cb.coalesce(root.get("sale"), root.get("price")), maxPrice));
+        }
+    }
+
+    private void addLevelPredicate(String levelId, Root<Course> root, CriteriaBuilder cb, List<Predicate> predicates) {
+        if (levelId != null && !levelId.isEmpty()) {
+            predicates.add(cb.equal(root.get("level").get("id"), levelId));
+        }
+    }
+
+    private void handleSorting(Pageable pageable, Root<Course> root, CriteriaBuilder cb, CriteriaQuery<?> query) {
+        Sort sort = pageable.getSort();
+        if (sort.isSorted()) {
+            List<Order> orders = new ArrayList<>();
+            for (Sort.Order order : sort) {
+                if ("price".equals(order.getProperty())) {
+                    // Use COALESCE to sort by final price (sale or price)
+                    Order orderByPrice = order.isAscending() ? cb.asc(cb.coalesce(root.get("sale"), root.get("price"))) : cb.desc(cb.coalesce(root.get("sale"), root.get("price")));
+                    orders.add(orderByPrice);
+                } else {
+                    // Sort by other properties normally
+                    Order orderByOtherProperty = order.isAscending() ? cb.asc(root.get(order.getProperty())) : cb.desc(root.get(order.getProperty()));
+                    orders.add(orderByOtherProperty);
+                }
+            }
+            query.orderBy(orders);
+        }
     }
 
 }

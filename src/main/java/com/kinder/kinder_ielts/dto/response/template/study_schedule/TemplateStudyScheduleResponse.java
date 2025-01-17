@@ -2,7 +2,6 @@ package com.kinder.kinder_ielts.dto.response.template.study_schedule;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.kinder.kinder_ielts.dto.response.BaseEntityResponse;
-import com.kinder.kinder_ielts.dto.response.study_schedule.StudyScheduleDetailInfoResponse;
 import com.kinder.kinder_ielts.entity.course_template.TemplateStudySchedule;
 import lombok.Getter;
 
@@ -11,7 +10,6 @@ import java.time.ZonedDateTime;
 @Getter
 public class TemplateStudyScheduleResponse {
     private final String id;
-    private final ZonedDateTime dateTime;
     private final String title;
     private final String description;
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -21,7 +19,6 @@ public class TemplateStudyScheduleResponse {
 
     public TemplateStudyScheduleResponse(TemplateStudySchedule studySchedule, boolean includeInfoForAdmin, boolean includeDetail) {
         this.id = studySchedule.getId();
-        this.dateTime = studySchedule.getDateTime();
         this.title = studySchedule.getTitle();
         this.description = studySchedule.getDescription();
 

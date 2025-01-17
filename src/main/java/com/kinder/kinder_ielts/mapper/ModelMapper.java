@@ -6,15 +6,20 @@ import com.kinder.kinder_ielts.dto.request.classroom.CreateClassroomRequest;
 import com.kinder.kinder_ielts.dto.request.classroom.link.CreateClassroomLinkRequest;
 import com.kinder.kinder_ielts.dto.request.course.CreateCourseRequest;
 import com.kinder.kinder_ielts.dto.request.homework.CreateHomeworkRequest;
+import com.kinder.kinder_ielts.dto.request.material_link.CreateMaterialLinkRequest;
 import com.kinder.kinder_ielts.dto.request.study_material.CreateStudyMaterialRequest;
 import com.kinder.kinder_ielts.dto.request.study_schedule.CreateStudyScheduleRequest;
+import com.kinder.kinder_ielts.dto.request.template.CreateTemplateStudyMaterialRequest;
+import com.kinder.kinder_ielts.dto.request.template.homework.CreateTemplateHomeworkRequest;
 import com.kinder.kinder_ielts.dto.request.template.study_schedule.CreateTemplateStudyScheduleRequest;
 import com.kinder.kinder_ielts.dto.request.warm_up_test.CreateWarmUpTestRequest;
 import com.kinder.kinder_ielts.entity.*;
+import com.kinder.kinder_ielts.entity.course_template.TemplateHomework;
+import com.kinder.kinder_ielts.entity.course_template.TemplateStudyMaterial;
 import com.kinder.kinder_ielts.entity.course_template.TemplateStudySchedule;
 import com.kinder.kinder_ielts.util.IdUtil;
+import com.kinder.kinder_ielts.util.SecurityContextHolderUtil;
 import com.kinder.kinder_ielts.util.TimeUtil;
-import com.kinder.kinder_ielts.util.TimeZoneUtil;
 
 import java.time.ZonedDateTime;
 
@@ -60,11 +65,11 @@ public class ModelMapper {
     public static TemplateStudySchedule map(CreateTemplateStudyScheduleRequest request){
         TemplateStudySchedule templateStudySchedule = new TemplateStudySchedule();
         templateStudySchedule.setId(IdUtil.generateId());
+        templateStudySchedule.setCreateBy(SecurityContextHolderUtil.getAccount());
         templateStudySchedule.setCreateTime(ZonedDateTime.now());
         templateStudySchedule.setIsDeleted(IsDelete.NOT_DELETED);
         templateStudySchedule.setDescription(request.getDescription());
         templateStudySchedule.setTitle(request.getTitle());
-        templateStudySchedule.setDateTime(request.getDateTime());
         return templateStudySchedule;
     }
     public static StudySchedule map(CreateStudyScheduleRequest request){
@@ -122,5 +127,42 @@ public class ModelMapper {
         studyMaterial.setTitle(request.getTitle());
         studyMaterial.setPrivacyStatus(request.getPrivacyStatus() != null ? request.getPrivacyStatus() : StudyMaterialStatus.PUBLIC);
         return studyMaterial;
+    }
+
+    public static TemplateHomework map(CreateTemplateHomeworkRequest request) {
+        TemplateHomework templateHomework = new TemplateHomework();
+        templateHomework.setId(IdUtil.generateId());
+        templateHomework.setTitle(request.getTitle());
+        templateHomework.setDescription(request.getDescription());
+        templateHomework.setLink(request.getLink());
+        templateHomework.setStatus(request.getStatus());
+        templateHomework.setStartDate(request.getStartDate());
+        templateHomework.setDueDate(request.getDueDate());
+        templateHomework.setIsDeleted(IsDelete.NOT_DELETED);
+        templateHomework.setCreateBy(SecurityContextHolderUtil.getAccount());
+        templateHomework.setCreateTime(ZonedDateTime.now());
+        return templateHomework;
+    }
+
+    public static TemplateStudyMaterial map(CreateTemplateStudyMaterialRequest request, Account actor, ZonedDateTime currentTime) {
+        TemplateStudyMaterial templateStudyMaterial = new TemplateStudyMaterial();
+        templateStudyMaterial.setId(IdUtil.generateId());
+        templateStudyMaterial.setTitle(request.getTitle());
+        templateStudyMaterial.setDescription(request.getDescription());
+        templateStudyMaterial.setPrivacyStatus(request.getPrivacyStatus() != null ? request.getPrivacyStatus() : StudyMaterialStatus.PUBLIC);
+
+        templateStudyMaterial.initForNew(actor, currentTime);
+        return templateStudyMaterial;
+    }
+
+    public static MaterialLink map(CreateMaterialLinkRequest request, Account actor, ZonedDateTime currentTime) {
+        MaterialLink materialLink = new MaterialLink();
+        materialLink.setId(IdUtil.generateId());
+        materialLink.setTitle(request.getTitle());
+        materialLink.setLink(request.getLink());
+
+        materialLink.initForNew(actor, currentTime);
+
+        return materialLink;
     }
 }

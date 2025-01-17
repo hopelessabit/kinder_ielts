@@ -1,10 +1,11 @@
-package com.kinder.kinder_ielts.service.implement.base;
+package com.kinder.kinder_ielts.service.implement.base.template;
 
 import com.kinder.kinder_ielts.constant.IsDelete;
 import com.kinder.kinder_ielts.entity.course_template.TemplateWarmUpTest;
 import com.kinder.kinder_ielts.repository.BaseEntityRepository;
 import com.kinder.kinder_ielts.repository.TemplateWarmUpTestRepository;
 import com.kinder.kinder_ielts.service.base.BaseTemplateWarmUpTestService;
+import com.kinder.kinder_ielts.service.implement.base.BaseEntityServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

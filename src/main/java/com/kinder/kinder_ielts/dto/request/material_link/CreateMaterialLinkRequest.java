@@ -1,16 +1,14 @@
-package com.kinder.kinder_ielts.dto.request.template.study_schedule;
+package com.kinder.kinder_ielts.dto.request.material_link;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.ZonedDateTime;
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateTemplateStudyScheduleRequest {
+public class CreateMaterialLinkRequest {
     private String title;
-    private String description;
+    private String link;
 }

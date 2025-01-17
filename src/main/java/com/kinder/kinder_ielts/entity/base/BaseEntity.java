@@ -2,6 +2,7 @@ package com.kinder.kinder_ielts.entity.base;
 
 import com.kinder.kinder_ielts.constant.IsDelete;
 import com.kinder.kinder_ielts.entity.Account;
+import com.kinder.kinder_ielts.util.SecurityContextHolderUtil;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -37,4 +38,20 @@ public abstract class BaseEntity {
     @Basic(fetch = FetchType.EAGER)
     private IsDelete isDeleted = IsDelete.NOT_DELETED;
 
+    public void initForNew(){
+        this.createTime = ZonedDateTime.now();
+        this.createBy = SecurityContextHolderUtil.getAccount();
+        this.isDeleted = IsDelete.NOT_DELETED;
+    }
+
+    public void initForNew(Account account, ZonedDateTime currentTime, IsDelete isDeleted){
+        this.createTime = currentTime;
+        this.createBy = account;
+        this.isDeleted = isDeleted;
+    }
+
+    public void initForNew(Account account, ZonedDateTime currentTime){
+        this.createTime = currentTime;
+        this.createBy = account;
+    }
 }

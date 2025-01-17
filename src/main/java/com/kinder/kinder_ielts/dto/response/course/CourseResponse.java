@@ -21,6 +21,7 @@ public class CourseResponse {
     private String detail;
     private BigDecimal price;
     private BigDecimal sale;
+    private Integer slots;
     private List<TutorResponse> tutors;
     private CourseLevelResponse level;
     private StatusResponse<CourseStatus> status;
@@ -33,6 +34,7 @@ public class CourseResponse {
         this.id = course.getId();
         this.description = course.getDescription();
         this.detail = course.getDetail();
+        this.slots = course.getSlots();
         this.status = StatusResponse.from(course.getStatus());
         this.level = CourseLevelResponse.info(course.getLevel());
         this.price = course.getPrice();
@@ -44,6 +46,9 @@ public class CourseResponse {
 
         if (includeInfoForAdmin)
             this.extendDetail = BaseEntityResponse.from(course);
+
+        if (includeBaseInfo)
+            this.detailInfo = CourseDetailInfoResponse.from(course);
     }
 
     public static CourseResponse infoWithDetail(Course course) {

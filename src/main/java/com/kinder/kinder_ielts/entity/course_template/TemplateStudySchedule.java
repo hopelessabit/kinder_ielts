@@ -23,9 +23,6 @@ public class TemplateStudySchedule extends BaseEntity {
     @Column(name = "id", nullable = false)
     private String id;
 
-    @Column(name = "date_time")
-    private ZonedDateTime dateTime;
-
     @Size(max = 500)
     @Column(name = "title", nullable = false)
     private String title;
@@ -33,6 +30,9 @@ public class TemplateStudySchedule extends BaseEntity {
     @Lob
     @Column(name = "description")
     private String description;
+
+    @Column(name = "place")
+    private Integer place;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")

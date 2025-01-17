@@ -48,6 +48,25 @@ public class ResponseUtil {
         }
     }
 
+    public static ResponseEntity<ResponseData<Void>> getResponse(Runnable action, String message) {
+        try {
+            action.run(); // Execute the action
+            return new ResponseEntity<>(ResponseData.ok(null, message), HttpStatus.OK);
+        } catch (BadRequestException | DataExistedException e) {
+            return new ResponseEntity<>(new ResponseData<>(HttpStatus.BAD_REQUEST.value(), e.getMessage(), e.getError()), HttpStatus.BAD_REQUEST);
+        } catch (NotFoundException e) {
+            return new ResponseEntity<>(new ResponseData<>(HttpStatus.NOT_FOUND.value(), e.getMessage(), e.getError()), HttpStatus.NOT_FOUND);
+        } catch (InternalServerExceptionException e) {
+            return new ResponseEntity<>(new ResponseData<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage(), e.getError()), HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (SqlException e) {
+            return new ResponseEntity<>(new ResponseData<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), SQL_ERROR_MESSAGE, e.getError()), HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (DataAccessResourceFailureException e) {
+            return new ResponseEntity<>(new ResponseData<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage(), Error.build(e.getMessage())), HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new ResponseData<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage(), Error.build(e.getMessage())), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     public static  <T> ResponseEntity<ResponseData<T>> getResponse(ResponseData<T> response) {
         if (response.getStatus() == HttpStatus.OK.value())
             return ResponseEntity.ok(response);
