@@ -12,6 +12,7 @@ public class TemplateStudyScheduleResponse {
     private final String id;
     private final String title;
     private final String description;
+    private final Integer place;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private TemplateStudyScheduleDetailInfoResponse detailInfo;
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -21,6 +22,7 @@ public class TemplateStudyScheduleResponse {
         this.id = studySchedule.getId();
         this.title = studySchedule.getTitle();
         this.description = studySchedule.getDescription();
+        this.place = studySchedule.getPlace();
 
         if (includeDetail)
             this.detailInfo = TemplateStudyScheduleDetailInfoResponse.from(studySchedule);

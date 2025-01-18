@@ -34,6 +34,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.*;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -104,7 +105,7 @@ public class ClassroomServiceImpl implements ClassroomService {
             return ClassroomResponse.detailWithDetails(baseClassroomService.update(classroom, message));
         }
         TemplateClassroom templateClassroom = belongToCourse.getTemplates().stream().filter(tc -> tc.getId().equals(request.getTemplateClassroomId())).findAny().orElseThrow(() -> new NotFoundException(message, Error.build("", List.of(request.getTemplateClassroomId()))));
-        addStudyScheduleHaveTemplate(studySchedules, templateClassroom.getStudySchedules(), account, currentTime);
+        addStudyScheduleHaveTemplate(studySchedules, templateClassroom.getStudySchedules().stream().sorted(Comparator.comparing(TemplateStudySchedule::getPlace)).toList(), account, currentTime);
         classroom.setStudySchedules(studySchedules);
 
         return ClassroomResponse.detailWithDetails(baseClassroomService.update(classroom, message));

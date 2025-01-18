@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -76,7 +77,11 @@ public class TemplateStudyScheduleServiceImpl {
 
     public void modifyPlace(String templateClassroomId, String templateStudyScheduleId, int toPlace, String failMessage) {
         TemplateClassroom templateClassroom = baseTemplateClassroomService.get(templateClassroomId, IsDelete.NOT_DELETED, failMessage);
-        List<TemplateStudySchedule> allTemplateStudySchedule = templateClassroom.getStudySchedules();
+        List<TemplateStudySchedule> allTemplateStudySchedule = templateClassroom.getStudySchedules()
+                .stream()
+                .sorted(Comparator.comparing(TemplateStudySchedule::getPlace))
+                .toList();
+
 
         TemplateStudySchedule templateStudySchedule = allTemplateStudySchedule.stream()
                 .filter(template -> template.getId().equals(templateStudyScheduleId))
@@ -92,9 +97,9 @@ public class TemplateStudyScheduleServiceImpl {
         Account actor = SecurityContextHolderUtil.getAccount();
 
         if (templateStudySchedule.getPlace() < toPlace){
-            for (int i = templateStudySchedule.getPlace() + 1; i <= toPlace; i++) {
+            for (int i = (templateStudySchedule.getPlace()); i <= (toPlace - 1); i++) {
                 TemplateStudySchedule currentTemplateStudySchedule = allTemplateStudySchedule.get(i);
-                currentTemplateStudySchedule.setPlace(i - 1);
+                currentTemplateStudySchedule.setPlace(i);
                 currentTemplateStudySchedule.setModifyBy(actor);
                 currentTemplateStudySchedule.setModifyTime(ZonedDateTime.now());
             }
@@ -102,9 +107,9 @@ public class TemplateStudyScheduleServiceImpl {
             templateClassroom.setModifyBy(actor);
             templateClassroom.setModifyTime(ZonedDateTime.now());
         } else {
-            for (int i = toPlace + 1; i <= templateStudySchedule.getPlace() - 1; i++) {
+            for (int i = (toPlace - 1); i <= (templateStudySchedule.getPlace() - 2); i++) {
                 TemplateStudySchedule currentTemplateStudySchedule = allTemplateStudySchedule.get(i);
-                currentTemplateStudySchedule.setPlace(i + 1);
+                currentTemplateStudySchedule.setPlace(i + 2);
                 currentTemplateStudySchedule.setModifyBy(actor);
                 currentTemplateStudySchedule.setModifyTime(ZonedDateTime.now());
             }

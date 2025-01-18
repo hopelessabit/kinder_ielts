@@ -39,7 +39,6 @@ public class CourseResponse {
         this.level = CourseLevelResponse.info(course.getLevel());
         this.price = course.getPrice();
         this.sale = course.getSale();
-        List<CourseTutor> a = course.getCourseTutors();
         this.tutors = course.getCourseTutors() != null
                 ? course.getCourseTutors().stream().filter(courseTutor -> courseTutor.getIsDeleted().equals(IsDelete.NOT_DELETED)).map(CourseTutor::getTutor).map(TutorResponse::withNoAccountInfo).toList()
                 : null;

@@ -3,6 +3,7 @@ package com.kinder.kinder_ielts.service.implement;
 import com.kinder.kinder_ielts.constant.AccountStatus;
 import com.kinder.kinder_ielts.constant.IsDelete;
 import com.kinder.kinder_ielts.constant.StudyMaterialStatus;
+import com.kinder.kinder_ielts.dto.request.material_link.CreateMaterialLinkRequest;
 import com.kinder.kinder_ielts.dto.request.study_material.CreateStudyMaterialRequest;
 import com.kinder.kinder_ielts.dto.response.homework.HomeworkResponse;
 import com.kinder.kinder_ielts.dto.response.study_material.StudyMaterialResponse;
@@ -20,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Service
@@ -47,9 +49,17 @@ public class StudyMaterialServiceImpl {
             List<Student> students = baseStudentService.get(request.getStudentIds(), AccountStatus.ACTIVE, failMessage);
             studyMaterial.setStudyMaterialsForStudents(students);
         }
-
         StudyMaterial result = baseStudyMaterialService.create(studyMaterial, failMessage);
-        return StudyMaterialResponse.detailWithDetails(result);
+
+        if (request.getMaterialLinks() != null && !request.getMaterialLinks().isEmpty()){
+            setMaterialLink(result, request.getMaterialLinks(), account, ZonedDateTime.now());
+        }
+
+        return StudyMaterialResponse.detailWithDetails(baseStudyMaterialService.update(result, failMessage));
+    }
+
+    public void setMaterialLink(StudyMaterial studyMaterial, List<CreateMaterialLinkRequest> materialLinkRequests, Account actor, ZonedDateTime currentTime){
+        studyMaterial.setMaterialLinks(materialLinkRequests.stream().map(a -> ModelMapper.map(a, actor, currentTime)).toList());
     }
 
     public StudyMaterialResponse getInfo(String id) {

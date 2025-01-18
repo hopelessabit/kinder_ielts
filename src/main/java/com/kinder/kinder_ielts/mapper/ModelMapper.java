@@ -10,13 +10,13 @@ import com.kinder.kinder_ielts.dto.request.material_link.CreateMaterialLinkReque
 import com.kinder.kinder_ielts.dto.request.study_material.CreateStudyMaterialRequest;
 import com.kinder.kinder_ielts.dto.request.study_schedule.CreateStudyScheduleRequest;
 import com.kinder.kinder_ielts.dto.request.template.CreateTemplateStudyMaterialRequest;
+import com.kinder.kinder_ielts.dto.request.template.classroom_link.CreateTemplateClassroomLink;
 import com.kinder.kinder_ielts.dto.request.template.homework.CreateTemplateHomeworkRequest;
 import com.kinder.kinder_ielts.dto.request.template.study_schedule.CreateTemplateStudyScheduleRequest;
+import com.kinder.kinder_ielts.dto.request.template.warmup_test.CreateTemplateWarmupTestRequest;
 import com.kinder.kinder_ielts.dto.request.warm_up_test.CreateWarmUpTestRequest;
 import com.kinder.kinder_ielts.entity.*;
-import com.kinder.kinder_ielts.entity.course_template.TemplateHomework;
-import com.kinder.kinder_ielts.entity.course_template.TemplateStudyMaterial;
-import com.kinder.kinder_ielts.entity.course_template.TemplateStudySchedule;
+import com.kinder.kinder_ielts.entity.course_template.*;
 import com.kinder.kinder_ielts.util.IdUtil;
 import com.kinder.kinder_ielts.util.SecurityContextHolderUtil;
 import com.kinder.kinder_ielts.util.TimeUtil;
@@ -135,6 +135,7 @@ public class ModelMapper {
         templateHomework.setTitle(request.getTitle());
         templateHomework.setDescription(request.getDescription());
         templateHomework.setLink(request.getLink());
+        templateHomework.setPrivacyStatus(request.getPrivacyStatus());
         templateHomework.setStatus(request.getStatus());
         templateHomework.setStartDate(request.getStartDate());
         templateHomework.setDueDate(request.getDueDate());
@@ -164,5 +165,33 @@ public class ModelMapper {
         materialLink.initForNew(actor, currentTime);
 
         return materialLink;
+    }
+
+    public static TemplateWarmUpTest map(CreateTemplateWarmupTestRequest request) {
+        TemplateWarmUpTest templateWarmUpTest = new TemplateWarmUpTest();
+        templateWarmUpTest.setId(IdUtil.generateId());
+        templateWarmUpTest.setTitle(request.getTitle());
+        templateWarmUpTest.setDescription(request.getDescription());
+        templateWarmUpTest.setLink(request.getLink());
+        templateWarmUpTest.setStatus(request.getStatus());
+
+        templateWarmUpTest.setCreateBy(SecurityContextHolderUtil.getAccount());
+        templateWarmUpTest.setCreateTime(ZonedDateTime.now());
+        templateWarmUpTest.setIsDeleted(IsDelete.NOT_DELETED);
+        return templateWarmUpTest;
+    }
+
+    public static TemplateClassroomLink map(CreateTemplateClassroomLink request) {
+        TemplateClassroomLink templateClassroomLink = new TemplateClassroomLink();
+        templateClassroomLink.setId(IdUtil.generateId());
+        templateClassroomLink.setTitle(request.getTitle());
+        templateClassroomLink.setDescription(request.getDescription());
+        templateClassroomLink.setLink(request.getLink());
+        templateClassroomLink.setStatus(request.getStatus());
+
+        templateClassroomLink.setCreateBy(SecurityContextHolderUtil.getAccount());
+        templateClassroomLink.setCreateTime(ZonedDateTime.now());
+        templateClassroomLink.setIsDeleted(IsDelete.NOT_DELETED);
+        return templateClassroomLink;
     }
 }

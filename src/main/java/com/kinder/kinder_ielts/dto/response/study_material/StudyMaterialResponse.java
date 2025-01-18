@@ -1,6 +1,7 @@
 package com.kinder.kinder_ielts.dto.response.study_material;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.kinder.kinder_ielts.constant.IsDelete;
 import com.kinder.kinder_ielts.constant.StudyMaterialStatus;
 import com.kinder.kinder_ielts.dto.response.BaseEntityResponse;
 import com.kinder.kinder_ielts.dto.response.StatusResponse;
@@ -28,7 +29,7 @@ public class StudyMaterialResponse {
         this.title = studyMaterial.getTitle();
         this.description = studyMaterial.getDescription();
         this.privacyStatus = StatusResponse.from(studyMaterial.getPrivacyStatus());
-        this.links = studyMaterial.getMaterialLinks() != null ? studyMaterial.getMaterialLinks().stream().map(MaterialLinkResponse::infoWithDetails).toList() : null;
+        this.links = studyMaterial.getMaterialLinks() != null ? studyMaterial.getMaterialLinks().stream().filter(a -> a.getIsDeleted().equals(IsDelete.NOT_DELETED)).map(MaterialLinkResponse::infoWithDetails).toList() : null;
 
         mapSubInfo(studyMaterial, includeInfoForAdmin);
         mapDetail(studyMaterial, includeDetails);

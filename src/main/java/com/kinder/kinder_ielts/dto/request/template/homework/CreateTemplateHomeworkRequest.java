@@ -1,5 +1,6 @@
 package com.kinder.kinder_ielts.dto.request.template.homework;
 
+import com.kinder.kinder_ielts.constant.HomeworkPrivacyStatus;
 import com.kinder.kinder_ielts.constant.HomeworkStatus;
 
 import java.time.ZonedDateTime;
@@ -16,6 +17,7 @@ public class CreateTemplateHomeworkRequest {
     private String title;
     private String description;
     private String link;
+    private HomeworkPrivacyStatus privacyStatus;
     private HomeworkStatus status;
     private ZonedDateTime dueDate;
     private ZonedDateTime startDate;
