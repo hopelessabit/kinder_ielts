@@ -2,6 +2,7 @@ package com.kinder.kinder_ielts.controller.template;
 import com.kinder.kinder_ielts.constant.IsDelete;
 import com.kinder.kinder_ielts.dto.ResponseData;
 import com.kinder.kinder_ielts.dto.request.template.study_schedule.CreateTemplateStudyScheduleRequest;
+import com.kinder.kinder_ielts.dto.request.template.study_schedule.UpdateTemplateStudySchedulePlaceRequest;
 import com.kinder.kinder_ielts.dto.request.template.study_schedule.UpdateTemplateStudyScheduleRequest;
 import com.kinder.kinder_ielts.dto.response.template.classroom.TemplateClassroomResponse;
 import com.kinder.kinder_ielts.dto.response.template.study_schedule.TemplateStudyScheduleResponse;
@@ -57,6 +58,13 @@ public class TemplateStudyScheduleController {
     @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR','TUTOR')")
     public  ResponseEntity<ResponseData<Void>> modifyPlace(@PathVariable String templateClassroomId, @PathVariable String templateStudyScheduleId, @RequestParam Integer place){
         return ResponseUtil.getResponse(() -> templateStudyScheduleService.modifyPlace(templateClassroomId, templateStudyScheduleId, place, "Modify place failed"), "Modify place success");
+    }
+
+    @PatchMapping("/{templateStudyScheduleId}/places")
+    @SecurityRequirement(name = "Bearer")
+    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR','TUTOR')")
+    public  ResponseEntity<ResponseData<Void>> modifyPlaceV2(@PathVariable String templateClassroomId, @RequestBody UpdateTemplateStudySchedulePlaceRequest request){
+        return ResponseUtil.getResponse(() -> templateStudyScheduleService.modifyPlaceV2(templateClassroomId, request, "Modify place failed"), "Modify place success");
     }
 
     @DeleteMapping("/{templateStudyScheduleId}")

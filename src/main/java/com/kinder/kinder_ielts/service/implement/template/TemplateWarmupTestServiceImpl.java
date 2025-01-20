@@ -13,8 +13,6 @@ import com.kinder.kinder_ielts.util.CompareUtil;
 import com.kinder.kinder_ielts.util.SecurityContextHolderUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
@@ -24,8 +22,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class TemplateWarmupTestServiceImpl {
-    private BaseTemplateWarmUpTestService baseTemplateWarmUpTestService;
-    private BaseTemplateStudyScheduleService baseTemplateStudyScheduleService;
+    private final BaseTemplateWarmUpTestService baseTemplateWarmUpTestService;
+    private final BaseTemplateStudyScheduleService baseTemplateStudyScheduleService;
 
     public TemplateWarmUpTestResponse create (String templateStudyScheduleId, CreateTemplateWarmupTestRequest request, String failMessage) {
         TemplateStudySchedule templateStudySchedule = baseTemplateStudyScheduleService.get(templateStudyScheduleId, IsDelete.NOT_DELETED, failMessage);

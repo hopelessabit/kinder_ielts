@@ -65,6 +65,7 @@ public class ModelMapper {
     public static TemplateStudySchedule map(CreateTemplateStudyScheduleRequest request){
         TemplateStudySchedule templateStudySchedule = new TemplateStudySchedule();
         templateStudySchedule.setId(IdUtil.generateId());
+        templateStudySchedule.setPlace(request.getPlace());
         templateStudySchedule.setCreateBy(SecurityContextHolderUtil.getAccount());
         templateStudySchedule.setCreateTime(ZonedDateTime.now());
         templateStudySchedule.setIsDeleted(IsDelete.NOT_DELETED);

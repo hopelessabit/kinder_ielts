@@ -154,10 +154,8 @@ public class ClassroomServiceImpl implements ClassroomService {
     }
 
     public void addStudyScheduleHaveTemplate(List<StudySchedule> studySchedules, List<TemplateStudySchedule> templateStudySchedules, Account account, ZonedDateTime currentTime) {
-        for (int i = 0; i < templateStudySchedules.size(); i++) {
-            TemplateStudySchedule templateStudySchedule = templateStudySchedules.get(i);
-            StudySchedule studySchedule = studySchedules.get(i);
-            List<TemplateStudyMaterial> a = templateStudySchedule.getStudyMaterials();
+        for (TemplateStudySchedule templateStudySchedule : templateStudySchedules) {
+            StudySchedule studySchedule = studySchedules.get(templateStudySchedule.getPlace() - 1);
             List<ClassroomLink> classroomLinks = templateStudySchedule.getClassroomLinks().stream().map(c -> ClassroomLink.from(c, studySchedule, account, currentTime)).toList();
             List<WarmUpTest> warmUpTests = templateStudySchedule.getWarmUpTests().stream().map(w -> WarmUpTest.from(w, studySchedule, account, currentTime)).toList();
             List<StudyMaterial> studyMaterials = templateStudySchedule.getStudyMaterials().stream().map(sm -> StudyMaterial.from(sm, studySchedule, account, currentTime)).toList();

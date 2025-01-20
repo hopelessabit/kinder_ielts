@@ -4,12 +4,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateTemplateStudyScheduleRequest {
-    private String title;
-    private String description;
-    private Integer place;
+public class UpdateTemplateStudySchedulePlaceRequest {
+    private List<TemplateStudySchedulePlace> templateStudySchedulePlaces;
 }

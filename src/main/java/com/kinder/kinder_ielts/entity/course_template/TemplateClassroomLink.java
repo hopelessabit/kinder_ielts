@@ -31,7 +31,6 @@ public class TemplateClassroomLink extends BaseEntity {
     private String description;
 
     @Lob
-    @Nationalized
     @Column(name = "link", nullable = false)
     private String link;
 

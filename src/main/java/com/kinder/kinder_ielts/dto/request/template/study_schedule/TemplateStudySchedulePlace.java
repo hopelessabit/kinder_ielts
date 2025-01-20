@@ -8,8 +8,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateTemplateStudyScheduleRequest {
-    private String title;
-    private String description;
+public class TemplateStudySchedulePlace {
+    private String templateStudyScheduleId;
     private Integer place;
 }

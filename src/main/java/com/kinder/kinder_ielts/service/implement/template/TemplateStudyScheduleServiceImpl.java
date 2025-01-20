@@ -2,6 +2,8 @@ package com.kinder.kinder_ielts.service.implement.template;
 import com.kinder.kinder_ielts.constant.IsDelete;
 import com.kinder.kinder_ielts.dto.Error;
 import com.kinder.kinder_ielts.dto.request.template.study_schedule.CreateTemplateStudyScheduleRequest;
+import com.kinder.kinder_ielts.dto.request.template.study_schedule.TemplateStudySchedulePlace;
+import com.kinder.kinder_ielts.dto.request.template.study_schedule.UpdateTemplateStudySchedulePlaceRequest;
 import com.kinder.kinder_ielts.dto.request.template.study_schedule.UpdateTemplateStudyScheduleRequest;
 import com.kinder.kinder_ielts.dto.response.template.study_schedule.TemplateStudyScheduleResponse;
 import com.kinder.kinder_ielts.entity.Account;
@@ -73,6 +75,42 @@ public class TemplateStudyScheduleServiceImpl {
 
     public void delete(String templateStudyScheduleId, String failMessage) {
         baseTemplateStudyScheduleService.delete(templateStudyScheduleId, failMessage);
+    }
+
+    public void modifyPlaceV2(String templateClassroomId, UpdateTemplateStudySchedulePlaceRequest request, String failMessage) {
+        Account actor = SecurityContextHolderUtil.getAccount();
+        ZonedDateTime now = ZonedDateTime.now();
+        TemplateClassroom templateClassroom = baseTemplateClassroomService.get(templateClassroomId, IsDelete.NOT_DELETED, failMessage);
+        List<TemplateStudySchedule> allTemplateStudySchedule = templateClassroom.getStudySchedules();
+        List<String> templateStudyScheduleIds = request.getTemplateStudySchedulePlaces().stream().map(TemplateStudySchedulePlace::getTemplateStudyScheduleId).toList();
+        List<String> templateStudyScheduleIdsNotFound = new ArrayList<>();
+        for (String templateStudyScheduleId : templateStudyScheduleIds) {
+            if (allTemplateStudySchedule.stream().noneMatch(template -> template.getId().equals(templateStudyScheduleId))) {
+                templateStudyScheduleIdsNotFound.add(templateStudyScheduleId);
+            }
+        }
+
+        if (!templateStudyScheduleIdsNotFound.isEmpty())
+            throw new NotFoundException(
+                    failMessage,
+                    new Error<>(
+                            "Template Study Schedule with Ids: " + templateStudyScheduleIdsNotFound + " not found",
+                            templateStudyScheduleIdsNotFound
+                    )
+            );
+
+        for (TemplateStudySchedulePlace templateStudySchedulePlace : request.getTemplateStudySchedulePlaces()) {
+            TemplateStudySchedule templateStudySchedule = allTemplateStudySchedule.stream()
+                    .filter(template -> template.getId().equals(templateStudySchedulePlace.getTemplateStudyScheduleId()))
+                    .findFirst().get();
+
+            templateStudySchedule.setPlace(templateStudySchedulePlace.getPlace());
+            templateClassroom.setModifyBy(actor);
+            templateClassroom.setModifyTime(now);
+        }
+
+
+        baseTemplateClassroomService.update(templateClassroom, failMessage);
     }
 
     public void modifyPlace(String templateClassroomId, String templateStudyScheduleId, int toPlace, String failMessage) {
