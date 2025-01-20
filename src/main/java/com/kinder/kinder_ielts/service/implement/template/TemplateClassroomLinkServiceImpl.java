@@ -26,52 +26,125 @@ public class TemplateClassroomLinkServiceImpl implements TemplateClassroomLinkSe
     private final BaseTemplateClassroomLinkService templateClassroomLinkService;
     private final BaseTemplateStudyScheduleService templateStudyScheduleService;
 
+    @Override
     public TemplateClassroomLinkResponse create(String templateStudyScheduleId, CreateTemplateClassroomLink request, String failMessage) {
-        TemplateStudySchedule templateStudySchedule = templateStudyScheduleService.get(templateStudyScheduleId, IsDelete.NOT_DELETED, failMessage);
+        log.info("[CREATE CLASSROOM LINK] Initiating creation for study schedule ID: {}", templateStudyScheduleId);
+
+        TemplateStudySchedule templateStudySchedule = fetchTemplateStudySchedule(templateStudyScheduleId, failMessage);
+
         TemplateClassroomLink templateClassroomLink = ModelMapper.map(request);
         templateClassroomLink.setTemplateStudySchedule(templateStudySchedule);
 
-        return TemplateClassroomLinkResponse.detailWithStudySchedule(templateClassroomLinkService.create(templateClassroomLink, failMessage));
+        log.debug("[CREATE CLASSROOM LINK] Persisting classroom link");
+        TemplateClassroomLinkResponse response = TemplateClassroomLinkResponse.detailWithStudySchedule(
+                templateClassroomLinkService.create(templateClassroomLink, failMessage));
+
+        log.info("[CREATE CLASSROOM LINK] Successfully created classroom link for study schedule ID: {}", templateStudyScheduleId);
+        return response;
     }
 
+    @Override
     public TemplateClassroomLinkResponse get(String templateClassroomLinkId, String failMessage) {
-        return TemplateClassroomLinkResponse.infoWithStudySchedule(templateClassroomLinkService.get(templateClassroomLinkId, IsDelete.NOT_DELETED, failMessage));
+        log.info("[GET CLASSROOM LINK] Fetching classroom link with ID: {}", templateClassroomLinkId);
+
+        TemplateClassroomLinkResponse response = TemplateClassroomLinkResponse.infoWithStudySchedule(
+                templateClassroomLinkService.get(templateClassroomLinkId, IsDelete.NOT_DELETED, failMessage));
+
+        log.info("[GET CLASSROOM LINK] Successfully fetched classroom link with ID: {}", templateClassroomLinkId);
+        return response;
     }
 
+    @Override
     public List<TemplateClassroomLinkResponse> getByTemplateStudyScheduleId(String templateStudyScheduleId, String failMessage) {
-        TemplateStudySchedule templateStudySchedule = templateStudyScheduleService.get(templateStudyScheduleId, IsDelete.NOT_DELETED, failMessage);
-        List<TemplateClassroomLink> templateClassroomLinks = templateStudySchedule.getClassroomLinks();
+        log.info("[GET CLASSROOM LINKS BY STUDY SCHEDULE] Fetching links for study schedule ID: {}", templateStudyScheduleId);
 
-        if (templateClassroomLinks == null || templateClassroomLinks.isEmpty()) {
-            return List.of();
-        }
+        TemplateStudySchedule templateStudySchedule = fetchTemplateStudySchedule(templateStudyScheduleId, failMessage);
+        List<TemplateClassroomLink> links = templateStudySchedule.getClassroomLinks();
 
-        return templateClassroomLinks.stream().filter(a -> a.getIsDeleted().equals(IsDelete.NOT_DELETED)).map(TemplateClassroomLinkResponse::info).toList();
+        log.debug("[GET CLASSROOM LINKS BY STUDY SCHEDULE] Found {} links, filtering non-deleted ones", links != null ? links.size() : 0);
+
+        List<TemplateClassroomLinkResponse> response = links == null ?
+                List.of() :
+                links.stream()
+                        .filter(link -> IsDelete.NOT_DELETED.equals(link.getIsDeleted()))
+                        .map(TemplateClassroomLinkResponse::info)
+                        .toList();
+
+        log.info("[GET CLASSROOM LINKS BY STUDY SCHEDULE] Returning {} active links", response.size());
+        return response;
     }
 
+    @Override
     public void delete(String templateClassroomLinkId, String failMessage) {
+        log.info("[DELETE CLASSROOM LINK] Deleting classroom link with ID: {}", templateClassroomLinkId);
+
         templateClassroomLinkService.delete(templateClassroomLinkId, failMessage);
+
+        log.info("[DELETE CLASSROOM LINK] Successfully deleted classroom link with ID: {}", templateClassroomLinkId);
     }
 
+    @Override
     public TemplateClassroomLinkResponse updateInfo(String templateClassroomLinkId, UpdateTemplateClassroomLinkRequest request, String failMessage) {
-        TemplateClassroomLink templateClassroomLink = templateClassroomLinkService.get(templateClassroomLinkId, IsDelete.NOT_DELETED, failMessage);
+        log.info("[UPDATE CLASSROOM LINK INFO] Updating info for classroom link ID: {}", templateClassroomLinkId);
 
+        TemplateClassroomLink templateClassroomLink = fetchTemplateClassroomLink(templateClassroomLinkId, failMessage);
+
+        log.debug("[UPDATE CLASSROOM LINK INFO] Comparing and updating fields");
         templateClassroomLink.setLink(CompareUtil.compare(request.getLink(), templateClassroomLink.getLink()));
         templateClassroomLink.setDescription(CompareUtil.compare(request.getDescription(), templateClassroomLink.getDescription()));
-        templateClassroomLink.setLink(CompareUtil.compare(request.getLink(), templateClassroomLink.getLink()));
 
-        templateClassroomLink.setModifyBy(SecurityContextHolderUtil.getAccount());
-        templateClassroomLink.setModifyTime(ZonedDateTime.now());
-        return TemplateClassroomLinkResponse.detailWithStudySchedule(templateClassroomLinkService.update(templateClassroomLink, failMessage));
+        updateAuditInfo(templateClassroomLink);
+
+        log.debug("[UPDATE CLASSROOM LINK INFO] Persisting updated classroom link");
+        TemplateClassroomLinkResponse response = TemplateClassroomLinkResponse.detailWithStudySchedule(
+                templateClassroomLinkService.update(templateClassroomLink, failMessage));
+
+        log.info("[UPDATE CLASSROOM LINK INFO] Successfully updated classroom link ID: {}", templateClassroomLinkId);
+        return response;
     }
 
+    @Override
     public TemplateClassroomLinkResponse updateStatus(String templateClassroomLinkId, ClassroomLinkStatus status, String failMessage) {
-        TemplateClassroomLink templateClassroomLink = templateClassroomLinkService.get(templateClassroomLinkId, IsDelete.NOT_DELETED, failMessage);
+        log.info("[UPDATE CLASSROOM LINK STATUS] Updating status for classroom link ID: {}", templateClassroomLinkId);
+
+        TemplateClassroomLink templateClassroomLink = fetchTemplateClassroomLink(templateClassroomLinkId, failMessage);
+
+        log.debug("[UPDATE CLASSROOM LINK STATUS] Changing status to: {}", status);
         templateClassroomLink.setStatus(status);
 
+        updateAuditInfo(templateClassroomLink);
+
+        log.debug("[UPDATE CLASSROOM LINK STATUS] Persisting updated classroom link");
+        TemplateClassroomLinkResponse response = TemplateClassroomLinkResponse.detailWithStudySchedule(
+                templateClassroomLinkService.update(templateClassroomLink, failMessage));
+
+        log.info("[UPDATE CLASSROOM LINK STATUS] Successfully updated status for classroom link ID: {}", templateClassroomLinkId);
+        return response;
+    }
+
+    /**
+     * Fetches a TemplateStudySchedule by ID and ensures it is not deleted.
+     */
+    private TemplateStudySchedule fetchTemplateStudySchedule(String id, String failMessage) {
+        log.debug("[FETCH STUDY SCHEDULE] Fetching study schedule with ID: {}", id);
+        return templateStudyScheduleService.get(id, IsDelete.NOT_DELETED, failMessage);
+    }
+
+    /**
+     * Fetches a TemplateClassroomLink by ID and ensures it is not deleted.
+     */
+    private TemplateClassroomLink fetchTemplateClassroomLink(String id, String failMessage) {
+        log.debug("[FETCH CLASSROOM LINK] Fetching classroom link with ID: {}", id);
+        return templateClassroomLinkService.get(id, IsDelete.NOT_DELETED, failMessage);
+    }
+
+    /**
+     * Updates audit fields (modifiedBy and modifiedTime) for an entity.
+     */
+    private void updateAuditInfo(TemplateClassroomLink templateClassroomLink) {
         templateClassroomLink.setModifyBy(SecurityContextHolderUtil.getAccount());
         templateClassroomLink.setModifyTime(ZonedDateTime.now());
-
-        return TemplateClassroomLinkResponse.detailWithStudySchedule(templateClassroomLinkService.update(templateClassroomLink, failMessage));
+        log.debug("[UPDATE AUDIT INFO] Updated audit info for classroom link ID: {}", templateClassroomLink.getId());
     }
 }
+

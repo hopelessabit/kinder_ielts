@@ -22,14 +22,14 @@ public class TemplateClassroomController {
 //TODO: Add update info api
     @PostMapping("/course/{courseId}")
     @SecurityRequirement(name = "Bearer")
-    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR','TUTOR','STUDENT')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR','TUTOR')")
     public ResponseEntity<ResponseData<TemplateClassroomResponse>> create(@PathVariable String courseId, @RequestBody CreateTemplateClassroomRequest request) {
         return ResponseUtil.getResponse(() -> templateClassroomService.create(courseId, request, TemplateClassroomMessage.CREATE_FAILED), TemplateClassroomMessage.CREATED);
     }
 
     @GetMapping("/{templateClassroomId}")
     @SecurityRequirement(name = "Bearer")
-    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR','TUTOR','STUDENT')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR','TUTOR')")
     public ResponseEntity<ResponseData<TemplateClassroomResponse>> getById(@PathVariable String templateClassroomId) {
         return ResponseUtil.getResponse(() -> templateClassroomService.get(templateClassroomId), TemplateClassroomMessage.FOUND_SUCCESSFULLY);
     }

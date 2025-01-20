@@ -25,28 +25,28 @@ public class TemplateStudyScheduleController {
 
     @GetMapping("/classroom/{classroomId}")
     @SecurityRequirement(name = "Bearer")
-    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR','TUTOR','STUDENT')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR','TUTOR')")
     public ResponseEntity<ResponseData<List<TemplateStudyScheduleResponse>>> getByClassroomId(@PathVariable String classroomId) {
         return ResponseUtil.getResponse(() -> templateStudyScheduleService.getByTemplateClassroomId(classroomId, TemplateStudyScheduleMessage.FOUND_FAILED), TemplateStudyScheduleMessage.FOUND_SUCCESSFULLY);
     }
 
     @GetMapping("/{templateStudyScheduleId}")
     @SecurityRequirement(name = "Bearer")
-    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR','TUTOR','STUDENT')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR','TUTOR')")
     public ResponseEntity<ResponseData<TemplateStudyScheduleResponse>> get(@PathVariable String templateStudyScheduleId) {
         return ResponseUtil.getResponse(() -> templateStudyScheduleService.get(templateStudyScheduleId, TemplateStudyScheduleMessage.NOT_FOUND), TemplateStudyScheduleMessage.FOUND_SUCCESSFULLY);
     }
 
     @PostMapping("/classroom/{classroomId}")
     @SecurityRequirement(name = "Bearer")
-    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR','TUTOR')")
     public ResponseEntity<ResponseData<TemplateStudyScheduleResponse>> create(@PathVariable String classroomId, @RequestBody CreateTemplateStudyScheduleRequest request) {
         return ResponseUtil.getResponse(() -> templateStudyScheduleService.createTemplateStudySchedule(classroomId, request, TemplateStudyScheduleMessage.CREATE_FAILED), TemplateStudyScheduleMessage.CREATED);
     }
 
     @PutMapping("/{templateStudyScheduleId}")
     @SecurityRequirement(name = "Bearer")
-    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR','TUTOR')")
     public ResponseEntity<ResponseData<TemplateStudyScheduleResponse>> update(@PathVariable String templateStudyScheduleId, @RequestBody UpdateTemplateStudyScheduleRequest request) {
         return ResponseUtil.getResponse(() -> templateStudyScheduleService.updateInfo(templateStudyScheduleId, request, TemplateStudyScheduleMessage.UPDATE_INFO_FAILED), TemplateStudyScheduleMessage.INFO_UPDATED);
     }
@@ -61,7 +61,7 @@ public class TemplateStudyScheduleController {
 
     @DeleteMapping("/{templateStudyScheduleId}")
     @SecurityRequirement(name = "Bearer")
-    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR','TUTOR')")
     public ResponseEntity<ResponseData<Void>> delete (@PathVariable String templateStudyScheduleId){
         return ResponseUtil.getResponse(() -> templateStudyScheduleService.delete(templateStudyScheduleId, TemplateStudyScheduleMessage.DELETE_FAILED), TemplateStudyScheduleMessage.DELETED);
     }

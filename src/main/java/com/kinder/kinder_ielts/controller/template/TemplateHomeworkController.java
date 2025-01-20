@@ -22,14 +22,14 @@ public class TemplateHomeworkController {
 
     @GetMapping("/{templateHomeworkId}")
     @SecurityRequirement(name = "Bearer")
-    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR','TUTOR','STUDENT')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR','TUTOR')")
     public ResponseEntity<ResponseData<TemplateHomeworkResponse>> get(@PathVariable String templateHomeworkId){
         return ResponseUtil.getResponse(() -> templateHomeworkService.get(templateHomeworkId, TemplateHomeworkMessage.NOT_FOUND), TemplateHomeworkMessage.FOUND_SUCCESSFULLY);
     }
 
     @GetMapping("/study-schedule/{templateStudyScheduleId}")
     @SecurityRequirement(name = "Bearer")
-    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR','TUTOR','STUDENT')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR','TUTOR')")
     public ResponseEntity<ResponseData<List<TemplateHomeworkResponse>>> getByStudyScheduleId(@PathVariable String templateStudyScheduleId){
         return ResponseUtil.getResponse(() -> templateHomeworkService.getByTemplateStudyScheduleId(templateStudyScheduleId, TemplateHomeworkMessage.NOT_FOUND), TemplateHomeworkMessage.FOUND_SUCCESSFULLY);
     }

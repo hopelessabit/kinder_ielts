@@ -7,8 +7,10 @@ import com.kinder.kinder_ielts.dto.response.template.study_material.TemplateStud
 import com.kinder.kinder_ielts.response_message.TemplateStudyMaterialMessage;
 import com.kinder.kinder_ielts.service.template.TemplateStudyMaterialService;
 import com.kinder.kinder_ielts.util.ResponseUtil;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,31 +22,43 @@ public class TemplateStudyMaterialController {
     private final TemplateStudyMaterialService templateStudyMaterialService;
 
     @GetMapping("/{templateStudyMaterialId}")
+    @SecurityRequirement(name = "Bearer")
+    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR','TUTOR')")
     public ResponseEntity<ResponseData<TemplateStudyMaterialResponse>> get(@PathVariable String templateStudyMaterialId) {
         return ResponseUtil.getResponse(() -> templateStudyMaterialService.get(templateStudyMaterialId, TemplateStudyMaterialMessage.CREATE_FAILED), TemplateStudyMaterialMessage.CREATED);
     }
 
     @GetMapping("/study-schedule/{templateStudyScheduleId}")
+    @SecurityRequirement(name = "Bearer")
+    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR','TUTOR')")
     public ResponseEntity<ResponseData<List<TemplateStudyMaterialResponse>>> getByStudyScheduleId(@PathVariable String templateStudyScheduleId) {
         return ResponseUtil.getResponse(() -> templateStudyMaterialService.getByTemplateStudyScheduleId(templateStudyScheduleId, TemplateStudyMaterialMessage.CREATE_FAILED), TemplateStudyMaterialMessage.CREATED);
     }
 
     @PostMapping("/study-schedule/{templateStudyScheduleId}")
+    @SecurityRequirement(name = "Bearer")
+    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR','TUTOR')")
     public ResponseEntity<ResponseData<TemplateStudyMaterialResponse>> create(@PathVariable String templateStudyScheduleId, @RequestBody CreateTemplateStudyMaterialRequest request) {
         return ResponseUtil.getResponse(() -> templateStudyMaterialService.create(templateStudyScheduleId, request, TemplateStudyMaterialMessage.CREATE_FAILED), TemplateStudyMaterialMessage.CREATED);
     }
 
     @PutMapping("/{templateStudyMaterialId}")
+    @SecurityRequirement(name = "Bearer")
+    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR','TUTOR')")
     public ResponseEntity<ResponseData<TemplateStudyMaterialResponse>> updateInfo(@PathVariable String templateStudyMaterialId, @RequestBody UpdateTemplateStudyMaterialRequest request) {
         return ResponseUtil.getResponse(() -> templateStudyMaterialService.updateInfo(templateStudyMaterialId, request, TemplateStudyMaterialMessage.UPDATE_INFO_FAILED), TemplateStudyMaterialMessage.INFO_UPDATED);
     }
 
     @PatchMapping("/{templateStudyMaterialId}")
+    @SecurityRequirement(name = "Bearer")
+    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR','TUTOR')")
     public ResponseEntity<ResponseData<TemplateStudyMaterialResponse>> updatePrivacyStatus(@PathVariable String templateStudyMaterialId, @RequestParam StudyMaterialStatus privacyStatus) {
         return ResponseUtil.getResponse(() -> templateStudyMaterialService.updatePrivacyStatus(templateStudyMaterialId, privacyStatus, TemplateStudyMaterialMessage.UPDATE_STATUS_FAILED), TemplateStudyMaterialMessage.STATUS_UPDATED);
     }
 
     @DeleteMapping("/{templateStudyMaterialId}")
+    @SecurityRequirement(name = "Bearer")
+    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR','TUTOR')")
     public ResponseEntity<ResponseData<Void>> delete(@PathVariable String templateStudyMaterialId) {
         return ResponseUtil.getResponse(() -> templateStudyMaterialService.delete(templateStudyMaterialId, TemplateStudyMaterialMessage.DELETE_FAILED), TemplateStudyMaterialMessage.DELETED);
     }

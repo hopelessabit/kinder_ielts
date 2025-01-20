@@ -9,6 +9,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Nationalized;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -24,10 +25,12 @@ public class TemplateStudySchedule extends BaseEntity {
     private String id;
 
     @Size(max = 500)
+    @Nationalized
     @Column(name = "title", nullable = false)
     private String title;
 
     @Lob
+    @Nationalized
     @Column(name = "description")
     private String description;
 
