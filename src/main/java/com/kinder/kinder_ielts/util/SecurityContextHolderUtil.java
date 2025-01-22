@@ -1,11 +1,16 @@
 package com.kinder.kinder_ielts.util;
 
+import com.kinder.kinder_ielts.constant.Role;
 import com.kinder.kinder_ielts.entity.Account;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 public class SecurityContextHolderUtil {
     private SecurityContextHolderUtil() {
         throw new IllegalStateException("Utility class");
+    }
+
+    public static Role getRole(){
+        return ((Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getRole();
     }
 
     public static String getAccountId(){

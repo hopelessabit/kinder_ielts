@@ -10,6 +10,9 @@ import com.kinder.kinder_ielts.service.base.BaseClassroomService;
 import com.kinder.kinder_ielts.util.SecurityContextHolderUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
@@ -57,5 +60,10 @@ public class BaseClassroomServiceImpl extends BaseEntityServiceImpl<Classroom, S
         classroom.setModifyBy(modifier);
         classroom.setModifyTime(ZonedDateTime.now());
         classroom.setIsDeleted(IsDelete.DELETED);
+    }
+
+    @Override
+    public Page<Classroom> findAll(Specification<Classroom> classroomSpecification, Pageable unsortedPageable) {
+        return classroomRepository.findAll(classroomSpecification, unsortedPageable);
     }
 }

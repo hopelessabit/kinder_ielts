@@ -1,5 +1,6 @@
 package com.kinder.kinder_ielts.service;
 
+import com.kinder.kinder_ielts.constant.IsDelete;
 import com.kinder.kinder_ielts.dto.ResponseData;
 import com.kinder.kinder_ielts.dto.request.classroom.CreateClassroomRequest;
 import com.kinder.kinder_ielts.dto.request.classroom.UpdateClassroomRequest;
@@ -7,6 +8,8 @@ import com.kinder.kinder_ielts.dto.request.classroom.UpdateClassroomTutorRequest
 import com.kinder.kinder_ielts.dto.response.classroom.ClassroomResponse;
 import com.kinder.kinder_ielts.exception.NotFoundException;
 import com.kinder.kinder_ielts.exception.SqlException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * Service interface for managing Classroom entities.
@@ -130,4 +133,5 @@ public interface ClassroomService {
      */
     ClassroomResponse updateInfo(String id, UpdateClassroomRequest request);
 
+    Page<ClassroomResponse> get(String title, String courseId, String tutorId, String studentId, IsDelete isDelete, Pageable pageable);
 }

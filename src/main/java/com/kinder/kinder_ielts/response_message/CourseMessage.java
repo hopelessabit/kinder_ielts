@@ -21,4 +21,5 @@ public class CourseMessage {
     public static final String REMOVE_TUTOR_FAILED = "Xóa giảng viên khỏi khóa học thất bại";
     public static final String UPDATE_INFO_FAILED = "Cập nhập thông tin khóa học thất bại";
     public static final String DELETE_FAILED = "Xóa khóa học thất bại";
+    public static final String NOT_ALLOWED = "Không được phép thực hiện hành động này";
 }

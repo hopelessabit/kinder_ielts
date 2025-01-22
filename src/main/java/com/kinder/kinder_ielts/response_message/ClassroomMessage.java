@@ -11,4 +11,5 @@ public class ClassroomMessage {
     public static final String UNAVAILABLE = "Cấp độ học không khả dụng";
 
     public static final String CLASS_IS_DELETED = "lớp học đã bị xóa";
+    public static final String NOT_ALLOWED = "Không được phép thực hiện hành động này";
 }

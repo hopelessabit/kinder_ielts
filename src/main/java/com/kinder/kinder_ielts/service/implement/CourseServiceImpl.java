@@ -2,6 +2,7 @@ package com.kinder.kinder_ielts.service.implement;
 
 import com.kinder.kinder_ielts.constant.AccountStatus;
 import com.kinder.kinder_ielts.constant.IsDelete;
+import com.kinder.kinder_ielts.constant.Role;
 import com.kinder.kinder_ielts.dto.Error;
 import com.kinder.kinder_ielts.dto.request.course.CreateCourseRequest;
 import com.kinder.kinder_ielts.dto.request.course.UpdateCourseInfoRequest;
@@ -424,9 +425,14 @@ public class CourseServiceImpl implements CourseService {
         return baseCourseService.get(isDelete, failMessage).stream().map(CourseResponse::infoWithDetail).toList();
     }
 
-    public Page<CourseResponse> get(String courseName, Float minPrice, Float maxPrice, String levelId, Pageable pageable) {
+    public Page<CourseResponse> get(String courseName, Float minPrice, Float maxPrice, String levelId, String tutorId, String studentId, IsDelete isDelete, Pageable pageable) {
+        Role role = SecurityContextHolderUtil.getRole();
+        if (isDelete != null && isDelete.isDeleted() && !role.equals(Role.ADMIN))
+            throw new BadRequestException(CourseMessage.NOT_ALLOWED, Error.build("Không có quyền tìm kiếm khóa học đã xóa"));
+        else
+            isDelete = IsDelete.NOT_DELETED;
         // Create the Specification with the custom sorting logic
-        Specification<Course> spec = createCourseSpecification(courseName, minPrice, maxPrice, levelId, pageable);
+        Specification<Course> spec = createCourseSpecification(courseName, minPrice, maxPrice, levelId, tutorId, studentId, pageable);
 
         // Create a new Pageable with unsorted to avoid conflicts with custom sorting logic
         Pageable unsortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.unsorted());
@@ -434,11 +440,13 @@ public class CourseServiceImpl implements CourseService {
         // Execute the query with the Specification and the unmodified Pageable (with unsorted)
         Page<Course> coursePage = courseRepository.findAll(spec, unsortedPageable);
 
-        // Map to CourseResponse and return
-        return coursePage.map(CourseResponse::infoWithDetail);
+        if (role.equals(Role.ADMIN))
+            return coursePage.map(CourseResponse::detailWithDetails);
+        else
+            return coursePage.map(CourseResponse::infoWithDetail);
     }
 
-    private Specification<Course> createCourseSpecification(String courseName, Float minPrice, Float maxPrice, String levelId, Pageable pageable) {
+    private Specification<Course> createCourseSpecification(String courseName, Float minPrice, Float maxPrice, String levelId, String tutorId, String studentId, Pageable pageable) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
@@ -446,12 +454,35 @@ public class CourseServiceImpl implements CourseService {
             addCourseNamePredicate(courseName, root, cb, predicates);
             addPriceRangePredicate(minPrice, maxPrice, root, cb, predicates);
             addLevelPredicate(levelId, root, cb, predicates);
+            addTutorPredicate(tutorId, root, cb, predicates, query);
+            addStudentPredicate(studentId, root, cb, predicates, query);
+            addIsDeletePredicate(IsDelete.NOT_DELETED, root, cb, predicates);
 
             // Handle sorting logic
             handleSorting(pageable, root, cb, query);
 
             return cb.and(predicates.toArray(new Predicate[0]));
         };
+    }
+
+    private void addIsDeletePredicate(IsDelete isDelete, Root<Course> root, CriteriaBuilder cb, List<Predicate> predicates) {
+        predicates.add(cb.equal(root.get("isDeleted"), isDelete));
+    }
+
+    private void addTutorPredicate(String tutorId, Root<Course> root, CriteriaBuilder cb, List<Predicate> predicates, CriteriaQuery query) {
+        if (tutorId != null && !tutorId.isEmpty()) {
+            query.distinct(true);
+            predicates.add(cb.equal(root.join("courseTutors").get("tutor").get("id"), tutorId));
+            predicates.add(cb.equal(root.join("courseTutors").get("isDeleted"), IsDelete.NOT_DELETED));
+        }
+    }
+
+    private void addStudentPredicate(String studentId, Root<Course> root, CriteriaBuilder cb, List<Predicate> predicates, CriteriaQuery query) {
+        if (studentId != null && !studentId.isEmpty()) {
+            query.distinct(true);
+            predicates.add(cb.equal(root.join("courseStudents").get("student").get("id"), studentId));
+            predicates.add(cb.equal(root.join("courseStudents").get("isDeleted"), IsDelete.NOT_DELETED));
+        }
     }
 
     private void addCourseNamePredicate(String courseName, Root<Course> root, CriteriaBuilder cb, List<Predicate> predicates) {
