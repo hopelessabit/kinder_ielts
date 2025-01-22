@@ -2,7 +2,6 @@ package com.kinder.kinder_ielts.dto.response.course;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.kinder.kinder_ielts.constant.CourseStatus;
-import com.kinder.kinder_ielts.constant.IsDelete;
 import com.kinder.kinder_ielts.dto.response.BaseEntityResponse;
 import com.kinder.kinder_ielts.dto.response.StatusResponse;
 import com.kinder.kinder_ielts.dto.response.course_level.CourseLevelResponse;
@@ -30,7 +29,7 @@ public class CourseResponse {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private BaseEntityResponse extendDetail;
 
-    public CourseResponse(Course course, boolean includeInfoForAdmin, boolean includeBaseInfo) {
+    public CourseResponse(Course course, boolean includeInfoForAdmin, boolean includeDetailInfo) {
         this.id = course.getId();
         this.description = course.getDescription();
         this.detail = course.getDetail();
@@ -40,14 +39,46 @@ public class CourseResponse {
         this.price = course.getPrice();
         this.sale = course.getSale();
         this.tutors = course.getCourseTutors() != null
-                ? course.getCourseTutors().stream().filter(courseTutor -> courseTutor.getIsDeleted().equals(IsDelete.NOT_DELETED)).map(CourseTutor::getTutor).map(TutorResponse::withNoAccountInfo).toList()
+                ? course.getCourseTutors().stream()
+                .filter(courseTutor -> !courseTutor.getIsDeleted().isDeleted())
+                .map(CourseTutor::getTutor)
+                .map(TutorResponse::withNoAccountInfo)
+                .toList()
                 : null;
 
         if (includeInfoForAdmin)
             this.extendDetail = BaseEntityResponse.from(course);
 
-        if (includeBaseInfo)
-            this.detailInfo = CourseDetailInfoResponse.from(course);
+        if (includeDetailInfo)
+            this.detailInfo = CourseDetailInfoResponse.includeTemplateClassroom(course);
+    }
+
+    public CourseResponse(Course course, boolean includeInfoForAdmin, boolean includeTemplateClassroom, boolean includeClassroom) {
+        this.id = course.getId();
+        this.description = course.getDescription();
+        this.detail = course.getDetail();
+        this.slots = course.getSlots();
+        this.status = StatusResponse.from(course.getStatus());
+        this.level = CourseLevelResponse.info(course.getLevel());
+        this.price = course.getPrice();
+        this.sale = course.getSale();
+        this.tutors = course.getCourseTutors() != null
+                ? course.getCourseTutors().stream()
+                .filter(courseTutor -> !courseTutor.getIsDeleted().isDeleted())
+                .map(CourseTutor::getTutor)
+                .map(TutorResponse::withNoAccountInfo)
+                .toList()
+                : null;
+
+        if (includeInfoForAdmin)
+            this.extendDetail = BaseEntityResponse.from(course);
+
+        if (includeTemplateClassroom && !includeClassroom)
+            this.detailInfo = CourseDetailInfoResponse.includeTemplateClassroom(course);
+        else if (includeClassroom && !includeTemplateClassroom)
+            this.detailInfo = CourseDetailInfoResponse.includeClassroom(course);
+        else if (includeTemplateClassroom && includeClassroom)
+            this.detailInfo = CourseDetailInfoResponse.includeAll(course);
     }
 
     public static CourseResponse infoWithDetail(Course course) {

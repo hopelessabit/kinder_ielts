@@ -58,6 +58,7 @@ public class TemplateHomeworkServiceImpl implements TemplateHomeworkService {
         templateHomework.setLink(CompareUtil.compare(request.getLink(), templateHomework.getLink()));
         templateHomework.setDueDate(CompareUtil.compare(request.getDueDate(), templateHomework.getDueDate()));
         templateHomework.setStartDate(CompareUtil.compare(request.getStartDate(), templateHomework.getStartDate()));
+        templateHomework.setStatus(CompareUtil.compare(request.getStatus(), templateHomework.getStatus()));
 
         templateHomework.setModifyBy(SecurityContextHolderUtil.getAccount());
         templateHomework.setModifyTime(ZonedDateTime.now());

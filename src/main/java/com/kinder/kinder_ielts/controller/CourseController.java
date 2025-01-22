@@ -25,7 +25,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CourseController {
     private final CourseServiceImpl courseService;
-    private final BaseCourseService baseCourseService;
 
     @GetMapping("")
     public ResponseEntity<ResponseData<Page<CourseResponse>>> search(
@@ -33,9 +32,12 @@ public class CourseController {
         @RequestParam(required = false) String name,
         @RequestParam(required = false) Float minPrice,
         @RequestParam(required = false) Float maxPrice,
-        @RequestParam(required = false) String levelId
+        @RequestParam(required = false) String levelId,
+        @RequestParam(required = false) String tutorId,
+        @RequestParam(required = false) String studentId,
+        @RequestParam(required = false) IsDelete isDelete
     ){
-        return ResponseUtil.getResponse(() -> courseService.get(name, minPrice, maxPrice, levelId, pageable), CourseMessage.FOUND_SUCCESSFULLY);
+        return ResponseUtil.getResponse(() -> courseService.get(name, minPrice, maxPrice, levelId, tutorId, studentId, isDelete, pageable), CourseMessage.FOUND_SUCCESSFULLY);
     }
 
     @GetMapping("/info/{id}")

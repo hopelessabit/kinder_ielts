@@ -3,6 +3,7 @@ package com.kinder.kinder_ielts.service.implement;
 import com.kinder.kinder_ielts.constant.AccountStatus;
 import com.kinder.kinder_ielts.constant.DateOfWeek;
 import com.kinder.kinder_ielts.constant.IsDelete;
+import com.kinder.kinder_ielts.constant.Role;
 import com.kinder.kinder_ielts.dto.Error;
 import com.kinder.kinder_ielts.dto.ResponseData;
 import com.kinder.kinder_ielts.dto.request.classroom.UpdateClassroomRequest;
@@ -11,7 +12,6 @@ import com.kinder.kinder_ielts.dto.response.classroom.ClassroomResponse;
 import com.kinder.kinder_ielts.dto.request.classroom.CreateClassroomRequest;
 import com.kinder.kinder_ielts.entity.*;
 import com.kinder.kinder_ielts.entity.course_template.TemplateClassroom;
-import com.kinder.kinder_ielts.entity.course_template.TemplateStudyMaterial;
 import com.kinder.kinder_ielts.entity.course_template.TemplateStudySchedule;
 import com.kinder.kinder_ielts.entity.id.CourseTutorId;
 import com.kinder.kinder_ielts.entity.join_entity.ClassroomTutor;
@@ -27,10 +27,19 @@ import com.kinder.kinder_ielts.service.base.BaseCourseTutorService;
 import com.kinder.kinder_ielts.util.CompareUtil;
 import com.kinder.kinder_ielts.util.SecurityContextHolderUtil;
 import com.kinder.kinder_ielts.util.Time;
-import com.kinder.kinder_ielts.util.TimeUtil;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.*;
 import java.util.ArrayList;
@@ -54,6 +63,7 @@ public class ClassroomServiceImpl implements ClassroomService {
     /**
      * Create a new Classroom.
      */
+    @Transactional
     public ClassroomResponse createClassroom(String courseId, CreateClassroomRequest request, String message) {
         log.info("Starting process to create a new Classroom.");
         ZonedDateTime currentTime = ZonedDateTime.now();
@@ -222,6 +232,70 @@ public class ClassroomServiceImpl implements ClassroomService {
         Classroom updatedClassroom = baseClassroomService.update(classroom, ClassroomMessage.CLASS_IS_DELETED);
         log.info("Classroom information updated successfully for ID: {}", id);
         return ClassroomResponse.detail(updatedClassroom);
+    }
+
+    @Override
+    public Page<ClassroomResponse> get(String title, String courseId, String tutorId, String studentId, IsDelete isDelete, Pageable pageable) {
+        Role role = SecurityContextHolderUtil.getRole();
+
+        if (isDelete != null && isDelete.isDeleted() && !role.equals(Role.ADMIN)){
+            throw new BadRequestException(ClassroomMessage.NOT_ALLOWED, Error.build("Không có quyền tìm kiếm lớp học đã xóa"));
+        }
+        else
+            isDelete = IsDelete.NOT_DELETED;
+
+        Specification<Classroom> classroomSpecification = createClassroomSpecification(title, courseId, tutorId, studentId, isDelete);
+
+        Pageable unsortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.unsorted());
+
+        Page<Classroom> classrooms = baseClassroomService.findAll(classroomSpecification, unsortedPageable);
+
+        return classrooms.map(ClassroomResponse::infoWithDetails);
+    }
+
+    private Specification<Classroom> createClassroomSpecification(String title, String courseId, String tutorId, String studentId, IsDelete isDelete) {
+
+        return (root, query, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            addClassroomTitlePredicate(title, cb, root, predicates);
+            addCourseIdPredicate(courseId, cb, root, predicates);
+            addTutorIdPredicate(tutorId, cb, root, predicates, query);
+            addStudentIdPredicate(studentId, cb, root, predicates, query);
+            addIsDeletePredicate(isDelete, cb, root, predicates);
+
+            return cb.and(predicates.toArray(new Predicate[0]));
+        };
+    }
+
+    private void addIsDeletePredicate(IsDelete isDelete, CriteriaBuilder cb, Root<Classroom> root, List<Predicate> predicates) {
+        predicates.add(cb.equal(root.get("isDeleted"), isDelete));
+    }
+
+    private void addTutorIdPredicate(String tutorId, CriteriaBuilder cb, Root<Classroom> root, List<Predicate> predicates, CriteriaQuery<?> query) {
+        if (tutorId != null && !tutorId.isEmpty()) {
+            query.distinct(true);
+            predicates.add(cb.equal(root.join("classroomTutors").get("tutor").get("id"), tutorId));
+        }
+    }
+
+    private void addStudentIdPredicate(String studentId, CriteriaBuilder cb, Root<Classroom> root, List<Predicate> predicates, CriteriaQuery<?> query) {
+        if (studentId != null && !studentId.isEmpty()) {
+            query.distinct(true);
+            predicates.add(cb.equal(root.join("classroomStudents").get("student").get("id"), studentId));
+        }
+    }
+
+    private void addCourseIdPredicate(String courseId, CriteriaBuilder cb, Root<Classroom> root, List<Predicate> predicates) {
+        if (courseId != null) {
+            predicates.add(cb.equal(root.get("course").get("id"), courseId));
+        }
+    }
+
+    private void addClassroomTitlePredicate(String title, CriteriaBuilder cb, Root<Classroom> root, List<Predicate> predicates) {
+        if (title != null) {
+            predicates.add(cb.like(cb.lower(root.get("title")), "%" + title.toLowerCase() + "%"));
+        }
     }
 
     /**

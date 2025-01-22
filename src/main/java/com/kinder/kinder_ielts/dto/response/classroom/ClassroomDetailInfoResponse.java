@@ -16,8 +16,11 @@ public class ClassroomDetailInfoResponse {
 
     public ClassroomDetailInfoResponse(Classroom classroom) {
         this.belongToCourse = CourseResponse.info(classroom.getCourse());
-        this.studySchedules = classroom.getStudySchedules() != null ? classroom.getStudySchedules().stream().map(StudyScheduleResponse::infoWithDetail).toList() : null;
+        this.studySchedules = classroom.getStudySchedules() != null ? classroom.getStudySchedules().stream()
+                .filter(studySchedule -> !studySchedule.getIsDeleted().isDeleted())
+                .map(StudyScheduleResponse::infoWithDetail).toList() : null;
         this.tutorResponses = classroom.getClassroomTutors() != null ? classroom.getClassroomTutors().stream()
+                .filter(classroomTutor -> !classroomTutor.getIsDeleted().isDeleted())
                 .map(ClassroomTutor::getTutor)
                 .map(TutorResponse::withNoAccountInfo)
                 .toList() : null;

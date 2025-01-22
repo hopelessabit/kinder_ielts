@@ -1,7 +1,8 @@
 package com.kinder.kinder_ielts.controller;
 
+import com.azure.core.credential.TokenCredential;
+import com.azure.identity.ClientSecretCredentialBuilder;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.kinder.kinder_ielts.constant.IsDelete;
 import com.kinder.kinder_ielts.dto.ResponseData;
 import com.kinder.kinder_ielts.dto.request.classroom.CreateClassroomRequest;
 import com.kinder.kinder_ielts.dto.request.course.CreateCourseRequest;
@@ -19,17 +20,30 @@ import com.kinder.kinder_ielts.service.implement.StudyScheduleServiceImpl;
 import com.kinder.kinder_ielts.util.IdUtil;
 import com.kinder.kinder_ielts.util.ResponseUtil;
 import com.kinder.kinder_ielts.util.TimeZoneUtil;
+import com.microsoft.graph.core.models.IProgressCallback;
+import com.microsoft.graph.core.models.UploadResult;
+import com.microsoft.graph.core.tasks.LargeFileUploadTask;
+import com.microsoft.graph.drives.item.items.item.createuploadsession.CreateUploadSessionPostRequestBody;
+import com.microsoft.graph.models.*;
+import com.microsoft.graph.serviceclient.GraphServiceClient;
+import com.microsoft.graph.users.item.sendmail.SendMailPostRequestBody;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.time.ZonedDateTime;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.UUID;
+import java.util.concurrent.CancellationException;
 
 @RestController()
 @Slf4j
@@ -96,7 +110,123 @@ public class TestController {
     @PostMapping("/classroom/course/{courseId}")
     @SecurityRequirement(name = "Bearer")
     @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR')")
-    public ResponseEntity<ResponseData<ClassroomResponse>> create(@PathVariable String courseId, @RequestBody CreateClassroomRequest request){
+    public ResponseEntity<ResponseData<ClassroomResponse>> create(@PathVariable String courseId, @RequestBody CreateClassroomRequest request) {
         return ResponseUtil.getResponse(() -> classroomService.createClassroom(courseId, request, ClassroomMessage.CREATE_FAILED), ClassroomMessage.CREATED);
     }
+
+    @GetMapping("/send-mail")
+    public ResponseEntity testSendMail(){
+        final String siteId = "a151620.sharepoint.com,ebfabe2d-018c-409c-8968-ce2fd8478a39,039b0f2a-b864-4df1-8002-2b8348159e6f";
+        final String driveId = "b!Lb7664wBnECJaM4v2EeKOSoPmwNkuPFNgAIrg0gVnm-5bK4ObU6pRIa3ZpYmjFEe";
+        final String itemId = "01QLPIJMUBNY7PW2RGLJG335V5HPUNJBL6";
+        TokenCredential tokenCredential = new ClientSecretCredentialBuilder()
+                .tenantId("2ced3377-c996-45c8-bf26-d07bd60c5bbc")
+                .clientId("a2621942-5d1d-4e45-94c4-db26eb7331c5")
+                .clientSecret("EV98Q~MjOJYKG4r6kif3IMvUzIewfml1gch1GclN")
+                .build();
+
+        GraphServiceClient graphServiceClient = new GraphServiceClient(tokenCredential);
+
+//        var a = graphServiceClient.sites().bySiteId(siteId);
+//        var e = graphServiceClient.drives().byDriveId(driveId).items().byDriveItemId(itemId).children().get();
+
+//        testSendMailFunc(graphServiceClient);
+//        var a = graphServiceClient.users().get();
+//        return ResponseEntity.ok(graphServiceClient);
+
+        var b = graphServiceClient.drives().byDriveId(driveId).get();
+        return ResponseEntity.ok(b);
+    }
+
+    @PostMapping(value = "/upload-file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file,
+                                             @RequestParam("itemPath") String itemPath) {
+        try {
+            final String siteId = "a151620.sharepoint.com,ebfabe2d-018c-409c-8968-ce2fd8478a39,039b0f2a-b864-4df1-8002-2b8348159e6f";
+            final String driveId = "b!Lb7664wBnECJaM4v2EeKOSoPmwNkuPFNgAIrg0gVnm-5bK4ObU6pRIa3ZpYmjFEe";
+            final String itemId = "01QLPIJMUBNY7PW2RGLJG335V5HPUNJBL6";
+            TokenCredential tokenCredential = new ClientSecretCredentialBuilder()
+                    .tenantId("2ced3377-c996-45c8-bf26-d07bd60c5bbc")
+                    .clientId("a2621942-5d1d-4e45-94c4-db26eb7331c5")
+                    .clientSecret("EV98Q~MjOJYKG4r6kif3IMvUzIewfml1gch1GclN")
+                    .build();
+
+            GraphServiceClient graphClient = new GraphServiceClient(tokenCredential);
+
+            final InputStream fileStream = file.getInputStream();
+            long streamSize = file.getSize();
+
+// Set body of the upload session request
+            CreateUploadSessionPostRequestBody uploadSessionRequest = new CreateUploadSessionPostRequestBody();
+            DriveItemUploadableProperties properties = new DriveItemUploadableProperties();
+            properties.getAdditionalData().put("@microsoft.graph.conflictBehavior", "replace");
+            uploadSessionRequest.setItem(properties);
+
+            UploadSession uploadSession = graphClient
+                    .drives()
+                    .byDriveId(driveId)
+                    .items()
+                    .byDriveItemId("root:/"+itemPath+":")
+                    .createUploadSession()
+                    .post(uploadSessionRequest);
+
+// Create the upload task
+            int maxSliceSize = 10 * 1024 * 1024;
+            LargeFileUploadTask<DriveItem> largeFileUploadTask = new LargeFileUploadTask<>(
+                    graphClient.getRequestAdapter(),
+                    uploadSession,
+                    fileStream,
+                    streamSize,
+                    maxSliceSize,
+                    DriveItem::createFromDiscriminatorValue);
+
+            int maxAttempts = 5;
+// Create a callback used by the upload provider
+            IProgressCallback callback = (current, max) -> log.info(
+                    String.format("Uploaded %d bytes of %d total bytes", current, max));
+
+            UploadResult<DriveItem> uploadResult = largeFileUploadTask.upload(maxAttempts, callback);
+            if (uploadResult.isUploadSuccessful()) {
+                log.info("Upload complete");
+                log.info("Item ID: " + uploadResult.itemResponse.getId());
+            } else {
+                log.info("Upload failed");
+            }
+            return null;
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
+        }
+    }
+
+    public void testSendMailFunc(GraphServiceClient graphServiceClient){
+        SendMailPostRequestBody sendMailPostRequestBody = new SendMailPostRequestBody();
+        Message message = new Message();
+        message.setSubject("Hi em yêu");
+        ItemBody itemBody = new ItemBody();
+        itemBody.setContentType(BodyType.Text);
+        itemBody.setContent("Chào em từ Minh app.");
+        message.setBody(itemBody);
+
+        LinkedList<Recipient> recipients = new LinkedList<>();
+        Recipient recipient = new Recipient();
+        EmailAddress emailAddress = new EmailAddress();
+        emailAddress.setAddress("micalminh1@gmail.com");
+        recipient.setEmailAddress(emailAddress);
+        recipients.add(recipient);
+        message.setToRecipients(recipients);
+
+        LinkedList<Recipient> ccRecipients = new LinkedList<Recipient>();
+        Recipient recipient1 = new Recipient();
+        EmailAddress emailAddress1 = new EmailAddress();
+        emailAddress1.setAddress("micalminh1@gmail.com");
+        recipient1.setEmailAddress(emailAddress1);
+        ccRecipients.add(recipient1);
+        message.setCcRecipients(ccRecipients);
+
+        sendMailPostRequestBody.setMessage(message);
+        sendMailPostRequestBody.setSaveToSentItems(false);
+        graphServiceClient.users().byUserId("2af0bea4-8bae-49cb-b98b-850948f1de33").sendMail().post(sendMailPostRequestBody);
+    }
+
+
 }

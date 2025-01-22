@@ -5,8 +5,6 @@ import com.kinder.kinder_ielts.dto.response.BaseEntityResponse;
 import com.kinder.kinder_ielts.entity.course_template.TemplateStudySchedule;
 import lombok.Getter;
 
-import java.time.ZonedDateTime;
-
 @Getter
 public class TemplateStudyScheduleResponse {
     private final String id;

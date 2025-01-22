@@ -20,18 +20,22 @@ public class StudyScheduleDetailInfoResponse {
     public StudyScheduleDetailInfoResponse(StudySchedule studySchedule) {
         this.classroomLinks = studySchedule.getClassroomLinks() != null ? studySchedule.getClassroomLinks()
                 .stream()
+                .filter(classroomLink -> !classroomLink.getIsDeleted().isDeleted())
                 .map(ClassroomLinkResponse::info)
                 .toList() : null;
         this.warmUpTests = studySchedule.getWarmUpTests() != null ? studySchedule.getWarmUpTests()
                 .stream()
+                .filter(warmUpTest -> !warmUpTest.getIsDeleted().isDeleted())
                 .map(WarmUpTestResponse::info)
                 .toList() : null;
         this.homeworks = studySchedule.getHomework() != null ? studySchedule.getHomework()
                 .stream()
+                .filter(homework -> !homework.getIsDeleted().isDeleted())
                 .map(HomeworkResponse::info)
                 .toList() : null;
         this.studyMaterials = studySchedule.getStudyMaterials() != null ? studySchedule.getStudyMaterials()
                 .stream()
+                .filter(studyMaterial -> !studyMaterial.getIsDeleted().isDeleted())
                 .map(StudyMaterialResponse::info)
                 .toList() : null;
     }

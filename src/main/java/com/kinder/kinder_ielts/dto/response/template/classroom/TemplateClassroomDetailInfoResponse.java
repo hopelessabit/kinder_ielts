@@ -22,7 +22,7 @@ public class TemplateClassroomDetailInfoResponse {
                 .stream()
                 .filter(templateStudySchedule -> templateClassroom.getIsDeleted().equals(IsDelete.NOT_DELETED))
                 .sorted(Comparator.comparing(TemplateStudySchedule::getPlace))
-                .map(TemplateStudyScheduleResponse::infoWithDetail)
+                .map(TemplateStudyScheduleResponse::info)
                 .toList());
     }
 }

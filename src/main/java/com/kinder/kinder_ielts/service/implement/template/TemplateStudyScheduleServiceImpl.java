@@ -42,19 +42,19 @@ public class TemplateStudyScheduleServiceImpl {
         if (templateStudySchedules == null || templateStudySchedules.isEmpty()) {
             return new ArrayList<>();
         }
-        return templateStudySchedules.stream().filter(a -> a.getIsDeleted().equals(IsDelete.NOT_DELETED)).map(TemplateStudyScheduleResponse::infoWithDetail).toList();
+        return templateStudySchedules.stream().filter(a -> a.getIsDeleted().equals(IsDelete.NOT_DELETED)).sorted(Comparator.comparing(TemplateStudySchedule::getPlace)).map(TemplateStudyScheduleResponse::infoWithDetail).toList();
     }
 
     public TemplateStudyScheduleResponse createTemplateStudySchedule(String templateClassroomId, CreateTemplateStudyScheduleRequest request, String failMessage) {
         TemplateClassroom templateClassroom = baseTemplateClassroomService.get(templateClassroomId, IsDelete.NOT_DELETED, failMessage);
-        List<TemplateStudySchedule> existedTemplateStudySchedule = templateClassroom.getStudySchedules();
+//        List<TemplateStudySchedule> existedTemplateStudySchedule = templateClassroom.getStudySchedules();
         TemplateStudySchedule templateStudySchedule = ModelMapper.map(request);
 
-        if (existedTemplateStudySchedule.isEmpty())
-            templateStudySchedule.setPlace(1);
-        else {
-            templateStudySchedule.setPlace(existedTemplateStudySchedule.size() + 1);
-        }
+//        if (existedTemplateStudySchedule.isEmpty())
+//            templateStudySchedule.setPlace(1);
+//        else {
+//            templateStudySchedule.setPlace(existedTemplateStudySchedule.size() + 1);
+//        }
 
         templateStudySchedule.setTemplateClassroom(templateClassroom);
 

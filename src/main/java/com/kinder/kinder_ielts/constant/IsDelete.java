@@ -10,4 +10,7 @@ public enum IsDelete implements StatusEnum {
     IsDelete(String vietnamese) {
         this.vietnamese = vietnamese;
     }
+    public boolean isDeleted(){
+        return this == DELETED;
+    }
 }

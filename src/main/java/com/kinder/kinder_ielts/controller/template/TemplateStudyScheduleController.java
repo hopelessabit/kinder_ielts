@@ -60,7 +60,7 @@ public class TemplateStudyScheduleController {
         return ResponseUtil.getResponse(() -> templateStudyScheduleService.modifyPlace(templateClassroomId, templateStudyScheduleId, place, "Modify place failed"), "Modify place success");
     }
 
-    @PatchMapping("/{templateStudyScheduleId}/places")
+    @PatchMapping("/{templateClassroomId}/places")
     @SecurityRequirement(name = "Bearer")
     @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR','TUTOR')")
     public  ResponseEntity<ResponseData<Void>> modifyPlaceV2(@PathVariable String templateClassroomId, @RequestBody UpdateTemplateStudySchedulePlaceRequest request){

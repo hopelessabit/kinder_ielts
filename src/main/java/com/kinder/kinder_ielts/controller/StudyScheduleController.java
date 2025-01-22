@@ -29,6 +29,6 @@ public class StudyScheduleController {
     @SecurityRequirement(name = "Bearer")
     @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR')")
     public ResponseEntity<ResponseData<StudyScheduleResponse>> get(@PathVariable String id) {
-        return ResponseUtil.getResponse(() -> studyScheduleService.getInfoWithDetail(id), StudyScheduleMessage.CREATED);
+        return ResponseUtil.getResponse(() -> studyScheduleService.getInfoWithDetail(id), StudyScheduleMessage.FOUND_SUCCESSFULLY);
     }
 }
