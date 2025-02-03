@@ -3,12 +3,14 @@ package com.kinder.kinder_ielts.entity;
 import com.kinder.kinder_ielts.entity.base.BaseEntity;
 import com.kinder.kinder_ielts.entity.join_entity.ClassroomStudent;
 import com.kinder.kinder_ielts.entity.join_entity.ClassroomTutor;
+import com.kinder.kinder_ielts.entity.join_entity.ClassroomWeeklySchedule;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Nationalized;
 
 import java.time.OffsetTime;
 import java.time.ZonedDateTime;
@@ -25,6 +27,7 @@ public class Classroom extends BaseEntity {
     @Column(name = "id", nullable = false)
     private String id;
 
+    @Nationalized
     @Size(max = 500)
     @Column(name = "description", nullable = false)
     private String description;
@@ -54,4 +57,7 @@ public class Classroom extends BaseEntity {
 
     @OneToMany(mappedBy = "classroom", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ClassroomStudent> classroomStudents;
+
+    @OneToMany(mappedBy = "classroom", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<ClassroomWeeklySchedule> weeklySchedule;
 }

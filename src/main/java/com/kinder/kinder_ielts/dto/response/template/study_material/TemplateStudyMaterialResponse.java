@@ -4,15 +4,19 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.kinder.kinder_ielts.constant.StudyMaterialStatus;
 import com.kinder.kinder_ielts.dto.response.BaseEntityResponse;
 import com.kinder.kinder_ielts.dto.response.StatusResponse;
+import com.kinder.kinder_ielts.dto.response.material_link.MaterialLinkResponse;
 import com.kinder.kinder_ielts.dto.response.template.study_schedule.TemplateStudyScheduleResponse;
 import com.kinder.kinder_ielts.entity.course_template.TemplateStudyMaterial;
 import lombok.Getter;
+
+import java.util.List;
 
 @Getter
 public class TemplateStudyMaterialResponse {
     private final String id;
     private final String title;
     private final String description;
+    private final List<MaterialLinkResponse> materialLinks;
     private final StatusResponse<StudyMaterialStatus> privacyStatus;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private TemplateStudyScheduleResponse studyScheduleTemplate;
@@ -24,7 +28,7 @@ public class TemplateStudyMaterialResponse {
         this.title = studyMaterial.getTitle();
         this.description = studyMaterial.getDescription();
         this.privacyStatus = StatusResponse.from(studyMaterial.getPrivacyStatus());
-
+        this.materialLinks = studyMaterial.getMaterialLinks().stream().map(MaterialLinkResponse::info).toList();
         mapSubInfo(studyMaterial, includeInfoForAdmin);
         mapDetail(studyMaterial, includeDetails);
     }

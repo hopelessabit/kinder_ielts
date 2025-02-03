@@ -16,6 +16,7 @@ import com.kinder.kinder_ielts.response_message.StudyScheduleMessage;
 import com.kinder.kinder_ielts.service.ClassroomService;
 import com.kinder.kinder_ielts.service.base.BaseCourseService;
 import com.kinder.kinder_ielts.service.implement.CourseServiceImpl;
+import com.kinder.kinder_ielts.service.implement.OneDriveServiceImpl;
 import com.kinder.kinder_ielts.service.implement.StudyScheduleServiceImpl;
 import com.kinder.kinder_ielts.util.IdUtil;
 import com.kinder.kinder_ielts.util.ResponseUtil;
@@ -23,6 +24,7 @@ import com.kinder.kinder_ielts.util.TimeZoneUtil;
 import com.microsoft.graph.core.models.IProgressCallback;
 import com.microsoft.graph.core.models.UploadResult;
 import com.microsoft.graph.core.tasks.LargeFileUploadTask;
+import com.microsoft.graph.drives.item.items.item.createlink.CreateLinkPostRequestBody;
 import com.microsoft.graph.drives.item.items.item.createuploadsession.CreateUploadSessionPostRequestBody;
 import com.microsoft.graph.models.*;
 import com.microsoft.graph.serviceclient.GraphServiceClient;
@@ -38,12 +40,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.time.ZonedDateTime;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.CancellationException;
 
 @RestController()
 @Slf4j
@@ -57,6 +57,7 @@ public class TestController {
     private final CourseServiceImpl courseService;
     private final StudyScheduleServiceImpl studyScheduleService;
     private final CourseRepository courseRepository;
+    private final OneDriveServiceImpl oneDriveService;
 
     @GetMapping("/course/info/{id}")
     public ResponseEntity<ResponseData<CourseResponse>> getInfo(@PathVariable String id) {
@@ -139,16 +140,54 @@ public class TestController {
     }
 
     @PostMapping(value = "/upload-file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file,
+    public ResponseEntity<ResponseData<String>> uploadFile(@RequestParam("file") MultipartFile file,
+                                             @RequestParam("itemPath") String itemPath) {
+        return ResponseUtil.getResponse(() -> oneDriveService.uploadFile(file, itemPath), "Upload file successfully");
+    }
+
+    // Create a Public Sharing Link
+    public String createPublicShareLink(GraphServiceClient graphClient, String itemId) {
+        try {
+            CreateLinkPostRequestBody createLinkPostRequestBody = new CreateLinkPostRequestBody();
+            createLinkPostRequestBody.setType("view");
+            createLinkPostRequestBody.setScope("anonymous");
+
+            Permission permissionResult = graphClient.drives()
+                    .byDriveId("b!Lb7664wBnECJaM4v2EeKOSoPmwNkuPFNgAIrg0gVnm-5bK4ObU6pRIa3ZpYmjFEe")
+                    .items()
+                    .byDriveItemId(itemId)
+                    .createLink()
+                    .post(createLinkPostRequestBody);
+
+            if (permissionResult != null && permissionResult.getLink() != null) {
+                return permissionResult.getLink().getWebUrl();
+            }
+            else {
+                return null;
+            }
+
+        } catch (Exception ex) {
+            log.error("Error creating sharing link: " + ex.getMessage());
+            return null;
+        }
+    }
+
+    @PostMapping(value = "/upload-file1", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> uploadFile1(@RequestParam("file") MultipartFile file,
                                              @RequestParam("itemPath") String itemPath) {
         try {
             final String siteId = "a151620.sharepoint.com,ebfabe2d-018c-409c-8968-ce2fd8478a39,039b0f2a-b864-4df1-8002-2b8348159e6f";
             final String driveId = "b!Lb7664wBnECJaM4v2EeKOSoPmwNkuPFNgAIrg0gVnm-5bK4ObU6pRIa3ZpYmjFEe";
             final String itemId = "01QLPIJMUBNY7PW2RGLJG335V5HPUNJBL6";
+//            TokenCredential tokenCredential = new ClientSecretCredentialBuilder()
+//                    .tenantId("2ced3377-c996-45c8-bf26-d07bd60c5bbc")
+//                    .clientId("a2621942-5d1d-4e45-94c4-db26eb7331c5")
+//                    .clientSecret("EV98Q~MjOJYKG4r6kif3IMvUzIewfml1gch1GclN")
+//                    .build();
             TokenCredential tokenCredential = new ClientSecretCredentialBuilder()
-                    .tenantId("2ced3377-c996-45c8-bf26-d07bd60c5bbc")
-                    .clientId("a2621942-5d1d-4e45-94c4-db26eb7331c5")
-                    .clientSecret("EV98Q~MjOJYKG4r6kif3IMvUzIewfml1gch1GclN")
+                    .tenantId("")
+                    .clientId("")
+                    .clientSecret("")
                     .build();
 
             GraphServiceClient graphClient = new GraphServiceClient(tokenCredential);

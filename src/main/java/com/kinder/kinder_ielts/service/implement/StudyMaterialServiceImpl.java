@@ -59,7 +59,7 @@ public class StudyMaterialServiceImpl {
     }
 
     public void setMaterialLink(StudyMaterial studyMaterial, List<CreateMaterialLinkRequest> materialLinkRequests, Account actor, ZonedDateTime currentTime){
-        studyMaterial.setMaterialLinks(materialLinkRequests.stream().map(a -> ModelMapper.map(a, actor, currentTime)).toList());
+        studyMaterial.setMaterialLinks(materialLinkRequests.stream().map(a -> ModelMapper.map(a, studyMaterial, actor, currentTime)).toList());
     }
 
     public StudyMaterialResponse getInfo(String id) {

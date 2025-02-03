@@ -10,6 +10,7 @@ import lombok.Getter;
 public class MaterialLinkResponse {
     private String id;
     private String title;
+    private String link;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private TemplateStudyMaterialResponse studyMaterial;
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -18,7 +19,7 @@ public class MaterialLinkResponse {
     public MaterialLinkResponse(MaterialLink materialLink, boolean includeInfoForAdmin, boolean includeDetails) {
         this.id = materialLink.getId();
         this.title = materialLink.getTitle();
-
+        this.link = materialLink.getLink();
         mapSubInfo(materialLink, includeInfoForAdmin);
     }
 

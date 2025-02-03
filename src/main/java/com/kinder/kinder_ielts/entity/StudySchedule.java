@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Nationalized;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -27,11 +28,13 @@ public class StudySchedule extends BaseEntity {
     @Column(name = "to_Time")
     private ZonedDateTime toTime;
 
+    @Nationalized
     @Size(max = 500)
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Lob
+    @Nationalized
+    @Size(max = 500)
     @Column(name = "description")
     private String description;
 

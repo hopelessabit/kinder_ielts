@@ -15,8 +15,10 @@ import com.kinder.kinder_ielts.entity.course_template.TemplateClassroom;
 import com.kinder.kinder_ielts.entity.course_template.TemplateStudySchedule;
 import com.kinder.kinder_ielts.entity.id.CourseTutorId;
 import com.kinder.kinder_ielts.entity.join_entity.ClassroomTutor;
+import com.kinder.kinder_ielts.entity.join_entity.ClassroomWeeklySchedule;
 import com.kinder.kinder_ielts.entity.join_entity.CourseTutor;
 import com.kinder.kinder_ielts.exception.BadRequestException;
+import com.kinder.kinder_ielts.exception.InternalServerExceptionException;
 import com.kinder.kinder_ielts.exception.NotFoundException;
 import com.kinder.kinder_ielts.mapper.ModelMapper;
 import com.kinder.kinder_ielts.response_message.ClassroomMessage;
@@ -100,6 +102,10 @@ public class ClassroomServiceImpl implements ClassroomService {
             classroom.setClassroomTutors(classroomTutors);
         }
 
+        List<ClassroomWeeklySchedule> classroomWeeklySchedules = new ArrayList<>();
+        addWeeklySchedule(classroom, request.getSchedules(), classroomWeeklySchedules, account, currentTime);
+        classroom.setWeeklySchedule(classroomWeeklySchedules);
+
         List<StudySchedule> studySchedules = generateAllStudySchedule(request.getStartDate(),
                 request.getSchedules(),
                 request.getSlots() == null ? belongToCourse.getSlots() : request.getSlots(),
@@ -115,10 +121,17 @@ public class ClassroomServiceImpl implements ClassroomService {
             return ClassroomResponse.detailWithDetails(baseClassroomService.update(classroom, message));
         }
         TemplateClassroom templateClassroom = belongToCourse.getTemplates().stream().filter(tc -> tc.getId().equals(request.getTemplateClassroomId())).findAny().orElseThrow(() -> new NotFoundException(message, Error.build("", List.of(request.getTemplateClassroomId()))));
-        addStudyScheduleHaveTemplate(studySchedules, templateClassroom.getStudySchedules().stream().sorted(Comparator.comparing(TemplateStudySchedule::getPlace)).toList(), account, currentTime);
+        List<TemplateStudySchedule> templateStudySchedules = templateClassroom.getStudySchedules().stream().filter(templateStudySchedule -> !templateStudySchedule.getIsDeleted().isDeleted()).sorted(Comparator.comparing(TemplateStudySchedule::getPlace)).toList();
+        addStudyScheduleHaveTemplate(studySchedules, templateStudySchedules, account, currentTime);
         classroom.setStudySchedules(studySchedules);
 
         return ClassroomResponse.detailWithDetails(baseClassroomService.update(classroom, message));
+    }
+
+    private void addWeeklySchedule(Classroom classroom, List<DateOfWeek> schedules, List<ClassroomWeeklySchedule> classroomWeeklySchedules, Account account, ZonedDateTime currentTime) {
+        for (DateOfWeek schedule : schedules) {
+            classroomWeeklySchedules.add(new ClassroomWeeklySchedule(classroom, schedule, account, currentTime));
+        }
     }
 
     protected List<StudySchedule> generateAllStudySchedule(ZonedDateTime startDate,
@@ -166,16 +179,23 @@ public class ClassroomServiceImpl implements ClassroomService {
     public void addStudyScheduleHaveTemplate(List<StudySchedule> studySchedules, List<TemplateStudySchedule> templateStudySchedules, Account account, ZonedDateTime currentTime) {
         for (TemplateStudySchedule templateStudySchedule : templateStudySchedules) {
             StudySchedule studySchedule = studySchedules.get(templateStudySchedule.getPlace() - 1);
-            List<ClassroomLink> classroomLinks = templateStudySchedule.getClassroomLinks().stream().map(c -> ClassroomLink.from(c, studySchedule, account, currentTime)).toList();
-            List<WarmUpTest> warmUpTests = templateStudySchedule.getWarmUpTests().stream().map(w -> WarmUpTest.from(w, studySchedule, account, currentTime)).toList();
-            List<StudyMaterial> studyMaterials = templateStudySchedule.getStudyMaterials().stream().map(sm -> StudyMaterial.from(sm, studySchedule, account, currentTime)).toList();
-            List<Homework> homeworks = templateStudySchedule.getHomework().stream().map(hw -> Homework.from(hw, studySchedule, account, currentTime)).toList();
+
+            List<ClassroomLink> classroomLinks = templateStudySchedule.getClassroomLinks().stream()
+                    .map(c -> ClassroomLink.from(c, studySchedule, account, currentTime)).toList();
+            List<WarmUpTest> warmUpTests = templateStudySchedule.getWarmUpTests().stream()
+                    .map(w -> WarmUpTest.from(w, studySchedule, account, currentTime)).toList();
+            List<StudyMaterial> studyMaterials = templateStudySchedule.getStudyMaterials().stream()
+                    .map(sm -> StudyMaterial.from(sm, studySchedule, account, currentTime)).toList();
+            List<Homework> homeworks = templateStudySchedule.getHomework().stream()
+                    .map(hw -> Homework.from(hw, studySchedule, account, currentTime)).toList();
 
             studySchedule.setClassroomLinks(classroomLinks);
             studySchedule.setWarmUpTests(warmUpTests);
             studySchedule.setStudyMaterials(studyMaterials);
             studySchedule.setHomework(homeworks);
             studySchedule.setStatus(templateStudySchedule.getStatus());
+            studySchedules.set(templateStudySchedule.getPlace() - 1, studySchedule);
+
         }
     }
 
@@ -236,9 +256,14 @@ public class ClassroomServiceImpl implements ClassroomService {
 
     @Override
     public Page<ClassroomResponse> get(String title, String courseId, String tutorId, String studentId, IsDelete isDelete, Pageable pageable) {
-        Role role = SecurityContextHolderUtil.getRole();
+        Role role = null;
+        try {
+            role = SecurityContextHolderUtil.getRole();
+        } catch (Exception e) {
+            log.info("Không phân quyền. Mặc định là USER");
+        }
 
-        if (isDelete != null && isDelete.isDeleted() && !role.equals(Role.ADMIN)){
+        if (role != null && !role.equals(Role.ADMIN) && isDelete != null && isDelete.isDeleted()){
             throw new BadRequestException(ClassroomMessage.NOT_ALLOWED, Error.build("Không có quyền tìm kiếm lớp học đã xóa"));
         }
         else
@@ -250,7 +275,7 @@ public class ClassroomServiceImpl implements ClassroomService {
 
         Page<Classroom> classrooms = baseClassroomService.findAll(classroomSpecification, unsortedPageable);
 
-        return classrooms.map(ClassroomResponse::infoWithDetails);
+        return classrooms.map(classroom -> new ClassroomResponse(classroom, false, false));
     }
 
     private Specification<Classroom> createClassroomSpecification(String title, String courseId, String tutorId, String studentId, IsDelete isDelete) {

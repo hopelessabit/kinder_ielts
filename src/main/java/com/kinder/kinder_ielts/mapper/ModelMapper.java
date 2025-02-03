@@ -161,11 +161,24 @@ public class ModelMapper {
         return templateStudyMaterial;
     }
 
-    public static MaterialLink map(CreateMaterialLinkRequest request, Account actor, ZonedDateTime currentTime) {
+    public static MaterialLink map(CreateMaterialLinkRequest request, TemplateStudyMaterial templateStudyMaterial, Account actor, ZonedDateTime currentTime) {
         MaterialLink materialLink = new MaterialLink();
         materialLink.setId(IdUtil.generateId());
         materialLink.setTitle(request.getTitle());
         materialLink.setLink(request.getLink());
+        materialLink.setTemplateStudyMaterial(templateStudyMaterial);
+
+        materialLink.initForNew(actor, currentTime);
+
+        return materialLink;
+    }
+
+    public static MaterialLink map(CreateMaterialLinkRequest request, StudyMaterial studyMaterial, Account actor, ZonedDateTime currentTime) {
+        MaterialLink materialLink = new MaterialLink();
+        materialLink.setId(IdUtil.generateId());
+        materialLink.setTitle(request.getTitle());
+        materialLink.setLink(request.getLink());
+        materialLink.setStudyMaterial(studyMaterial);
 
         materialLink.initForNew(actor, currentTime);
 

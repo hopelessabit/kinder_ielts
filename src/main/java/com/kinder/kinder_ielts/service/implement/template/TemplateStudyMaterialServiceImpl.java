@@ -45,7 +45,7 @@ public class TemplateStudyMaterialServiceImpl implements TemplateStudyMaterialSe
     }
 
     protected void setMaterialLinks(TemplateStudyMaterial templateStudyMaterial, List<CreateMaterialLinkRequest> materialLinkRequests, Account actor, ZonedDateTime currentTime){
-        templateStudyMaterial.setMaterialLinks(materialLinkRequests.stream().map(a -> ModelMapper.map(a, actor, currentTime)).toList());
+        templateStudyMaterial.setMaterialLinks(materialLinkRequests.stream().map(a -> ModelMapper.map(a, templateStudyMaterial, actor, currentTime)).toList());
     }
 
     public TemplateStudyMaterialResponse get(String templateStudyMaterialId, String failMessage){

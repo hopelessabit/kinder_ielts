@@ -27,6 +27,7 @@ public class CourseController {
     private final CourseServiceImpl courseService;
 
     @GetMapping("")
+    @SecurityRequirement(name = "Bearer")
     public ResponseEntity<ResponseData<Page<CourseResponse>>> search(
         Pageable pageable,
         @RequestParam(required = false) String name,

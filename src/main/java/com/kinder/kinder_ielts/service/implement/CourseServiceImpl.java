@@ -440,7 +440,7 @@ public class CourseServiceImpl implements CourseService {
         // Execute the query with the Specification and the unmodified Pageable (with unsorted)
         Page<Course> coursePage = courseRepository.findAll(spec, unsortedPageable);
 
-        if (role.equals(Role.ADMIN))
+        if (role != null && role.equals(Role.ADMIN))
             return coursePage.map(CourseResponse::detailWithDetails);
         else
             return coursePage.map(CourseResponse::infoWithDetail);

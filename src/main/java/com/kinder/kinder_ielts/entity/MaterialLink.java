@@ -9,6 +9,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Nationalized;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -23,6 +24,7 @@ public class MaterialLink extends BaseEntity {
     @Column(name = "id", nullable = false)
     private String id;
 
+    @Nationalized
     @Size(max = 255)
     @Column(name = "title", nullable = false)
     private String title;
