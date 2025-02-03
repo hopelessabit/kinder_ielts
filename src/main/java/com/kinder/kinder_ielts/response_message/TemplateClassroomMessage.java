@@ -12,4 +12,7 @@ public class TemplateClassroomMessage {
 
     public static final String CLASS_IS_DELETED = "Mẫu lớp học đã bị xóa";
     public static final String DELETE_FAILED = "Xóa mẫu lớp học thất bại";
+
+    public static final String INFO_UPDATE_FAILED = "Cập nhật thông tin mẫu lớp học thất bại";
+    public static final String INFO_UPDATED = "Cập nhật thông tin mẫu lớp học thành công";
 }

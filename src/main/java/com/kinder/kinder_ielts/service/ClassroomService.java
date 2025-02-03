@@ -107,7 +107,7 @@ public interface ClassroomService {
      * }
      * </pre>
      */
-    ResponseData deleteCourse(String id);
+    Void deleteCourse(String id);
 
     /**
      * Update information of an existing classroom.
@@ -131,7 +131,7 @@ public interface ClassroomService {
      * }
      * </pre>
      */
-    ClassroomResponse updateInfo(String id, UpdateClassroomRequest request);
+    ClassroomResponse updateInfo(String id, UpdateClassroomRequest request, String failMessage);
 
-    Page<ClassroomResponse> get(String title, String courseId, String tutorId, String studentId, IsDelete isDelete, Pageable pageable);
+    Page<ClassroomResponse> get(String title, String courseId, String tutorId, String studentId, IsDelete isDelete, Boolean includeDetail, Boolean includeCourse, Boolean includeTutor, Pageable pageable);
 }

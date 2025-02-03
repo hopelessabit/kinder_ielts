@@ -5,6 +5,7 @@ import com.kinder.kinder_ielts.constant.HomeWorkSubmitStatus;
 import com.kinder.kinder_ielts.constant.HomeworkPrivacyStatus;
 import com.kinder.kinder_ielts.constant.IsDelete;
 import com.kinder.kinder_ielts.dto.request.homework.CreateHomeworkRequest;
+import com.kinder.kinder_ielts.dto.request.homework.UpdateHomeworkRequest;
 import com.kinder.kinder_ielts.dto.response.homework.HomeworkResponse;
 import com.kinder.kinder_ielts.entity.Account;
 import com.kinder.kinder_ielts.entity.Homework;
@@ -20,11 +21,13 @@ import com.kinder.kinder_ielts.service.base.BaseAccountService;
 import com.kinder.kinder_ielts.service.base.BaseHomeworkService;
 import com.kinder.kinder_ielts.service.base.BaseStudentHomeworkService;
 import com.kinder.kinder_ielts.service.base.BaseStudyScheduleService;
+import com.kinder.kinder_ielts.util.CompareUtil;
 import com.kinder.kinder_ielts.util.SecurityContextHolderUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Service
@@ -77,5 +80,34 @@ public class HomeworkServiceImpl implements HomeworkService {
 
     public HomeworkResponse getInfo(String id) {
         return HomeworkResponse.infoWithDetails(baseHomeworkService.get(id, IsDelete.NOT_DELETED, HomeworkMessage.NOT_FOUND));
+    }
+
+    public HomeworkResponse updateHomeworkInfo(String homeworkId, UpdateHomeworkRequest request, String failMessage) {
+        Homework homework = baseHomeworkService.get(homeworkId, IsDelete.NOT_DELETED, failMessage);
+
+        performUpdateInfo(homework, request, failMessage);
+
+        return HomeworkResponse.detail(homework);
+    }
+
+    private void performUpdateInfo(Homework homework, UpdateHomeworkRequest request, String failMessage) {
+        homework.setTitle(CompareUtil.compare(request.getTitle().trim(), homework.getTitle()));
+        homework.setDescription(CompareUtil.compare(request.getDescription().trim(), homework.getDescription()));
+        homework.setLink(CompareUtil.compare(request.getLink().trim(), homework.getLink()));
+        homework.setDueDate(CompareUtil.compare(request.getDueDate(), homework.getDueDate()));
+        homework.setStartDate(CompareUtil.compare(request.getStartDate(), homework.getStartDate()));
+
+        updateAuditInfo(homework, SecurityContextHolderUtil.getAccount(), homework.getModifyTime());
+        baseHomeworkService.update(homework, failMessage);
+    }
+
+    private void updateAuditInfo(Homework homework, Account account, ZonedDateTime modifyTime) {
+        homework.setModifyBy(account);
+        homework.setModifyTime(modifyTime);
+    }
+
+    public Void deleteHomework(String homeworkId, String deleteFailed) {
+        baseHomeworkService.delete(homeworkId, deleteFailed);
+        return null;
     }
 }

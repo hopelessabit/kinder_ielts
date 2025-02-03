@@ -18,7 +18,6 @@ import java.util.List;
 @Getter
 @Setter
 @Entity(name = "student")
-//TODO: Add address
 public class Student extends BaseEntity {
     @Id
     @Column(name = "id", nullable = false)

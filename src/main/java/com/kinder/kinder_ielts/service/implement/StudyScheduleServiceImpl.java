@@ -1,6 +1,7 @@
 package com.kinder.kinder_ielts.service.implement;
 import com.kinder.kinder_ielts.constant.IsDelete;
 import com.kinder.kinder_ielts.dto.request.study_schedule.CreateStudyScheduleRequest;
+import com.kinder.kinder_ielts.dto.request.study_schedule.UpdateStudyScheduleRequest;
 import com.kinder.kinder_ielts.dto.response.study_schedule.StudyScheduleResponse;
 import com.kinder.kinder_ielts.entity.Account;
 import com.kinder.kinder_ielts.entity.Classroom;
@@ -10,6 +11,7 @@ import com.kinder.kinder_ielts.response_message.StudyScheduleMessage;
 import com.kinder.kinder_ielts.service.base.BaseAccountService;
 import com.kinder.kinder_ielts.service.base.BaseClassroomService;
 import com.kinder.kinder_ielts.service.base.BaseStudyScheduleService;
+import com.kinder.kinder_ielts.util.CompareUtil;
 import com.kinder.kinder_ielts.util.SecurityContextHolderUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,5 +46,26 @@ public class StudyScheduleServiceImpl {
 
     public List<StudyScheduleResponse> getAllInfo() {
         return baseStudyScheduleService.all().stream().map(StudyScheduleResponse::detailWithDetail).toList();
+    }
+
+    public StudyScheduleResponse updateInfo(String id, UpdateStudyScheduleRequest request, String failMessage) {
+        StudySchedule studySchedule = baseStudyScheduleService.get(id, IsDelete.NOT_DELETED, failMessage);
+
+        performUpdateInfo(studySchedule, request, failMessage);
+        return StudyScheduleResponse.detail(studySchedule);
+    }
+
+    private void performUpdateInfo(StudySchedule studySchedule, UpdateStudyScheduleRequest request, String failMessage) {
+        studySchedule.setTitle(CompareUtil.compare(request.getTitle().trim(), studySchedule.getTitle()));
+        studySchedule.setDescription(CompareUtil.compare(request.getDescription().trim(), studySchedule.getDescription()));
+        studySchedule.setFromTime(CompareUtil.compare(request.getFromTime(), studySchedule.getFromTime()));
+        studySchedule.setToTime(CompareUtil.compare(request.getToTime(), studySchedule.getToTime()));
+
+        baseStudyScheduleService.update(studySchedule, failMessage);
+    }
+
+    public Void delete(String id, String deleteFailed) {
+        baseStudyScheduleService.delete(id, deleteFailed);
+        return null;
     }
 }

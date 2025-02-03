@@ -226,11 +226,11 @@ public class ClassroomServiceImpl implements ClassroomService {
     /**
      * Delete a classroom by ID.
      */
-    public ResponseData deleteCourse(String id) {
+    public Void deleteCourse(String id) {
         log.info("Starting deletion process for Classroom with ID: {}", id);
         baseClassroomService.delete(id, CourseMessage.DELETE_FAILED);
         log.info("Classroom successfully deleted with ID: {}", id);
-        return ResponseData.ok(CourseMessage.DELETED);
+        return null;
     }
 
     /**
@@ -239,24 +239,35 @@ public class ClassroomServiceImpl implements ClassroomService {
     public void performUpdateInfo(Classroom classroom, UpdateClassroomRequest request) {
         log.debug("Performing updates on Classroom fields.");
         classroom.setDescription(CompareUtil.compare(request.getDescription(), classroom.getDescription()));
+        classroom.setCode(CompareUtil.compare(request.getCode(), classroom.getCode()));
+        classroom.setFromTime(CompareUtil.compare(request.getFromTime(), classroom.getFromTime()));
+        classroom.setToTime(CompareUtil.compare(request.getToTime(), classroom.getToTime()));
+        classroom.setStartDate(CompareUtil.compare(request.getStartDate(), classroom.getStartDate()));
+
+        List<ClassroomWeeklySchedule> classroomWeeklySchedules = classroom.getWeeklySchedule();
+        if (request.getSchedules() != null) {
+            classroomWeeklySchedules.clear();
+            addWeeklySchedule(classroom, request.getSchedules(), classroomWeeklySchedules, SecurityContextHolderUtil.getAccount(), ZonedDateTime.now());
+        }
         log.debug("Classroom fields updated successfully.");
     }
 
     /**
      * Update classroom information.
      */
-    public ClassroomResponse updateInfo(String id, UpdateClassroomRequest request) {
+    public ClassroomResponse updateInfo(String id, UpdateClassroomRequest request, String failMessage) {
         log.info("Updating Classroom information for ID: {}", id);
-        Classroom classroom = baseClassroomService.get(id, IsDelete.NOT_DELETED, ClassroomMessage.CLASS_IS_DELETED);
+        Classroom classroom = baseClassroomService.get(id, IsDelete.NOT_DELETED, failMessage);
         performUpdateInfo(classroom, request);
-        Classroom updatedClassroom = baseClassroomService.update(classroom, ClassroomMessage.CLASS_IS_DELETED);
+        Classroom updatedClassroom = baseClassroomService.update(classroom, failMessage);
         log.info("Classroom information updated successfully for ID: {}", id);
         return ClassroomResponse.detail(updatedClassroom);
     }
 
     @Override
-    public Page<ClassroomResponse> get(String title, String courseId, String tutorId, String studentId, IsDelete isDelete, Pageable pageable) {
+    public Page<ClassroomResponse> get(String title, String courseId, String tutorId, String studentId, IsDelete isDelete, Boolean includeDetail, Boolean includeCourse, Boolean includeTutor, Pageable pageable) {
         Role role = null;
+
         try {
             role = SecurityContextHolderUtil.getRole();
         } catch (Exception e) {
@@ -275,7 +286,9 @@ public class ClassroomServiceImpl implements ClassroomService {
 
         Page<Classroom> classrooms = baseClassroomService.findAll(classroomSpecification, unsortedPageable);
 
-        return classrooms.map(classroom -> new ClassroomResponse(classroom, false, false));
+        if (role != null && (role.equals(Role.ADMIN) || role.equals(Role.TUTOR)))
+            return classrooms.map(classroom -> new ClassroomResponse(classroom, true, includeCourse, includeTutor, includeDetail));
+        return classrooms.map(classroom -> new ClassroomResponse(classroom, false, includeCourse, includeTutor, includeDetail));
     }
 
     private Specification<Classroom> createClassroomSpecification(String title, String courseId, String tutorId, String studentId, IsDelete isDelete) {

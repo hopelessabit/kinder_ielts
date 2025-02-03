@@ -5,6 +5,7 @@ import com.kinder.kinder_ielts.constant.IsDelete;
 import com.kinder.kinder_ielts.constant.StudyMaterialStatus;
 import com.kinder.kinder_ielts.dto.request.material_link.CreateMaterialLinkRequest;
 import com.kinder.kinder_ielts.dto.request.study_material.CreateStudyMaterialRequest;
+import com.kinder.kinder_ielts.dto.request.study_material.UpdateStudyMaterialRequest;
 import com.kinder.kinder_ielts.dto.response.homework.HomeworkResponse;
 import com.kinder.kinder_ielts.dto.response.study_material.StudyMaterialResponse;
 import com.kinder.kinder_ielts.dto.response.study_schedule.StudyScheduleResponse;
@@ -16,6 +17,7 @@ import com.kinder.kinder_ielts.mapper.ModelMapper;
 import com.kinder.kinder_ielts.response_message.ClassroomMessage;
 import com.kinder.kinder_ielts.response_message.StudyScheduleMessage;
 import com.kinder.kinder_ielts.service.base.*;
+import com.kinder.kinder_ielts.util.CompareUtil;
 import com.kinder.kinder_ielts.util.SecurityContextHolderUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -64,5 +66,19 @@ public class StudyMaterialServiceImpl {
 
     public StudyMaterialResponse getInfo(String id) {
         return StudyMaterialResponse.detailWithDetails(baseStudyMaterialService.get(id, IsDelete.NOT_DELETED, StudyScheduleMessage.NOT_FOUND));
+    }
+
+    public StudyMaterialResponse update(String id, UpdateStudyMaterialRequest request, String failMessage) {
+        StudyMaterial studyMaterial = baseStudyMaterialService.get(id, IsDelete.NOT_DELETED, failMessage);
+
+        studyMaterial.setTitle(CompareUtil.compare(request.getTitle().trim(), studyMaterial.getTitle()));
+        studyMaterial.setDescription(CompareUtil.compare(request.getDescription().trim(), studyMaterial.getDescription()));
+
+        return StudyMaterialResponse.detailWithDetails(baseStudyMaterialService.update(studyMaterial, failMessage));
+    }
+
+    public Void delete(String id, String deleteFailed) {
+        baseStudyMaterialService.delete(id, deleteFailed);
+        return null;
     }
 }

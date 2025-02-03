@@ -11,4 +11,10 @@ public class StudyMaterialMessage {
     public static final String UNAVAILABLE = "Cấp độ học không khả dụng";
 
     public static final String STUDY_MATERIAL_IS_DELETED = "Tài liệu đã bị xóa";
+
+    public static final String INFO_UPDATED = "Cập nhập thông tin tài liệu thành công";
+    public static final String INFO_UPDATE_FAILED = "Cập nhập thông tin tài liệu thất ";
+
+    public static final String DELETE_FAILED = "Xóa tài liệu thất bại";
+    public static final String DELETED = "Xoá tài liệu thành công";
 }

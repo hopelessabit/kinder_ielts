@@ -21,7 +21,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "tutor")
-//TODO: Add Address
 public class Tutor extends BaseEntity {
     @Id
     @Column(name = "id", nullable = false)

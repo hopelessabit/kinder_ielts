@@ -2,6 +2,7 @@ package com.kinder.kinder_ielts.controller;
 import com.kinder.kinder_ielts.constant.IsDelete;
 import com.kinder.kinder_ielts.dto.ResponseData;
 import com.kinder.kinder_ielts.dto.request.classroom.CreateClassroomRequest;
+import com.kinder.kinder_ielts.dto.request.classroom.UpdateClassroomRequest;
 import com.kinder.kinder_ielts.dto.request.classroom.UpdateClassroomTutorRequest;
 import com.kinder.kinder_ielts.dto.response.classroom.ClassroomResponse;
 import com.kinder.kinder_ielts.response_message.ClassroomMessage;
@@ -30,9 +31,12 @@ public class ClassroomController {
             @RequestParam(required = false) String courseId,
             @RequestParam(required = false) String tutorId,
             @RequestParam(required = false) String studentId,
-            @RequestParam(required = false) IsDelete isDelete
+            @RequestParam(required = false, defaultValue = "NOT_DELETED") IsDelete isDelete,
+            @RequestParam(required = false, defaultValue = "false") boolean includeDetail,
+            @RequestParam(required = false, defaultValue = "true") boolean includeCourse,
+            @RequestParam(required = false, defaultValue = "true") boolean includeTutor
             ){
-        return ResponseUtil.getResponse(() -> classroomService.get(title, courseId, tutorId, studentId, isDelete, pageable), ClassroomMessage.FOUND_SUCCESSFULLY);
+        return ResponseUtil.getResponse(() -> classroomService.get(title, courseId, tutorId, studentId, isDelete, includeDetail, includeCourse, includeTutor, pageable), ClassroomMessage.FOUND_SUCCESSFULLY);
     }
 
     @PostMapping("/course/{courseId}")
@@ -66,4 +70,15 @@ public class ClassroomController {
 //        return ResponseUtil.getResponse(() -> classroomService.updateCourseStudent(id, request, CourseMessage.UPDATE_STUDENTS_FAILED), CourseMessage.UPDATE_STUDENTS_SUCCESSFULLY);
 //    }
 
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR')")
+    public ResponseEntity<ResponseData<ClassroomResponse>> update(@PathVariable String id, @RequestBody UpdateClassroomRequest request){
+        return ResponseUtil.getResponse(() -> classroomService.updateInfo(id, request, ClassroomMessage.INFO_UPDATE_FAILED), ClassroomMessage.INFO_UPDATED);
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR')")
+    public ResponseEntity<ResponseData<Void>> delete(@PathVariable String id){
+        return ResponseUtil.getResponse(() -> classroomService.deleteCourse(id), ClassroomMessage.CLASS_IS_DELETED);
+    }
 }

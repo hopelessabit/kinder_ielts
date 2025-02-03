@@ -1,6 +1,7 @@
 package com.kinder.kinder_ielts.service.implement.template;
 import com.kinder.kinder_ielts.constant.IsDelete;
 import com.kinder.kinder_ielts.dto.request.template.classroom.CreateTemplateClassroomRequest;
+import com.kinder.kinder_ielts.dto.request.template.classroom.UpdateTemplateClassroomRequest;
 import com.kinder.kinder_ielts.dto.response.template.classroom.TemplateClassroomResponse;
 import com.kinder.kinder_ielts.entity.Course;
 import com.kinder.kinder_ielts.entity.course_template.TemplateClassroom;
@@ -9,6 +10,7 @@ import com.kinder.kinder_ielts.response_message.TemplateClassroomMessage;
 import com.kinder.kinder_ielts.service.TemplateClassroomService;
 import com.kinder.kinder_ielts.service.base.BaseCourseService;
 import com.kinder.kinder_ielts.service.base.BaseTemplateClassroomService;
+import com.kinder.kinder_ielts.util.CompareUtil;
 import com.kinder.kinder_ielts.util.IdUtil;
 import com.kinder.kinder_ielts.util.SecurityContextHolderUtil;
 import lombok.RequiredArgsConstructor;
@@ -96,6 +98,19 @@ public class TemplateClassroomServiceImpl implements TemplateClassroomService {
         baseTemplateClassroomService.delete(templateClassroomId, TemplateClassroomMessage.DELETE_FAILED);
 
         log.info("[DELETE TEMPLATE CLASSROOM] Successfully deleted template classroom with ID: {}", templateClassroomId);
+    }
+
+    @Override
+    public TemplateClassroomResponse updateInfo(String templateClassroomId, UpdateTemplateClassroomRequest request, String infoUpdateFailed) {
+        TemplateClassroom templateClassroom = fetchTemplateClassroom(templateClassroomId, infoUpdateFailed);
+        performUpdateInfo(templateClassroom, request, infoUpdateFailed);
+        return TemplateClassroomResponse.detail(templateClassroom);
+    }
+
+    private void performUpdateInfo(TemplateClassroom templateClassroom, UpdateTemplateClassroomRequest request, String infoUpdateFailed) {
+        templateClassroom.setName(CompareUtil.compare(request.getName().trim(), templateClassroom.getName()));
+        updateAuditInfo(templateClassroom);
+        baseTemplateClassroomService.update(templateClassroom, infoUpdateFailed);
     }
 
     /**

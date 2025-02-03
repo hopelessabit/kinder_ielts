@@ -2,6 +2,7 @@ package com.kinder.kinder_ielts.controller.template;
 
 import com.kinder.kinder_ielts.dto.ResponseData;
 import com.kinder.kinder_ielts.dto.request.template.classroom.CreateTemplateClassroomRequest;
+import com.kinder.kinder_ielts.dto.request.template.classroom.UpdateTemplateClassroomRequest;
 import com.kinder.kinder_ielts.dto.response.template.classroom.TemplateClassroomResponse;
 import com.kinder.kinder_ielts.response_message.TemplateClassroomMessage;
 import com.kinder.kinder_ielts.service.TemplateClassroomService;
@@ -19,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class TemplateClassroomController {
     private final TemplateClassroomService templateClassroomService;
-//TODO: Add update info api
     @PostMapping("/course/{courseId}")
     @SecurityRequirement(name = "Bearer")
     @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR','TUTOR')")
@@ -39,6 +39,12 @@ public class TemplateClassroomController {
     @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR','TUTOR')")
     public ResponseEntity<ResponseData<Page<TemplateClassroomResponse>>> getByCourseId(@PathVariable String courseId, Pageable pageable) {
         return ResponseUtil.getResponse(() -> templateClassroomService.getByCourseId(courseId, pageable), TemplateClassroomMessage.FOUND_SUCCESSFULLY);
+    }
+
+    @PutMapping("/{templateClassroomId}")
+    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR','TUTOR')")
+    public ResponseEntity<ResponseData<TemplateClassroomResponse>> update(@PathVariable String templateClassroomId, @RequestBody UpdateTemplateClassroomRequest request) {
+        return ResponseUtil.getResponse(() -> templateClassroomService.updateInfo(templateClassroomId, request, TemplateClassroomMessage.INFO_UPDATE_FAILED), TemplateClassroomMessage.INFO_UPDATED);
     }
 
     @DeleteMapping("/{templateClassroomId}")

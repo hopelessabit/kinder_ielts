@@ -2,6 +2,7 @@ package com.kinder.kinder_ielts.controller;
 
 import com.kinder.kinder_ielts.dto.ResponseData;
 import com.kinder.kinder_ielts.dto.request.study_schedule.CreateStudyScheduleRequest;
+import com.kinder.kinder_ielts.dto.request.study_schedule.UpdateStudyScheduleRequest;
 import com.kinder.kinder_ielts.dto.response.study_schedule.StudyScheduleResponse;
 import com.kinder.kinder_ielts.response_message.StudyScheduleMessage;
 import com.kinder.kinder_ielts.service.implement.StudyScheduleServiceImpl;
@@ -13,7 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/study-schedule/")
+@RequestMapping("/api/v1/study-schedule")
 @RequiredArgsConstructor
 public class StudyScheduleController {
     private final StudyScheduleServiceImpl studyScheduleService;
@@ -30,5 +31,17 @@ public class StudyScheduleController {
     @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR')")
     public ResponseEntity<ResponseData<StudyScheduleResponse>> get(@PathVariable String id) {
         return ResponseUtil.getResponse(() -> studyScheduleService.getInfoWithDetail(id), StudyScheduleMessage.FOUND_SUCCESSFULLY);
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR')")
+    public ResponseEntity<ResponseData<StudyScheduleResponse>> update(@PathVariable String id, @RequestBody UpdateStudyScheduleRequest request) {
+        return ResponseUtil.getResponse(() -> studyScheduleService.updateInfo(id, request, StudyScheduleMessage.INFO_UPDATE_FAILED), StudyScheduleMessage.INFO_UPDATED);
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR')")
+    public ResponseEntity<ResponseData<Void>> delete(@PathVariable String id) {
+        return ResponseUtil.getResponse(() -> studyScheduleService.delete(id, StudyScheduleMessage.DELETE_FAILED), StudyScheduleMessage.DELETED);
     }
 }

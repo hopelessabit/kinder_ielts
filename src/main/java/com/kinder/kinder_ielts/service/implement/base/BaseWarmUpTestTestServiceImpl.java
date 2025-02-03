@@ -38,7 +38,6 @@ public class BaseWarmUpTestTestServiceImpl extends BaseEntityServiceImpl<WarmUpT
         return entity.getId();
     }
 
-    //TODO: change message
     @Override
     protected void markAsDeleted(WarmUpTest entity) {
         entity.setIsDeleted(IsDelete.DELETED);
@@ -46,7 +45,7 @@ public class BaseWarmUpTestTestServiceImpl extends BaseEntityServiceImpl<WarmUpT
 
         String createBy = SecurityContextHolderUtil.getAccountId();
         log.debug("Fetching account for modifier ID: {}", createBy);
-        Account modifier = baseAccountService.get(createBy, IsDelete.NOT_DELETED, CourseMessage.DELETE_FAILED);
+        Account modifier = SecurityContextHolderUtil.getAccount();
         entity.setModifyBy(modifier);
         entity.setModifyTime(ZonedDateTime.now());
     }

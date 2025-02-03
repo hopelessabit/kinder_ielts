@@ -12,4 +12,7 @@ public class ClassroomMessage {
 
     public static final String CLASS_IS_DELETED = "lớp học đã bị xóa";
     public static final String NOT_ALLOWED = "Không được phép thực hiện hành động này";
+
+    public static final String INFO_UPDATE_FAILED = "Cập nhập thông tin lớp học thất bại";
+    public static final String INFO_UPDATED = "Cập nhập thông tin lớp học thành công";
 }
