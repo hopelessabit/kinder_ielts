@@ -40,7 +40,7 @@ public class SecurityConfig {
     private final String AUTHEN_URL = BASE_URL_V1 + "/auth/**";
     private final String ACCOUNT_API = BASE_URL_V1 + "/account/**";
     private final String TEST_API = BASE_URL_V1 + "/test/**";
-    private final String CLASSROOM_API = BASE_URL_V1 + "/classroom/**";
+    private final String CLASSROOM_API = BASE_URL_V1 + "/class/**";
     private final String COURSE_API = BASE_URL_V1 + "/course/**";
     private final String TUTOR_API = BASE_URL_V1 + "/tutor/**";
     /**
@@ -58,6 +58,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(
                         req -> req
 //                                .requestMatchers(ADMIN_API).hasAuthority("ADMIN")
+                                .requestMatchers(CLASSROOM_API).permitAll()
                                 .requestMatchers(HttpMethod.GET, CLASSROOM_API).permitAll()
                                 .requestMatchers(HttpMethod.GET, COURSE_API).permitAll()
                                 .requestMatchers(HttpMethod.GET, TUTOR_API).permitAll()

@@ -3,7 +3,7 @@ package com.kinder.kinder_ielts.constant;
 import lombok.Getter;
 
 @Getter
-public enum DateOfWeek {
+public enum DateOfWeek implements StatusEnum{
     MONDAY ("Thứ hai", 1),
     TUESDAY ("Thứ ba", 3),
     WEDNESDAY ("Thứ tư", 4),

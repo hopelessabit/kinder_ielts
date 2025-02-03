@@ -17,15 +17,13 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/class/")
+@RequestMapping("/api/v1/class")
+@SecurityRequirement(name = "Bearer")
 @RequiredArgsConstructor
 public class ClassroomController {
     private final ClassroomServiceImpl classroomService;
 
-
     @GetMapping("/")
-    @SecurityRequirement(name = "Bearer")
-    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR')")
     public ResponseEntity<ResponseData<Page<ClassroomResponse>>> search(
             Pageable pageable,
             @RequestParam(required = false) String title,
@@ -38,28 +36,24 @@ public class ClassroomController {
     }
 
     @PostMapping("/course/{courseId}")
-    @SecurityRequirement(name = "Bearer")
     @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR')")
     public ResponseEntity<ResponseData<ClassroomResponse>> create(@PathVariable String courseId, @RequestBody CreateClassroomRequest request){
         return ResponseUtil.getResponse(() -> classroomService.createClassroom(courseId, request, ClassroomMessage.CREATE_FAILED), ClassroomMessage.CREATED);
     }
 
     @GetMapping("/{id}")
-    @SecurityRequirement(name = "Bearer")
     @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR')")
     public ResponseEntity<ResponseData<ClassroomResponse>> getInfo(@PathVariable String id){
         return ResponseUtil.getResponse(() -> classroomService.getInfo(id), ClassroomMessage.FOUND_SUCCESSFULLY);
     }
 
     @GetMapping("/detail/{id}")
-    @SecurityRequirement(name = "Bearer")
     @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR')")
     public ResponseEntity<ResponseData<ClassroomResponse>> getDetail(@PathVariable String id){
         return ResponseUtil.getResponse(() -> classroomService.getDetail(id), ClassroomMessage.FOUND_SUCCESSFULLY);
     }
 
     @PatchMapping("/{id}/tutors")
-    @SecurityRequirement(name = "Bearer")
     @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR')")
     public ResponseEntity<ResponseData<Integer>> modifyTutors(@PathVariable String id, @RequestBody UpdateClassroomTutorRequest request){
         return ResponseUtil.getResponse(() -> classroomService.updateClassroomTutor(id, request, CourseMessage.UPDATE_TUTORS_FAILED), CourseMessage.UPDATE_TUTORS_SUCCESSFULLY);
