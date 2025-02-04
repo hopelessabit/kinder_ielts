@@ -5,7 +5,6 @@ import com.kinder.kinder_ielts.constant.DateOfWeek;
 import com.kinder.kinder_ielts.constant.IsDelete;
 import com.kinder.kinder_ielts.constant.Role;
 import com.kinder.kinder_ielts.dto.Error;
-import com.kinder.kinder_ielts.dto.ResponseData;
 import com.kinder.kinder_ielts.dto.request.classroom.UpdateClassroomRequest;
 import com.kinder.kinder_ielts.dto.request.classroom.UpdateClassroomTutorRequest;
 import com.kinder.kinder_ielts.dto.response.classroom.ClassroomResponse;
@@ -18,7 +17,6 @@ import com.kinder.kinder_ielts.entity.join_entity.ClassroomTutor;
 import com.kinder.kinder_ielts.entity.join_entity.ClassroomWeeklySchedule;
 import com.kinder.kinder_ielts.entity.join_entity.CourseTutor;
 import com.kinder.kinder_ielts.exception.BadRequestException;
-import com.kinder.kinder_ielts.exception.InternalServerExceptionException;
 import com.kinder.kinder_ielts.exception.NotFoundException;
 import com.kinder.kinder_ielts.mapper.ModelMapper;
 import com.kinder.kinder_ielts.response_message.ClassroomMessage;
@@ -265,7 +263,7 @@ public class ClassroomServiceImpl implements ClassroomService {
     }
 
     @Override
-    public Page<ClassroomResponse> get(String title, String courseId, String tutorId, String studentId, IsDelete isDelete, Boolean includeDetail, Boolean includeCourse, Boolean includeTutor, Pageable pageable) {
+    public Page<ClassroomResponse> get(String search, String courseId, String tutorId, String studentId, IsDelete isDelete, Boolean includeDetail, Boolean includeCourse, Boolean includeTutor, Pageable pageable) {
         Role role = null;
 
         try {
@@ -280,7 +278,7 @@ public class ClassroomServiceImpl implements ClassroomService {
         else
             isDelete = IsDelete.NOT_DELETED;
 
-        Specification<Classroom> classroomSpecification = createClassroomSpecification(title, courseId, tutorId, studentId, isDelete);
+        Specification<Classroom> classroomSpecification = createClassroomSpecification(search, courseId, tutorId, studentId, isDelete);
 
         Pageable unsortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.unsorted());
 
@@ -291,12 +289,11 @@ public class ClassroomServiceImpl implements ClassroomService {
         return classrooms.map(classroom -> new ClassroomResponse(classroom, false, includeCourse, includeTutor, includeDetail));
     }
 
-    private Specification<Classroom> createClassroomSpecification(String title, String courseId, String tutorId, String studentId, IsDelete isDelete) {
+    private Specification<Classroom> createClassroomSpecification(String search, String courseId, String tutorId, String studentId, IsDelete isDelete) {
 
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
-
-            addClassroomTitlePredicate(title, cb, root, predicates);
+            addClassroomCodeAndDescriptionPredicate(search, cb, root, predicates);
             addCourseIdPredicate(courseId, cb, root, predicates);
             addTutorIdPredicate(tutorId, cb, root, predicates, query);
             addStudentIdPredicate(studentId, cb, root, predicates, query);
@@ -330,10 +327,12 @@ public class ClassroomServiceImpl implements ClassroomService {
         }
     }
 
-    private void addClassroomTitlePredicate(String title, CriteriaBuilder cb, Root<Classroom> root, List<Predicate> predicates) {
-        if (title != null) {
-            predicates.add(cb.like(cb.lower(root.get("title")), "%" + title.toLowerCase() + "%"));
-        }
+    private void addClassroomCodeAndDescriptionPredicate(String search, CriteriaBuilder cb, Root<Classroom> root, List<Predicate> predicates) {
+        if (search != null)
+            predicates.add(
+                    cb.or(cb.like(cb.lower(root.get("code")), "%" + search.toLowerCase() + "%"),
+                    cb.like(cb.lower(root.get("description")), "%" + search.toLowerCase() + "%")
+            ));
     }
 
     /**

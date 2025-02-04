@@ -85,4 +85,6 @@ public class CourseController {
     public ResponseEntity<ResponseData<Integer>> modifyStudents(@PathVariable String id, @RequestBody UpdateCourseStudent request){
         return ResponseUtil.getResponse(() -> courseService.updateCourseStudent(id, request, CourseMessage.UPDATE_STUDENTS_FAILED), CourseMessage.UPDATE_STUDENTS_SUCCESSFULLY);
     }
+
+
 }

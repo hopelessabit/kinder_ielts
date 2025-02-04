@@ -27,7 +27,7 @@ public class ClassroomController {
     @GetMapping("/")
     public ResponseEntity<ResponseData<Page<ClassroomResponse>>> search(
             Pageable pageable,
-            @RequestParam(required = false) String title,
+            @RequestParam(required = false) String search,
             @RequestParam(required = false) String courseId,
             @RequestParam(required = false) String tutorId,
             @RequestParam(required = false) String studentId,
@@ -36,7 +36,7 @@ public class ClassroomController {
             @RequestParam(required = false, defaultValue = "true") boolean includeCourse,
             @RequestParam(required = false, defaultValue = "true") boolean includeTutor
             ){
-        return ResponseUtil.getResponse(() -> classroomService.get(title, courseId, tutorId, studentId, isDelete, includeDetail, includeCourse, includeTutor, pageable), ClassroomMessage.FOUND_SUCCESSFULLY);
+        return ResponseUtil.getResponse(() -> classroomService.get(search, courseId, tutorId, studentId, isDelete, includeDetail, includeCourse, includeTutor, pageable), ClassroomMessage.FOUND_SUCCESSFULLY);
     }
 
     @PostMapping("/course/{courseId}")

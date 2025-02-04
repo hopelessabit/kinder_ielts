@@ -5,9 +5,12 @@ import com.kinder.kinder_ielts.dto.response.course.CourseResponse;
 import com.kinder.kinder_ielts.dto.response.study_schedule.StudyScheduleResponse;
 import com.kinder.kinder_ielts.dto.response.tutor.TutorResponse;
 import com.kinder.kinder_ielts.entity.Classroom;
+import com.kinder.kinder_ielts.entity.StudySchedule;
+import com.kinder.kinder_ielts.entity.course_template.TemplateStudySchedule;
 import com.kinder.kinder_ielts.entity.join_entity.ClassroomTutor;
 import lombok.Getter;
 
+import java.util.Comparator;
 import java.util.List;
 @Getter
 public class ClassroomDetailInfoResponse {

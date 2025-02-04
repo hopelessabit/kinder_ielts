@@ -90,6 +90,7 @@ public class ClassroomResponse {
                 .toList() : null;
         if (includeDetail){
             this.detailInfo = ClassroomDetailInfoResponse.info(classroom);
+            this.belongToCourse = CourseResponse.info(classroom.getCourse());
         }
 
         if (includeInfoForAdmin)
@@ -101,7 +102,7 @@ public class ClassroomResponse {
     }
 
     public static ClassroomResponse info(Classroom classroom) {
-        return new ClassroomResponse(classroom, false, false);
+        return new ClassroomResponse(classroom, false, true);
     }
 
     public static ClassroomResponse detailWithDetails(Classroom classroom) {
