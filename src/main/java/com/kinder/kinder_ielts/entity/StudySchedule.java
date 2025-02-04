@@ -63,6 +63,7 @@ public class StudySchedule extends BaseEntity {
 
     public StudySchedule(ZonedDateTime fromTime, ZonedDateTime toTime, String title, Account createBy, ZonedDateTime createTime, Classroom classroom, Integer place) {
         this.id = IdUtil.generateId();
+        this.place = place;
         this.setCreateTime(createTime);
         this.setIsDeleted(IsDelete.NOT_DELETED);
         this.setCreateBy(createBy);
