@@ -288,9 +288,7 @@ public class ClassroomServiceImpl implements ClassroomService {
 
         Specification<Classroom> classroomSpecification = createClassroomSpecification(search, courseId, tutorId, studentId, isDelete);
 
-        Pageable unsortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.unsorted());
-
-        Page<Classroom> classrooms = baseClassroomService.findAll(classroomSpecification, unsortedPageable);
+        Page<Classroom> classrooms = baseClassroomService.findAll(classroomSpecification, pageable);
 
         if (role != null && (role.equals(Role.ADMIN) || role.equals(Role.TUTOR)))
             return classrooms.map(classroom -> new ClassroomResponse(classroom, true, includeCourse, includeTutor, includeDetail));

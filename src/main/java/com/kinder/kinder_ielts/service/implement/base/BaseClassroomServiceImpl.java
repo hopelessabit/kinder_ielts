@@ -66,4 +66,9 @@ public class BaseClassroomServiceImpl extends BaseEntityServiceImpl<Classroom, S
     public Page<Classroom> findAll(Specification<Classroom> classroomSpecification, Pageable unsortedPageable) {
         return classroomRepository.findAll(classroomSpecification, unsortedPageable);
     }
+
+    @Override
+    public Page<Classroom> findAll(Specification<Classroom> classroomSpecification) {
+        return classroomRepository.findAll(classroomSpecification);
+    }
 }

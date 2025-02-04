@@ -17,4 +17,6 @@ public interface ClassroomRepository extends BaseEntityRepository<Classroom, Str
     Optional<Classroom> findByIdAndIsDeleted(String id, IsDelete findDeleted);
 
     Page<Classroom> findAll(Specification<Classroom> classroomSpecification, Pageable unsortedPageable);
+
+    Page<Classroom> findAll(Specification<Classroom> classroomSpecification);
 }

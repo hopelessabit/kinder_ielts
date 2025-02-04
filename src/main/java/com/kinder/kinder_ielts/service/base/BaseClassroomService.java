@@ -11,4 +11,6 @@ import org.springframework.data.jpa.domain.Specification;
  */
 public interface BaseClassroomService extends BaseEntityService<Classroom, String> {
     Page<Classroom> findAll(Specification<Classroom> classroomSpecification, Pageable unsortedPageable);
+
+    Page<Classroom> findAll(Specification<Classroom> classroomSpecification);
 }
