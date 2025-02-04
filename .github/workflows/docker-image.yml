@@ -60,7 +60,7 @@ jobs:
       - name: Deploy to VPS
         run: |
           # Add your deployment commands here, using SSH to connect to your VPS
-          ssh your_username@150.95.109.50 "
+          ssh root@150.95.109.50 "
             # Your deployment commands (e.g., stop/start Docker container, git pull, etc.)
             docker stop kinder_ielts && docker rm kinder_ielts && docker rmi highschoolvn/kinder_ielts || true
             docker pull highschoolvn/kinder_ielts
