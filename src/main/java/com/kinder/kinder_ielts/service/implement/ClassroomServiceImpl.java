@@ -154,7 +154,9 @@ public class ClassroomServiceImpl implements ClassroomService {
 
         List<StudySchedule> studySchedules = new ArrayList<>();
 
+        int place = 0;
         for (ZonedDateTime zonedDateTime : zonedDateTimes) {
+            place++;
             // Adjust fromDateTime using OffsetTime fromTime
             ZonedDateTime fromDateTime = zonedDateTime
                     .withHour(fromTime.getTime().getHour())
@@ -169,14 +171,17 @@ public class ClassroomServiceImpl implements ClassroomService {
                     .withSecond(toTime.getTime().getSecond())
                     .withNano(toTime.getTime().getNano());
 
-            studySchedules.add(new StudySchedule(fromDateTime, toDateTime, "Schedule", account, currentTime , classroom));
+            studySchedules.add(new StudySchedule(fromDateTime, toDateTime, "Schedule", account, currentTime , classroom, place));
         }
         return studySchedules;
     }
 
     public void addStudyScheduleHaveTemplate(List<StudySchedule> studySchedules, List<TemplateStudySchedule> templateStudySchedules, Account account, ZonedDateTime currentTime) {
         for (TemplateStudySchedule templateStudySchedule : templateStudySchedules) {
-            StudySchedule studySchedule = studySchedules.get(templateStudySchedule.getPlace() - 1);
+            StudySchedule studySchedule = studySchedules.stream()
+                    .filter(s -> s.getPlace().equals(templateStudySchedule.getPlace()))
+                    .findFirst()
+                    .orElseThrow(() -> new NotFoundException("", Error.build("", List.of(templateStudySchedule.getPlace()))));
 
             List<ClassroomLink> classroomLinks = templateStudySchedule.getClassroomLinks().stream()
                     .map(c -> ClassroomLink.from(c, studySchedule, account, currentTime)).toList();

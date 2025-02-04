@@ -22,6 +22,7 @@ public class ClassroomDetailInfoResponse {
     public ClassroomDetailInfoResponse(Classroom classroom) {
         this.studySchedules = classroom.getStudySchedules() != null ? classroom.getStudySchedules().stream()
                 .filter(studySchedule -> !studySchedule.getIsDeleted().isDeleted())
+                .sorted(Comparator.comparing(StudySchedule::getPlace))
                 .map(StudyScheduleResponse::infoWithDetail).toList() : null;
         this.tutorResponses = classroom.getClassroomTutors() != null ? classroom.getClassroomTutors().stream()
                 .filter(classroomTutor -> !classroomTutor.getIsDeleted().isDeleted())

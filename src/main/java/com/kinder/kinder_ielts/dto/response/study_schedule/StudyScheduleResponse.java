@@ -14,6 +14,7 @@ import java.time.ZonedDateTime;
 @Setter
 public class StudyScheduleResponse {
     private String id;
+    private Integer place;
     private ZonedDateTime fromTime;
     private ZonedDateTime toTime;
     private String title;
@@ -27,6 +28,7 @@ public class StudyScheduleResponse {
 
     public StudyScheduleResponse(StudySchedule studySchedule, boolean includeInfoForAdmin, boolean includeDetail) {
         this.id = studySchedule.getId();
+        this.place = studySchedule.getPlace();
         this.fromTime = studySchedule.getFromTime();
         this.toTime = studySchedule.getToTime();
         this.title = studySchedule.getTitle();

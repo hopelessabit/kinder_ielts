@@ -33,6 +33,9 @@ public class StudySchedule extends BaseEntity {
     @Column(name = "title", nullable = false)
     private String title;
 
+    @Column(name = "place")
+    private Integer place;
+
     @Nationalized
     @Size(max = 500)
     @Column(name = "description")
@@ -58,7 +61,7 @@ public class StudySchedule extends BaseEntity {
     @JoinColumn(name = "class_id", nullable = false)
     private Classroom classroom;
 
-    public StudySchedule(ZonedDateTime fromTime, ZonedDateTime toTime, String title, Account createBy, ZonedDateTime createTime, Classroom classroom) {
+    public StudySchedule(ZonedDateTime fromTime, ZonedDateTime toTime, String title, Account createBy, ZonedDateTime createTime, Classroom classroom, Integer place) {
         this.id = IdUtil.generateId();
         this.setCreateTime(createTime);
         this.setIsDeleted(IsDelete.NOT_DELETED);
