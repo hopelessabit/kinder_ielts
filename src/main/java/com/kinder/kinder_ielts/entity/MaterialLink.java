@@ -86,4 +86,5 @@ public class MaterialLink extends BaseEntity {
         this.setCreateTime(currentTime);
         this.setIsDeleted(IsDelete.NOT_DELETED);
     }
+
 }

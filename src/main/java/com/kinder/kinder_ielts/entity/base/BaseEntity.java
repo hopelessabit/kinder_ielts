@@ -54,4 +54,9 @@ public abstract class BaseEntity {
         this.createTime = currentTime;
         this.createBy = account;
     }
+
+    public void updateAudit(Account modifier, ZonedDateTime modifyTime){
+        this.modifyBy = modifier;
+        this.modifyTime = modifyTime;
+    }
 }
