@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -42,11 +43,15 @@ public class BaseWarmUpTestTestServiceImpl extends BaseEntityServiceImpl<WarmUpT
     protected void markAsDeleted(WarmUpTest entity) {
         entity.setIsDeleted(IsDelete.DELETED);
         entity.setStatus(WarmUpTestStatus.HIDDEN);
+        entity.updateAudit(SecurityContextHolderUtil.getAccount(), ZonedDateTime.now());
+    }
 
-        String createBy = SecurityContextHolderUtil.getAccountId();
-        log.debug("Fetching account for modifier ID: {}", createBy);
-        Account modifier = SecurityContextHolderUtil.getAccount();
-        entity.setModifyBy(modifier);
-        entity.setModifyTime(ZonedDateTime.now());
+    @Override
+    protected void markAsDeleted(List<WarmUpTest> entity, Account modifier, ZonedDateTime currentTime) {
+        for (WarmUpTest warmUpTest : entity) {
+            warmUpTest.setIsDeleted(IsDelete.DELETED);
+            warmUpTest.setStatus(WarmUpTestStatus.HIDDEN);
+            warmUpTest.updateAudit(modifier, currentTime);
+        }
     }
 }

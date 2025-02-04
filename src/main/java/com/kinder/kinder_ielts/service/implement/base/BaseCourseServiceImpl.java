@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 
 /**
  * Implementation of {@link BaseCourseService}.
@@ -43,15 +44,17 @@ public class BaseCourseServiceImpl extends BaseEntityServiceImpl<Course, String>
 
     @Override
     protected void markAsDeleted(Course entity) {
-
-
-        String modifierId = SecurityContextHolderUtil.getAccountId();
-        log.debug("Fetching account for modifier ID: {}", modifierId);
-        Account modifier = baseAccountService.get(modifierId, IsDelete.NOT_DELETED, CourseMessage.DELETE_FAILED);
-
-        entity.setModifyBy(modifier);
-        entity.setModifyTime(ZonedDateTime.now());
         entity.setIsDeleted(IsDelete.DELETED);
         entity.setStatus(CourseStatus.INACTIVE);
+        entity.updateAudit(SecurityContextHolderUtil.getAccount(), ZonedDateTime.now());
+    }
+
+    @Override
+    protected void markAsDeleted(List<Course> entity, Account modifier, ZonedDateTime currentTime) {
+        for (Course course : entity) {
+            course.setIsDeleted(IsDelete.DELETED);
+            course.setStatus(CourseStatus.INACTIVE);
+            course.updateAudit(modifier, currentTime);
+        }
     }
 }

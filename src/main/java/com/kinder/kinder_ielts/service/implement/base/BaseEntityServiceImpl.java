@@ -2,12 +2,14 @@ package com.kinder.kinder_ielts.service.implement.base;
 
 import com.kinder.kinder_ielts.dto.Error;
 import com.kinder.kinder_ielts.constant.IsDelete;
+import com.kinder.kinder_ielts.entity.Account;
 import com.kinder.kinder_ielts.exception.NotFoundException;
 import com.kinder.kinder_ielts.exception.SqlException;
 import com.kinder.kinder_ielts.repository.BaseEntityRepository;
 import com.kinder.kinder_ielts.service.base.BaseEntityService;
 import lombok.extern.slf4j.Slf4j;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -209,6 +211,7 @@ public abstract class BaseEntityServiceImpl<T, ID> implements BaseEntityService<
     }
 
     protected abstract void markAsDeleted(T entity);
+    protected abstract void markAsDeleted(List<T> entity, Account modifier, ZonedDateTime currentTime);
 
     public List<T> all(){
         return getRepository().findAll();

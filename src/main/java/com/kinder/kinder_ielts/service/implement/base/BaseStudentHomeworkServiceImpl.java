@@ -1,13 +1,18 @@
 package com.kinder.kinder_ielts.service.implement.base;
 import com.kinder.kinder_ielts.constant.IsDelete;
+import com.kinder.kinder_ielts.entity.Account;
 import com.kinder.kinder_ielts.entity.id.StudentHomeworkId;
 import com.kinder.kinder_ielts.entity.join_entity.StudentHomework;
 import com.kinder.kinder_ielts.repository.BaseEntityRepository;
 import com.kinder.kinder_ielts.repository.StudentHomeworkRepository;
 import com.kinder.kinder_ielts.service.base.BaseStudentHomeworkService;
+import com.kinder.kinder_ielts.util.SecurityContextHolderUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.time.ZonedDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -33,5 +38,14 @@ public class BaseStudentHomeworkServiceImpl extends BaseEntityServiceImpl<Studen
     @Override
     protected void markAsDeleted(StudentHomework entity) {
         entity.setIsDeleted(IsDelete.DELETED);
+        entity.updateAudit(SecurityContextHolderUtil.getAccount(), ZonedDateTime.now());
+    }
+
+    @Override
+    protected void markAsDeleted(List<StudentHomework> entity, Account modifier, ZonedDateTime currentTime) {
+        for (StudentHomework studentHomework : entity) {
+            studentHomework.setIsDeleted(IsDelete.DELETED);
+            studentHomework.updateAudit(modifier, currentTime);
+        }
     }
 }

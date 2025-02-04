@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -42,14 +43,14 @@ public class BaseClassroomTutorServiceImpl extends BaseEntityServiceImpl<Classro
     @Override
     protected void markAsDeleted(ClassroomTutor entity) {
         entity.setIsDeleted(IsDelete.DELETED);
-        entity.setModifyTime(ZonedDateTime.now());
+        entity.updateAudit(SecurityContextHolderUtil.getAccount(), ZonedDateTime.now());
+    }
 
-        String modifier = SecurityContextHolderUtil.getAccountId();
-        log.debug("Modifier [Account] ID fetched from security context: {}", modifier);
-
-        log.debug("Fetching [account] for modifier ID: {}", modifier);
-        Account account = baseAccountService.get(modifier, IsDelete.NOT_DELETED, ClassroomMessage.CREATE_FAILED);
-        entity.setCreateBy(account);
-        log.debug("[Account] fetched successfully and assigned to {} modifier.", getEntityName());
+    @Override
+    protected void markAsDeleted(List<ClassroomTutor> entity, Account modifier, ZonedDateTime currentTime) {
+        for (ClassroomTutor classroomTutor : entity) {
+            classroomTutor.setIsDeleted(IsDelete.DELETED);
+            classroomTutor.updateAudit(modifier, currentTime);
+        }
     }
 }

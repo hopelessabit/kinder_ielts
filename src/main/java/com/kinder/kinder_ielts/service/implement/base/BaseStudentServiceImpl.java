@@ -3,14 +3,17 @@ package com.kinder.kinder_ielts.service.implement.base;
 import com.kinder.kinder_ielts.constant.AccountStatus;
 import com.kinder.kinder_ielts.constant.IsDelete;
 import com.kinder.kinder_ielts.dto.Error;
+import com.kinder.kinder_ielts.entity.Account;
 import com.kinder.kinder_ielts.entity.Student;
 import com.kinder.kinder_ielts.exception.NotFoundException;
 import com.kinder.kinder_ielts.repository.StudentRepository;
 import com.kinder.kinder_ielts.service.base.BaseStudentService;
+import com.kinder.kinder_ielts.util.SecurityContextHolderUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
 /**
@@ -42,9 +45,24 @@ public class BaseStudentServiceImpl extends BaseEntityServiceImpl<Student, Strin
     @Override
     protected void markAsDeleted(Student entity) {
         entity.setIsDeleted(IsDelete.DELETED);
+        entity.updateAudit(SecurityContextHolderUtil.getAccount(), ZonedDateTime.now());
         if (entity.getAccount() != null) {
             entity.getAccount().setIsDeleted(IsDelete.DELETED);
             entity.getAccount().setStatus(AccountStatus.INACTIVE);
+            entity.getAccount().updateAudit(SecurityContextHolderUtil.getAccount(), ZonedDateTime.now());
+        }
+    }
+
+    @Override
+    protected void markAsDeleted(List<Student> entity, Account modifier, ZonedDateTime currentTime) {
+        for (Student student : entity) {
+            student.setIsDeleted(IsDelete.DELETED);
+            student.updateAudit(modifier, currentTime);
+            if (student.getAccount() != null) {
+                student.getAccount().setIsDeleted(IsDelete.DELETED);
+                student.getAccount().setStatus(AccountStatus.INACTIVE);
+                student.getAccount().updateAudit(modifier, currentTime);
+            }
         }
     }
 

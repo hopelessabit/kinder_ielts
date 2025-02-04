@@ -12,10 +12,9 @@ import com.kinder.kinder_ielts.dto.request.classroom.CreateClassroomRequest;
 import com.kinder.kinder_ielts.entity.*;
 import com.kinder.kinder_ielts.entity.course_template.TemplateClassroom;
 import com.kinder.kinder_ielts.entity.course_template.TemplateStudySchedule;
+import com.kinder.kinder_ielts.entity.id.ClassStudentId;
 import com.kinder.kinder_ielts.entity.id.CourseTutorId;
-import com.kinder.kinder_ielts.entity.join_entity.ClassroomTutor;
-import com.kinder.kinder_ielts.entity.join_entity.ClassroomWeeklySchedule;
-import com.kinder.kinder_ielts.entity.join_entity.CourseTutor;
+import com.kinder.kinder_ielts.entity.join_entity.*;
 import com.kinder.kinder_ielts.exception.BadRequestException;
 import com.kinder.kinder_ielts.exception.NotFoundException;
 import com.kinder.kinder_ielts.mapper.ModelMapper;
@@ -24,6 +23,7 @@ import com.kinder.kinder_ielts.response_message.CourseMessage;
 import com.kinder.kinder_ielts.service.ClassroomService;
 import com.kinder.kinder_ielts.service.base.*;
 import com.kinder.kinder_ielts.service.base.BaseCourseTutorService;
+import com.kinder.kinder_ielts.service.implement.base.BaseClassroomStudentServiceImpl;
 import com.kinder.kinder_ielts.util.CompareUtil;
 import com.kinder.kinder_ielts.util.SecurityContextHolderUtil;
 import com.kinder.kinder_ielts.util.Time;
@@ -58,6 +58,7 @@ public class ClassroomServiceImpl implements ClassroomService {
     private final BaseClassroomService baseClassroomService;
     private final BaseCourseTutorService baseCourseTutorService;
     private final BaseClassroomTutorService baseClassroomTutorService;
+    private BaseClassroomStudentServiceImpl baseClassroomStudentService;
 
 
     /**
@@ -487,5 +488,132 @@ public class ClassroomServiceImpl implements ClassroomService {
         log.info("[REMOVE CLASSROOM TUTORS] Successfully removed {} tutors.", removeClassroomTutors.size());
 
         return removeClassroomTutors.size();
+    }
+
+    public Integer updateClassroomStudent(String id, UpdateClassroomStudentRequest request, String failMessage) {
+        log.info("[UPDATE CLASSROOM STUDENTS] Start updating students for Classroom ID: {}", id);
+
+        Account actor = SecurityContextHolderUtil.getAccount();
+        ZonedDateTime currentTime = ZonedDateTime.now();
+        log.info("[UPDATE CLASSROOM STUDENTS] Actor: {} | Time: {}", actor.getUsername(), currentTime);
+
+        // Fetch Classroom and Course details
+        Classroom classroom = baseClassroomService.get(id, IsDelete.NOT_DELETED, failMessage);
+        Course course = classroom.getCourse();
+        List<ClassroomStudent> classroomStudents = classroom.getClassroomStudents();
+        List<CourseStudent> courseStudents = course.getCourseStudents();
+
+        log.info("[UPDATE CLASSROOM STUDENTS] Current Classroom Students: {}", classroomStudents.size());
+        log.info("[UPDATE CLASSROOM STUDENTS] Current Course Students: {}", courseStudents.size());
+
+        // Perform removal of students
+        log.info("[UPDATE CLASSROOM STUDENTS] Performing student removal...");
+        int removeCount = performRemoveStudent(classroomStudents, request.getRemove(), failMessage);
+        log.info("[UPDATE CLASSROOM STUDENTS] Student removal completed. Removed: {}", removeCount);
+
+        // Perform addition of students
+        log.info("[UPDATE CLASSROOM STUDENTS] Performing student addition...");
+        int addCount = performAddStudent(classroom, courseStudents, classroomStudents, request.getAdd(), actor, currentTime, failMessage);
+        log.info("[UPDATE CLASSROOM STUDENTS] Student addition completed. Added: {}", addCount);
+
+        log.info("[UPDATE CLASSROOM STUDENTS] Successfully updated students for Classroom ID: {}", id);
+
+        return addCount + removeCount;
+    }
+
+    /**
+     * Add students to the classroom.
+     */
+    protected int performAddStudent(Classroom classroom, List<CourseStudent> courseStudents, List<ClassroomStudent> classroomStudents,
+                                    List<String> studentIds, Account actor, ZonedDateTime currentTime, String failMessage) {
+        if (studentIds == null || studentIds.isEmpty()) {
+            log.info("[ADD CLASSROOM STUDENTS] No students to add.");
+            return 0;
+        }
+
+        log.info("[ADD CLASSROOM STUDENTS] Requested student IDs to add: {}", studentIds);
+
+        // Validate Student Availability in Course
+        Set<String> courseStudentIds = courseStudents.stream()
+                .map(courseStudent -> courseStudent.getId().getStudentId())
+                .collect(Collectors.toSet());
+
+        List<String> unavailableStudentIds = studentIds.stream()
+                .filter(studentId -> !courseStudentIds.contains(studentId))
+                .toList();
+
+        if (!unavailableStudentIds.isEmpty()) {
+            log.error("[ADD CLASSROOM STUDENTS] Some students are not available in the course: {}", unavailableStudentIds);
+            throw new BadRequestException(failMessage, Error.build(
+                    "Some students are not available in this course. Student IDs: " + unavailableStudentIds, unavailableStudentIds));
+        }
+
+        // Validate Deleted Students
+        List<String> deletedStudentIds = courseStudents.stream()
+                .filter(courseStudent -> studentIds.contains(courseStudent.getId().getStudentId()))
+                .filter(courseStudent -> courseStudent.getIsDeleted().equals(IsDelete.DELETED))
+                .map(courseStudent -> courseStudent.getId().getStudentId())
+                .toList();
+
+        if (!deletedStudentIds.isEmpty()) {
+            log.error("[ADD CLASSROOM STUDENTS] Some students are marked as deleted: {}", deletedStudentIds);
+            throw new BadRequestException(failMessage, Error.build(
+                    "Some students are marked as deleted. Student IDs: " + deletedStudentIds, deletedStudentIds));
+        }
+
+        // Separate already existing and new students in the classroom
+        Set<String> existingClassroomStudentIds = classroomStudents.stream()
+                .map(classroomStudent -> classroomStudent.getId().getStudentId())
+                .collect(Collectors.toSet());
+
+        List<String> newStudentIds = studentIds.stream()
+                .filter(studentId -> !existingClassroomStudentIds.contains(studentId))
+                .toList();
+
+        // Add New Students
+        List<ClassroomStudent> newClassroomStudents = newStudentIds.stream()
+                .map(studentId -> new ClassroomStudent(classroom,
+                        courseStudents.stream()
+                                .filter(courseStudent -> courseStudent.getId().getStudentId().equals(studentId))
+                                .findFirst()
+                                .orElseThrow(() -> new BadRequestException(failMessage, Error.build("Student not found: " + studentId)))
+                                .getStudent(),
+                        actor, currentTime))
+                .toList();
+
+        classroomStudents.addAll(newClassroomStudents);
+        log.info("[ADD CLASSROOM STUDENTS] Successfully added {} new students.", newClassroomStudents.size());
+
+        return newClassroomStudents.size();
+    }
+
+    /**
+     * Remove students from the classroom.
+     */
+    protected int performRemoveStudent(List<ClassroomStudent> classroomStudents, List<String> studentIds, String failMessage) {
+        if (studentIds == null || studentIds.isEmpty()) {
+            log.info("[REMOVE CLASSROOM STUDENTS] No students to remove.");
+            return 0;
+        }
+
+        log.info("[REMOVE CLASSROOM STUDENTS] Requested student IDs to remove: {}", studentIds);
+
+        List<ClassroomStudent> removeClassroomStudents = classroomStudents.stream()
+                .filter(classroomStudent -> studentIds.contains(classroomStudent.getId().getStudentId()))
+                .toList();
+
+        if (removeClassroomStudents.isEmpty()) {
+            log.warn("[REMOVE CLASSROOM STUDENTS] No matching students found to remove.");
+            return 0;
+        }
+
+        baseClassroomStudentService.remove(removeClassroomStudents.stream()
+                .map(ClassroomStudent::getId)
+                .toList(), failMessage);
+
+        classroomStudents.removeAll(removeClassroomStudents);
+        log.info("[REMOVE CLASSROOM STUDENTS] Successfully removed {} students.", removeClassroomStudents.size());
+
+        return removeClassroomStudents.size();
     }
 }

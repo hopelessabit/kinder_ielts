@@ -7,10 +7,12 @@ import com.kinder.kinder_ielts.dto.Error;
 import com.kinder.kinder_ielts.exception.NotFoundException;
 import com.kinder.kinder_ielts.repository.AccountRepository;
 import com.kinder.kinder_ielts.service.base.BaseAccountService;
+import com.kinder.kinder_ielts.util.SecurityContextHolderUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Service
@@ -29,7 +31,7 @@ public class BaseAccountServiceImpl  extends BaseEntityServiceImpl<Account, Stri
 
     @Override
     protected String getEntityName() {
-        return "Account";
+        return "[Account]";
     }
 
     @Override
@@ -41,6 +43,16 @@ public class BaseAccountServiceImpl  extends BaseEntityServiceImpl<Account, Stri
     protected void markAsDeleted(Account account) {
         account.setIsDeleted(IsDelete.DELETED);
         account.setStatus(AccountStatus.INACTIVE);
+        account.updateAudit(SecurityContextHolderUtil.getAccount(), ZonedDateTime.now());
+    }
+
+    @Override
+    protected void markAsDeleted(List<Account> entity, Account modifier, ZonedDateTime currentTime) {
+        for (Account account : entity) {
+            account.setIsDeleted(IsDelete.DELETED);
+            account.setStatus(AccountStatus.INACTIVE);
+            account.updateAudit(modifier, currentTime);
+        }
     }
 
     // ==========================

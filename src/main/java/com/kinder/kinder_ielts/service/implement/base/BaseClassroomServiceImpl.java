@@ -16,6 +16,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -37,7 +38,7 @@ public class BaseClassroomServiceImpl extends BaseEntityServiceImpl<Classroom, S
      */
     @Override
     protected String getEntityName() {
-        return "Class";
+        return "[Class]";
     }
 
     /**
@@ -53,13 +54,16 @@ public class BaseClassroomServiceImpl extends BaseEntityServiceImpl<Classroom, S
      */
     @Override
     protected void markAsDeleted(Classroom classroom) {
-        String modifierId = SecurityContextHolderUtil.getAccountId();
-        log.debug("Fetching account for modifier ID: {}", modifierId);
-        Account modifier = baseAccountService.get(modifierId, IsDelete.NOT_DELETED, CourseMessage.DELETE_FAILED);
-
-        classroom.setModifyBy(modifier);
-        classroom.setModifyTime(ZonedDateTime.now());
         classroom.setIsDeleted(IsDelete.DELETED);
+        classroom.updateAudit(SecurityContextHolderUtil.getAccount(), ZonedDateTime.now());
+    }
+
+    @Override
+    protected void markAsDeleted(List<Classroom> entity, Account modifier, ZonedDateTime currentTime) {
+        for (Classroom classroom : entity) {
+            classroom.setIsDeleted(IsDelete.DELETED);
+            classroom.updateAudit(modifier, currentTime);
+        }
     }
 
     @Override
