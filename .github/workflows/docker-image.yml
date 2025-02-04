@@ -57,6 +57,12 @@ jobs:
 
           ssh-keyscan -H 150.95.109.50 >> ~/.ssh/known_hosts  # 150.95.109.50
 
+          echo "setting" #Add
+          echo "AZURE_TENANT_ID=${{ secrets.AZURE_TENANT_ID }}" >> ~/.bashrc #Add
+          echo "AZURE_CLIENT_ID=${{ secrets.AZURE_CLIENT_ID }}" >> ~/.bashrc #Add
+          echo "AZURE_CLIENT_SECRET=${{ secrets.AZURE_CLIENT_SECRET }}" >> ~/.bashrc #Add
+          echo "ONEDRIVE_DRIVE_ID=${{ secrets.ONEDRIVE_DRIVE_ID }}" >> ~/.bashrc #Add
+
       - name: Deploy to VPS
         run: |
           # Add your deployment commands here, using SSH to connect to your VPS
@@ -86,9 +92,9 @@ jobs:
               -e SERVER_SSL_KEY_ALIAS=kinder_ielts \
               -e SPRING_JPA_PROPERTIES_HIBERNATE_JDBC_TIME_ZONE=Asia/Bangkok \
               -e SPRING_JACKSON_TIME_ZONE=Asia/Bangkok \
-              -e AZURE_TENANT_ID=2ced3377-c996-45c8-bf26-d07bd60c5bbc \
-              -e AZURE_CLIENT_ID=a2621942-5d1d-4e45-94c4-db26eb7331c5 \
-              -e AZURE_CLIENT_SECRET=EV98Q~MjOJYKG4r6kif3IMvUzIewfml1gch1GclN \
-              -e ONEDRIVE_DRIVE_ID='b!Lb7664wBnECJaM4v2EeKOSoPmwNkuPFNgAIrg0gVnm-5bK4ObU6pRIa3ZpYmjFEe' \
+              -e AZURE_TENANT_ID=${{ secrets.AZURE_TENANT_ID }} \
+              -e AZURE_CLIENT_ID=${{ secrets.AZURE_CLIENT_ID }} \
+              -e AZURE_CLIENT_SECRET=${{ secrets.AZURE_CLIENT_SECRET }} \
+              -e ONEDRIVE_DRIVE_ID=${{ secrets.ONEDRIVE_DRIVE_ID }} \
               highschoolvn/kinder_ielts
             " # Close the SSH command
