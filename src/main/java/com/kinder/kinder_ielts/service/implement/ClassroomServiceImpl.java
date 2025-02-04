@@ -183,6 +183,9 @@ public class ClassroomServiceImpl implements ClassroomService {
                     .findFirst()
                     .orElseThrow(() -> new NotFoundException("", Error.build("", List.of(templateStudySchedule.getPlace()))));
 
+            studySchedule.setTitle(templateStudySchedule.getTitle());
+            studySchedule.setDescription(templateStudySchedule.getDescription());
+
             List<ClassroomLink> classroomLinks = templateStudySchedule.getClassroomLinks().stream()
                     .map(c -> ClassroomLink.from(c, studySchedule, account, currentTime)).toList();
             List<WarmUpTest> warmUpTests = templateStudySchedule.getWarmUpTests().stream()
