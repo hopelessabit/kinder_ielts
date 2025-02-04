@@ -9,11 +9,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1. Checkout Code (Important for Caching to Work)
       - name: Checkout code
         uses: actions/checkout@v3
         with:
           fetch-depth: 0  # Fetches all history for better caching
-          
+
+      # 2. Set up JDK
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      # 3. Cache Maven Packages (Key for Speeding up Builds)
       - name: Cache Maven packages
         uses: actions/cache@v3
         with:
@@ -22,20 +31,17 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      - name: Set up JDK 17 # Set up Java, to run Maven
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'
-          distribution: 'temurin'
+      # 4. Build with Maven (Using Batch Mode for Non-Interactive Build)
+      - name: Build with Maven
+        run: mvn clean install -DskipTests=true -B
 
-      - name: Build with Maven # Build the JAR *before* building the Docker image
-        run: mvn clean install -DskipTests=true
-
+      # 5. Decode and Save Keystore (Securely Retrieve Keystore from Secret)
       - name: Decode and Save Keystore
         run: |
           mkdir -p src/main/resources
           echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > src/main/resources/keystore.p12
 
+      # 6. Docker Login (Recommended GitHub Action for Secure Login)
       - name: Docker Login
         uses: docker/login-action@v3
         with:
@@ -43,6 +49,7 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
+      # 7. Build and Push Docker image
       - name: Build and Push Docker image
         env:
           IMAGE_NAME: highschoolvn/kinder_ielts
@@ -50,7 +57,8 @@ jobs:
           docker build -t ${IMAGE_NAME} .
           docker push ${IMAGE_NAME}
 
-      - name: Set up SSH
+      # 8. Set up SSH and Environment Variables (Before Deployment)
+      - name: Set up SSH and Environment Variables
         run: |
           # Install SSH client
           sudo apt-get update
@@ -65,14 +73,16 @@ jobs:
           # Set correct permissions
           chmod 600 ~/.ssh/id_rsa
 
-          ssh-keyscan -H 150.95.109.50 >> ~/.ssh/known_hosts  # 150.95.109.50
+          # Add the VPS host key to known_hosts (for security)
+          ssh-keyscan -H 150.95.109.50 >> ~/.ssh/known_hosts
 
-          echo "setting" #Add
-          echo "AZURE_TENANT_ID=${{ secrets.AZURE_TENANT_ID }}" >> ~/.bashrc #Add
-          echo "AZURE_CLIENT_ID=${{ secrets.AZURE_CLIENT_ID }}" >> ~/.bashrc #Add
-          echo "AZURE_CLIENT_SECRET=${{ secrets.AZURE_CLIENT_SECRET }}" >> ~/.bashrc #Add
-          echo "ONEDRIVE_DRIVE_ID=${{ secrets.ONEDRIVE_DRIVE_ID }}" >> ~/.bashrc #Add
+          # Export environment variables
+          echo "AZURE_TENANT_ID=${{ secrets.AZURE_TENANT_ID }}" >> $GITHUB_ENV
+          echo "AZURE_CLIENT_ID=${{ secrets.AZURE_CLIENT_ID }}" >> $GITHUB_ENV
+          echo "AZURE_CLIENT_SECRET=${{ secrets.AZURE_CLIENT_SECRET }}" >> $GITHUB_ENV
+          echo "ONEDRIVE_DRIVE_ID=${{ secrets.ONEDRIVE_DRIVE_ID }}" >> $GITHUB_ENV
 
+      # 9. Deploy to VPS (Using Environment Variables for Configuration)
       - name: Deploy to VPS
         run: |
           # Add your deployment commands here, using SSH to connect to your VPS
@@ -102,9 +112,9 @@ jobs:
               -e SERVER_SSL_KEY_ALIAS=kinder_ielts \
               -e SPRING_JPA_PROPERTIES_HIBERNATE_JDBC_TIME_ZONE=Asia/Bangkok \
               -e SPRING_JACKSON_TIME_ZONE=Asia/Bangkok \
-              -e AZURE_TENANT_ID=${{ secrets.AZURE_TENANT_ID }} \
-              -e AZURE_CLIENT_ID=${{ secrets.AZURE_CLIENT_ID }} \
-              -e AZURE_CLIENT_SECRET=${{ secrets.AZURE_CLIENT_SECRET }} \
-              -e ONEDRIVE_DRIVE_ID=${{ secrets.ONEDRIVE_DRIVE_ID }} \
+              -e AZURE_TENANT_ID=${{ env.AZURE_TENANT_ID }} \
+              -e AZURE_CLIENT_ID=${{ env.AZURE_CLIENT_ID }} \
+              -e AZURE_CLIENT_SECRET=${{ env.AZURE_CLIENT_SECRET }} \
+              -e ONEDRIVE_DRIVE_ID=${{ env.ONEDRIVE_DRIVE_ID }} \
               highschoolvn/kinder_ielts
             " # Close the SSH command
