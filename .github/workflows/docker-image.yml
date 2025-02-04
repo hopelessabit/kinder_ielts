@@ -1,0 +1,86 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main" ] # Runs when code is pushed to the "main" branch
+  #  pull_request: # Removed PR trigger to simplify for this example
+  #    branches: [ "main" ]
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Build with Maven
+        run: mvn clean package -DskipTests=true # Build artifact
+
+      - name: Login to Docker Hub
+        run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and Push Docker image
+        env:
+          IMAGE_NAME: highschoolvn/kinder_ielts
+        run: |
+          docker build -t ${IMAGE_NAME} .
+          docker push ${IMAGE_NAME}
+
+      - name: SSH Deploy to VPS
+        if: github.ref == 'refs/heads/main' # Deploy only on pushes to main
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          HOST: 150.95.109.50 # Your VPS IP Address
+          USER: your_vps_username  # Replace with your VPS username
+        run: |
+          # Install SSH client if not already present
+          sudo apt-get update
+          sudo apt-get install -y openssh-client
+
+          # Add SSH key
+          mkdir -p ~/.ssh/
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan ${HOST} >> ~/.ssh/known_hosts
+
+          # Execute deployment commands on VPS using SSH
+          ssh -o StrictHostKeyChecking=no ${USER}@${HOST} "
+            docker stop kinder_ielts && docker rm kinder_ielts && docker rmi highschoolvn/kinder_ielts || true; # Ignore errors if container doesn't exist
+
+            docker pull highschoolvn/kinder_ielts;
+
+            docker run -d \
+              --name kinder_ielts \
+              -p 8080:8080 \
+              -e SPRING_CONFIG_LOCATION=classpath:/application.properties \
+              -e SPRING_DATASOURCE_URL=\"jdbc:sqlserver://150.95.109.50:1433;encrypt=true;trustServerCertificate=true;databaseName=kinder_ielts\" \
+              -e SPRING_DATASOURCE_USERNAME=sa \
+              -e SPRING_DATASOURCE_PASSWORD=Fpt123123@ \
+              -e SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.SQLServerDialect \
+              -e SPRING_JPA_HIBERNATE_DDL_AUTO=update \
+              -e SPRING_JPA_SHOW_SQL=true \
+              -e SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL=true \
+              -e SECRET_KEY=94b83cf0b942b22cc7c98924f90eec3bc90b974d61392b4eb694b85f7c68265e \
+              -e EXPIRATION=604800000 \
+              -e REFRESH_TOKEN_EXPIRATION=2592000000 \
+              -e SERVER_PORT=8080 \
+              -e SERVER_SSL_ENABLED=true \
+              -e SERVER_SSL_KEY_STORE=file:/app/resources/keystore.p12 \
+              -e SERVER_SSL_KEY_STORE_PASSWORD=KinderIelts \
+              -e SERVER_SSL_KEY_STORE_TYPE=PKCS12 \
+              -e SERVER_SSL_KEY_ALIAS=kinder_ielts \
+              -e SPRING_JPA_PROPERTIES_HIBERNATE_JDBC_TIME_ZONE=Asia/Bangkok \
+              -e SPRING_JACKSON_TIME_ZONE=Asia/Bangkok \
+              -e AZURE_TENANT_ID=2ced3377-c996-45c8-bf26-d07bd60c5bbc \
+              -e AZURE_CLIENT_ID=a2621942-5d1d-4e45-94c4-db26eb7331c5 \
+              -e AZURE_CLIENT_SECRET=EV98Q~MjOJYKG4r6kif3IMvUzIewfml1gch1GclN \
+              -e ONEDRIVE_DRIVE_ID='b!Lb7664wBnECJaM4v2EeKOSoPmwNkuPFNgAIrg0gVnm-5bK4ObU6pRIa3ZpYmjFEe' \
+              highschoolvn/kinder_ielts
+          "
