@@ -1,5 +1,6 @@
 package com.kinder.kinder_ielts.entity.join_entity;
 
+import com.kinder.kinder_ielts.entity.Account;
 import com.kinder.kinder_ielts.entity.Classroom;
 import com.kinder.kinder_ielts.entity.Student;
 import com.kinder.kinder_ielts.entity.base.BaseEntity;
@@ -29,7 +30,7 @@ public class ClassroomStudent extends BaseEntity {
     )
     private Classroom classroom;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @MapsId("studentId")
     @JoinColumn(
             name = "student_id",
@@ -44,5 +45,12 @@ public class ClassroomStudent extends BaseEntity {
     public ClassroomStudent(String classId, String studentId, ZonedDateTime assignedDate) {
         this.id = new ClassStudentId(classId, studentId);
         this.assignedDate = assignedDate;
+    }
+
+    public ClassroomStudent(Classroom classroom, Student student, Account actor, ZonedDateTime currentTime) {
+        this.id = new ClassStudentId(classroom.getId(), student.getId());
+        this.classroom = classroom;
+        this.student = student;
+        this.initForNew(actor, currentTime);
     }
 }

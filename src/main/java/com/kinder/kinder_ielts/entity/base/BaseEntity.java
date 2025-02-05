@@ -53,6 +53,7 @@ public abstract class BaseEntity {
     public void initForNew(Account account, ZonedDateTime currentTime){
         this.createTime = currentTime;
         this.createBy = account;
+        this.isDeleted = IsDelete.NOT_DELETED;
     }
 
     public void updateAudit(Account modifier, ZonedDateTime modifyTime){

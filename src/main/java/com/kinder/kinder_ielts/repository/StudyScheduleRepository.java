@@ -13,4 +13,6 @@ public interface StudyScheduleRepository extends BaseEntityRepository<StudySched
     List<StudySchedule> findByIdInAndIsDeletedIn(List<String> ids, List<IsDelete> isDeletes);
 
     Optional<StudySchedule> findByIdAndIsDeleted(String id, IsDelete findDeleted);
+
+//    List<StudySchedule> findById_ClassIdAndIsDeleted(String classId, IsDelete isDelete);
 }

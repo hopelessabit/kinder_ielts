@@ -83,4 +83,11 @@ public class Account extends BaseEntity implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+    public Account(String id) {
+        this.id = id;
+    }
+
+    public Account() {
+    }
 }

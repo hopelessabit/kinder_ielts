@@ -48,4 +48,10 @@ public class BaseStudyScheduleServiceImpl extends BaseEntityServiceImpl<StudySch
             studySchedule.updateAudit(modifier, currentTime);
         }
     }
+
+    @Override
+    public List<StudySchedule> findByClassId(String classId, IsDelete isDelete, String failMessage) {
+//        return studyScheduleRepository.findById_ClassIdAndIsDeleted(classId, isDelete);
+        return null;
+    }
 }

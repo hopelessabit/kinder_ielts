@@ -6,13 +6,13 @@ import com.kinder.kinder_ielts.constant.IsDelete;
 import com.kinder.kinder_ielts.constant.Role;
 import com.kinder.kinder_ielts.dto.Error;
 import com.kinder.kinder_ielts.dto.request.classroom.UpdateClassroomRequest;
+import com.kinder.kinder_ielts.dto.request.classroom.UpdateClassroomStudentRequest;
 import com.kinder.kinder_ielts.dto.request.classroom.UpdateClassroomTutorRequest;
 import com.kinder.kinder_ielts.dto.response.classroom.ClassroomResponse;
 import com.kinder.kinder_ielts.dto.request.classroom.CreateClassroomRequest;
 import com.kinder.kinder_ielts.entity.*;
 import com.kinder.kinder_ielts.entity.course_template.TemplateClassroom;
 import com.kinder.kinder_ielts.entity.course_template.TemplateStudySchedule;
-import com.kinder.kinder_ielts.entity.id.ClassStudentId;
 import com.kinder.kinder_ielts.entity.id.CourseTutorId;
 import com.kinder.kinder_ielts.entity.join_entity.*;
 import com.kinder.kinder_ielts.exception.BadRequestException;
@@ -23,7 +23,6 @@ import com.kinder.kinder_ielts.response_message.CourseMessage;
 import com.kinder.kinder_ielts.service.ClassroomService;
 import com.kinder.kinder_ielts.service.base.*;
 import com.kinder.kinder_ielts.service.base.BaseCourseTutorService;
-import com.kinder.kinder_ielts.service.implement.base.BaseClassroomStudentServiceImpl;
 import com.kinder.kinder_ielts.util.CompareUtil;
 import com.kinder.kinder_ielts.util.SecurityContextHolderUtil;
 import com.kinder.kinder_ielts.util.Time;
@@ -34,9 +33,7 @@ import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,7 +55,7 @@ public class ClassroomServiceImpl implements ClassroomService {
     private final BaseClassroomService baseClassroomService;
     private final BaseCourseTutorService baseCourseTutorService;
     private final BaseClassroomTutorService baseClassroomTutorService;
-    private BaseClassroomStudentServiceImpl baseClassroomStudentService;
+    private BaseClassroomStudentService baseClassroomStudentService;
 
 
     /**
