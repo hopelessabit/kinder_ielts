@@ -17,7 +17,7 @@ RUN apk add --no-cache \
     ttf-dejavu
 
 # Copy the keystore into the container
-COPY src/main/resources/keystore.p12 /app/resources/keystore.p12
+#COPY src/main/resources/keystore.p12 /app/resources/keystore.p12
 
 # Set environment variable to point to the credentials path
 #ENV FIREBASE_CREDENTIALS_PATH=/app/firebase-adminsdk.json
