@@ -52,4 +52,7 @@ public interface BaseStudentService extends BaseEntityService<Student, String> {
      * @see SqlException
      */
     List<Student> get(List<String> ids, AccountStatus accountStatus, String message);
+
+    List<Student> getByClassId(String classId, String failMessage);
+    List<Student> getByClassId(String classId);
 }

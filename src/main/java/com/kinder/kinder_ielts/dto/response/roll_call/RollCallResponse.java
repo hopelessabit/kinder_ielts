@@ -9,13 +9,15 @@ import com.kinder.kinder_ielts.dto.response.study_schedule.StudyScheduleResponse
 import com.kinder.kinder_ielts.entity.RollCall;
 
 public class RollCallResponse {
-    public StudentResponse student;
-    public StudyScheduleResponse studySchedule;
-    public StatusResponse<RollCallStatus> status;
+    public final StudentResponse student;
+    public final StudyScheduleResponse studySchedule;
+    public final StatusResponse<RollCallStatus> status;
+    public final String note;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public BaseEntityResponse extendDetail;
 
     public RollCallResponse(RollCall rollCall, boolean includeForAdmin, boolean includeStudySchedule) {
+        this.note = rollCall.getNote();
         this.student = StudentResponse.info(rollCall.getStudent());
         this.studySchedule = includeStudySchedule ? StudyScheduleResponse.info(rollCall.getStudySchedule()) : null;
         this.status = StatusResponse.from(rollCall.getStatus());

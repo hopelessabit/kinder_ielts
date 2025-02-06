@@ -7,6 +7,7 @@ import com.kinder.kinder_ielts.entity.Account;
 import com.kinder.kinder_ielts.entity.Student;
 import com.kinder.kinder_ielts.exception.NotFoundException;
 import com.kinder.kinder_ielts.repository.StudentRepository;
+import com.kinder.kinder_ielts.response_message.StudentMessage;
 import com.kinder.kinder_ielts.service.base.BaseStudentService;
 import com.kinder.kinder_ielts.util.SecurityContextHolderUtil;
 import lombok.RequiredArgsConstructor;
@@ -89,5 +90,19 @@ public class BaseStudentServiceImpl extends BaseEntityServiceImpl<Student, Strin
 
         log.info("Successfully fetched {}: {}", getEntityName(), students);
         return students;
+    }
+
+    @Override
+    public List<Student> getByClassId(String classId, String failMessage) {
+        List<Student> students = studentRepository.findAllByClassId(classId, IsDelete.NOT_DELETED);
+        if (students.isEmpty()) {
+            throw new NotFoundException(failMessage, Error.build(StudentMessage.NOT_FOUND_IN_CLASS, List.of(classId)));
+        }
+        return students;
+    }
+
+    @Override
+    public List<Student> getByClassId(String classId) {
+        return studentRepository.findAllByClassId(classId, IsDelete.NOT_DELETED);
     }
 }

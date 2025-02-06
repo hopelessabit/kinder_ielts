@@ -19,7 +19,7 @@ public class SecurityContextHolderUtil {
             }
             return ((Account) principal).getRole();
         } catch (Exception e){
-            throw new InternalServerExceptionException("Cannot get role from SecurityContextHolder", new Error(e.getMessage()));
+            throw new InternalServerExceptionException("Cannot get role from SecurityContextHolder", Error.build(e.getMessage()));
         }
     }
 

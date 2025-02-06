@@ -8,6 +8,9 @@ import com.kinder.kinder_ielts.exception.SqlException;
 import com.kinder.kinder_ielts.repository.BaseEntityRepository;
 import com.kinder.kinder_ielts.service.base.BaseEntityService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -134,7 +137,6 @@ public abstract class BaseEntityServiceImpl<T, ID> implements BaseEntityService<
     // Update entities
     public List<T> update(List<T> entities, String message) {
         log.info("Updating {} with ID: {}", getEntityName(), entities);
-        get(entities.stream().map(this::getEntityId).toList(), List.of(IsDelete.NOT_DELETED), message);
         try {
             List<T> updatedEntities = getRepository().saveAll(entities);
             log.info("Successfully updated {}: {}", getEntityName(), updatedEntities);
@@ -215,5 +217,9 @@ public abstract class BaseEntityServiceImpl<T, ID> implements BaseEntityService<
 
     public List<T> all(){
         return getRepository().findAll();
+    }
+
+    public Page<T> findAll(Specification<T> specification, Pageable pageable){
+        return getRepository().findAll(specification, pageable);
     }
 }

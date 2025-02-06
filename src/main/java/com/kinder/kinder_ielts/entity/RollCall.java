@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Nationalized;
 
 @Getter
 @Setter
@@ -20,6 +21,10 @@ public class RollCall extends BaseEntity {
     @Enumerated(EnumType.ORDINAL)
     @Column(name = "status")
     private RollCallStatus status;
+
+    @Nationalized
+    @Column(name = "note", nullable = true, length = 255)
+    private String note;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @MapsId("studentId")
