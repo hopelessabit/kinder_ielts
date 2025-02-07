@@ -105,6 +105,11 @@ jobs:
               -e EXPIRATION=604800000 \
               -e REFRESH_TOKEN_EXPIRATION=2592000000 \
               -e SERVER_PORT=8080 \
+              -e SERVER_SSL_ENABLED=true \
+              -e SERVER_SSL_KEY_STORE=file:/app/resources/keystore.p12 \
+              -e SERVER_SSL_KEY_STORE_PASSWORD=KinderIelts \
+              -e SERVER_SSL_KEY_STORE_TYPE=PKCS12 \
+              -e SERVER_SSL_KEY_ALIAS=kinder_ielts \
               -e SPRING_JPA_PROPERTIES_HIBERNATE_JDBC_TIME_ZONE=Asia/Bangkok \
               -e SPRING_JACKSON_TIME_ZONE=Asia/Bangkok \
               -e AZURE_TENANT_ID=${{ env.AZURE_TENANT_ID }} \
