@@ -36,10 +36,10 @@ jobs:
         run: mvn clean install -DskipTests=true -B
 
       # 5. Decode and Save Keystore (Securely Retrieve Keystore from Secret)
-      #- name: Decode and Save Keystore
-        #run: |
-          #mkdir -p src/main/resources
-          #echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > src/main/resources/keystore.p12
+      - name: Decode and Save Keystore
+        run: |
+          mkdir -p src/main/resources
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > src/main/resources/keystore.p12
 
       # 6. Docker Login (Recommended GitHub Action for Secure Login)
       - name: Docker Login
