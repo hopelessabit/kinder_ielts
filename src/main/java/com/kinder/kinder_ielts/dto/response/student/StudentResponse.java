@@ -6,11 +6,12 @@ import com.kinder.kinder_ielts.dto.response.account.SubAccountResponse;
 import com.kinder.kinder_ielts.dto.response.constant.CountryResponse;
 import com.kinder.kinder_ielts.dto.response.constant.IsDeletedResponse;
 import com.kinder.kinder_ielts.entity.Student;
-import com.kinder.kinder_ielts.entity.Tutor;
 import com.kinder.kinder_ielts.util.name.NameUtil;
+import lombok.Getter;
 
 import java.time.ZonedDateTime;
 
+@Getter
 public class StudentResponse{
     private AccountResponse account;
     private String fullName;

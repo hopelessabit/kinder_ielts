@@ -5,6 +5,7 @@ import com.kinder.kinder_ielts.constant.IsDelete;
 import com.kinder.kinder_ielts.constant.StudyMaterialStatus;
 import com.kinder.kinder_ielts.dto.request.material_link.CreateMaterialLinkRequest;
 import com.kinder.kinder_ielts.dto.request.study_material.CreateStudyMaterialRequest;
+import com.kinder.kinder_ielts.dto.request.study_material.ModifyStudyMaterialStatusRequest;
 import com.kinder.kinder_ielts.dto.request.study_material.UpdateStudyMaterialRequest;
 import com.kinder.kinder_ielts.dto.response.homework.HomeworkResponse;
 import com.kinder.kinder_ielts.dto.response.study_material.StudyMaterialResponse;
@@ -13,10 +14,12 @@ import com.kinder.kinder_ielts.entity.Account;
 import com.kinder.kinder_ielts.entity.Student;
 import com.kinder.kinder_ielts.entity.StudyMaterial;
 import com.kinder.kinder_ielts.entity.StudySchedule;
+import com.kinder.kinder_ielts.entity.join_entity.ClassroomStudent;
 import com.kinder.kinder_ielts.mapper.ModelMapper;
 import com.kinder.kinder_ielts.response_message.ClassroomMessage;
 import com.kinder.kinder_ielts.response_message.StudyScheduleMessage;
 import com.kinder.kinder_ielts.service.base.*;
+import com.kinder.kinder_ielts.service.implement.base.BaseClassroomStudentServiceImpl;
 import com.kinder.kinder_ielts.util.CompareUtil;
 import com.kinder.kinder_ielts.util.SecurityContextHolderUtil;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +38,7 @@ public class StudyMaterialServiceImpl {
     private final BaseStudyScheduleService baseStudyScheduleService;
     private final BaseTutorService baseTutorService;
     private final BaseStudyMaterialService baseStudyMaterialService;
+    private final BaseClassroomStudentService baseClassroomStudentService;
 
     public StudyMaterialResponse createStudyMaterial(String scheduleId, CreateStudyMaterialRequest request, String failMessage){
         StudyMaterial studyMaterial = ModelMapper.map(request);
@@ -81,4 +85,12 @@ public class StudyMaterialServiceImpl {
         baseStudyMaterialService.delete(id, deleteFailed);
         return null;
     }
+
+//    public StudyMaterialResponse updateStudyMaterialStatus(String studyMaterialId, ModifyStudyMaterialStatusRequest request, String statusUpdateFailed) {
+//        StudyMaterial studyMaterial = baseStudyMaterialService.get(studyMaterialId, IsDelete.NOT_DELETED, statusUpdateFailed);
+//
+//        studyMaterial.setPrivacyStatus(request.status);
+//        List<ClassroomStudent> classroomStudents = baseClassroomStudentService.getByClassroomId()
+//        return StudyMaterialResponse.detailWithDetails(baseStudyMaterialService.update(studyMaterial, statusUpdateFailed));
+//    }
 }

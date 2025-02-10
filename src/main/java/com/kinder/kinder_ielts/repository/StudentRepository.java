@@ -3,9 +3,12 @@ package com.kinder.kinder_ielts.repository;
 import com.kinder.kinder_ielts.constant.AccountStatus;
 import com.kinder.kinder_ielts.constant.IsDelete;
 import com.kinder.kinder_ielts.entity.Student;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Repository
@@ -21,4 +24,17 @@ public interface StudentRepository extends BaseEntityRepository<Student, String>
     and sc.is_deleted = :isDelete
 """, nativeQuery = true)
     List<Student> findAllByClassId(String classId, IsDelete isDelete);
+
+    @Modifying
+    @Query(value = """
+insert into student (id, create_time, is_deleted, email, first_name, last_name, middle_name, create_by) values (:id, :createTime, :isDeleted, :email, :firstName, :lastName, :middleName, :createBy);
+""", nativeQuery = true)
+    void saveStudent(@Param("id") String id,
+                     @Param("createTime") ZonedDateTime createTime,
+                     @Param("isDeleted") IsDelete isDeleted,
+                     @Param("email") String email,
+                     @Param("firstName") String firstName,
+                     @Param("lastName") String lastName,
+                     @Param("middleName") String middleName,
+                     @Param("createBy") String createBy);
 }

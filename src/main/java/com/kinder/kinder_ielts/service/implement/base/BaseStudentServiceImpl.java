@@ -13,6 +13,7 @@ import com.kinder.kinder_ielts.util.SecurityContextHolderUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -22,6 +23,7 @@ import java.util.List;
  * Provides CRUD operations for {@link Student} entities.
  */
 @Service
+@Transactional
 @RequiredArgsConstructor
 @Slf4j
 public class BaseStudentServiceImpl extends BaseEntityServiceImpl<Student, String> implements BaseStudentService {
@@ -104,5 +106,9 @@ public class BaseStudentServiceImpl extends BaseEntityServiceImpl<Student, Strin
     @Override
     public List<Student> getByClassId(String classId) {
         return studentRepository.findAllByClassId(classId, IsDelete.NOT_DELETED);
+    }
+
+    public void saveStudent(Student student) {
+        studentRepository.saveStudent(student.getId(), student.getCreateTime(), student.getIsDeleted(), student.getEmail(), student.getFirstName(), student.getLastName(), student.getMiddleName(), student.getCreateBy().getId());
     }
 }

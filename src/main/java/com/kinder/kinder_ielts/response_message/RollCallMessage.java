@@ -15,4 +15,7 @@ public class RollCallMessage {
 
     public static final String INFO_UPDATE_FAILED = "Cập nhật thông tin thông tin điểm danh học thất bại";
     public static final String INFO_UPDATED = "Cập nhật thông tin thông tin điểm danh học thành công";
+
+    public static final String UPDATE_SUCCESSFULLY = "Cập nhật thông tin điểm danh học thành công";
+    public static final String UPDATE_FAILED = "Cập nhật thông tin điểm danh học thất bại";
 }

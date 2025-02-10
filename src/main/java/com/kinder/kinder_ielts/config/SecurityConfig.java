@@ -43,6 +43,7 @@ public class SecurityConfig {
     private final String CLASSROOM_API = BASE_URL_V1 + "/class/**";
     private final String COURSE_API = BASE_URL_V1 + "/course/**";
     private final String TUTOR_API = BASE_URL_V1 + "/tutor/**";
+    private final String ROLLCALL_API = BASE_URL_V1 + "/roll-call/**";
     /**
      * Security filter chain security filter chain.
      *
@@ -62,6 +63,7 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.GET, CLASSROOM_API).permitAll()
                                 .requestMatchers(HttpMethod.GET, COURSE_API).permitAll()
                                 .requestMatchers(HttpMethod.GET, TUTOR_API).permitAll()
+                                .requestMatchers(HttpMethod.GET, ROLLCALL_API).permitAll()
                                 .requestMatchers(
                                         AUTHEN_URL,
                                         ACCOUNT_API,

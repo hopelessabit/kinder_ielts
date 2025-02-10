@@ -55,4 +55,5 @@ public interface BaseStudentService extends BaseEntityService<Student, String> {
 
     List<Student> getByClassId(String classId, String failMessage);
     List<Student> getByClassId(String classId);
+    void saveStudent(Student student);
 }

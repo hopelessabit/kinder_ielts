@@ -6,6 +6,7 @@ import com.kinder.kinder_ielts.entity.id.ClassStudentId;
 import com.kinder.kinder_ielts.entity.join_entity.ClassroomStudent;
 import com.kinder.kinder_ielts.repository.BaseEntityRepository;
 import com.kinder.kinder_ielts.repository.ClassroomStudentRepository;
+import com.kinder.kinder_ielts.service.base.BaseClassroomStudentService;
 import com.kinder.kinder_ielts.service.base.BaseEntityService;
 
 import com.kinder.kinder_ielts.util.SecurityContextHolderUtil;
@@ -19,7 +20,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class BaseClassroomStudentServiceImpl extends BaseEntityServiceImpl<ClassroomStudent, ClassStudentId> implements BaseEntityService<ClassroomStudent, ClassStudentId> {
+public class BaseClassroomStudentServiceImpl extends BaseEntityServiceImpl<ClassroomStudent, ClassStudentId> implements BaseClassroomStudentService {
     private final ClassroomStudentRepository classroomStudentRepository;
     @Override
     protected BaseEntityRepository<ClassroomStudent, ClassStudentId> getRepository() {
@@ -48,5 +49,10 @@ public class BaseClassroomStudentServiceImpl extends BaseEntityServiceImpl<Class
             classroomStudent.setIsDeleted(IsDelete.DELETED);
             classroomStudent.updateAudit(modifier, currentTime);
         }
+    }
+
+    @Override
+    public void updateStudent(String classroomId, String studentId, boolean isAdd) {
+        
     }
 }

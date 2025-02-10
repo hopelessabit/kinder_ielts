@@ -17,4 +17,7 @@ public class StudyMaterialMessage {
 
     public static final String DELETE_FAILED = "Xóa tài liệu thất bại";
     public static final String DELETED = "Xoá tài liệu thành công";
+
+    public static final String STATUS_UPDATE_FAILED = "Cập nhập trạng thái tài liệu thất bại";
+    public static final String STATUS_UPDATED = "Cập nhập trạng thái tài liệu thành công";
 }

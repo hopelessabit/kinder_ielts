@@ -45,10 +45,10 @@ public class Account extends BaseEntity implements UserDetails {
     @Enumerated(EnumType.STRING)
     private AccountStatus status;
 
-    @OneToOne(mappedBy = "account", fetch = FetchType.LAZY, cascade = CascadeType.ALL, optional = false)
+    @OneToOne(mappedBy = "account", fetch = FetchType.LAZY, cascade = CascadeType.ALL, optional = true)
     private Tutor tutor;
 
-    @OneToOne(mappedBy = "account", fetch = FetchType.LAZY, cascade = CascadeType.ALL, optional = false)
+    @OneToOne(mappedBy = "account", fetch = FetchType.LAZY, cascade = CascadeType.ALL, optional = true)
     private Student student;
 
     @OneToMany(mappedBy = "account", orphanRemoval = true, fetch = FetchType.LAZY)

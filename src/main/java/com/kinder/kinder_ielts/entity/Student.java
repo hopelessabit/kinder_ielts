@@ -23,7 +23,7 @@ public class Student extends BaseEntity {
     @Column(name = "id", nullable = false)
     private String id;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @MapsId
     @JoinColumn(name = "id")
     private Account account;
@@ -64,15 +64,15 @@ public class Student extends BaseEntity {
     @Column(name = "country")
     private EnumCountry country;
 
-    @ManyToMany(mappedBy = "studyMaterialsForStudents",fetch = FetchType.LAZY)
-    private List<StudyMaterial> studyMaterials;
-
-    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<StudentHomework> studentHomeworks;
-
-    @OneToMany(mappedBy = "student", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CourseStudent> courseStudents;
-
-    @OneToMany(mappedBy = "student", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ClassroomStudent> classroomStudents;
+//    @ManyToMany(mappedBy = "studyMaterialsForStudents",fetch = FetchType.LAZY)
+//    private List<StudyMaterial> studyMaterials;
+//
+//    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+//    private List<StudentHomework> studentHomeworks;
+//
+//    @OneToMany(mappedBy = "student", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<CourseStudent> courseStudents;
+//
+//    @OneToMany(mappedBy = "student", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<ClassroomStudent> classroomStudents;
 }

@@ -7,6 +7,7 @@ import com.kinder.kinder_ielts.dto.request.classroom.link.CreateClassroomLinkReq
 import com.kinder.kinder_ielts.dto.request.course.CreateCourseRequest;
 import com.kinder.kinder_ielts.dto.request.homework.CreateHomeworkRequest;
 import com.kinder.kinder_ielts.dto.request.material_link.CreateMaterialLinkRequest;
+import com.kinder.kinder_ielts.dto.request.student.CreateStudentRequest;
 import com.kinder.kinder_ielts.dto.request.study_material.CreateStudyMaterialRequest;
 import com.kinder.kinder_ielts.dto.request.study_schedule.CreateStudyScheduleRequest;
 import com.kinder.kinder_ielts.dto.request.template.CreateTemplateStudyMaterialRequest;
@@ -18,8 +19,11 @@ import com.kinder.kinder_ielts.dto.request.warm_up_test.CreateWarmUpTestRequest;
 import com.kinder.kinder_ielts.entity.*;
 import com.kinder.kinder_ielts.entity.course_template.*;
 import com.kinder.kinder_ielts.util.IdUtil;
+import com.kinder.kinder_ielts.util.PasswordUtil;
 import com.kinder.kinder_ielts.util.SecurityContextHolderUtil;
 import com.kinder.kinder_ielts.util.TimeUtil;
+import com.kinder.kinder_ielts.util.name.NameParts;
+import com.kinder.kinder_ielts.util.name.NameUtil;
 
 import java.time.ZonedDateTime;
 
@@ -211,5 +215,35 @@ public class ModelMapper {
         templateClassroomLink.setCreateTime(ZonedDateTime.now());
         templateClassroomLink.setIsDeleted(IsDelete.NOT_DELETED);
         return templateClassroomLink;
+    }
+
+    public static Student map(CreateStudentRequest request) {
+        Account creator = SecurityContextHolderUtil.getAccount();
+        ZonedDateTime currentTime = ZonedDateTime.now();
+
+        Student student = new Student();
+        Account account = new Account();
+        account.setId(IdUtil.generateId());
+        account.setUsername(request.getUsername());
+        account.setPassword(PasswordUtil.hashPassword(request.getPassword()));
+        //TODO: set default avatar
+        account.setRole(Role.STUDENT);
+        account.setIsDeleted(IsDelete.NOT_DELETED);
+        account.setStatus(AccountStatus.ACTIVE);
+        account.setCreateBy(creator);
+        account.setCreateTime(currentTime);
+
+        student.setAccount(account);
+        student.setId(account.getId());
+
+        NameParts nameParts = NameUtil.splitName(request.getName());
+        student.setFirstName(nameParts.firstName);
+        student.setMiddleName(nameParts.middleName);
+        student.setLastName(nameParts.lastName);
+        student.setEmail(request.getEmail());
+        student.setCreateBy(creator);
+        student.setCreateTime(currentTime);
+
+        return student;
     }
 }
