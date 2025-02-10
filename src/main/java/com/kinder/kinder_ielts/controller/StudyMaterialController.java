@@ -2,6 +2,7 @@ package com.kinder.kinder_ielts.controller;
 
 import com.kinder.kinder_ielts.dto.ResponseData;
 import com.kinder.kinder_ielts.dto.request.study_material.CreateStudyMaterialRequest;
+import com.kinder.kinder_ielts.dto.request.study_material.ModifyStudyMaterialStatusRequest;
 import com.kinder.kinder_ielts.dto.request.study_material.UpdateStudyMaterialRequest;
 import com.kinder.kinder_ielts.dto.response.study_material.StudyMaterialResponse;
 import com.kinder.kinder_ielts.dto.response.study_schedule.StudyScheduleResponse;
@@ -17,7 +18,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("")
+@RequestMapping("/api/v1/stuty-material")
 @RequiredArgsConstructor
 @SecurityRequirement(name = "Bearer")
 public class StudyMaterialController {
@@ -46,4 +47,10 @@ public class StudyMaterialController {
     public ResponseEntity<ResponseData<Void>> delete(@PathVariable String id){
         return ResponseUtil.getResponse(() -> studyMaterialService.delete(id, StudyMaterialMessage.DELETE_FAILED), StudyMaterialMessage.DELETED);
     }
+
+//    @PutMapping("/{studyMaterialId}")
+//    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR','TUTOR')")
+//    public ResponseEntity<ResponseData<StudyMaterialResponse>> updateStudyMaterialStatus(@PathVariable("studyMaterialId") String studyMaterialId, ModifyStudyMaterialStatusRequest request) {
+//        return ResponseUtil.getResponse(() -> studyMaterialService.updateStudyMaterialStatus(studyMaterialId, request, StudyMaterialMessage.STATUS_UPDATE_FAILED), StudyMaterialMessage.STATUS_UPDATED);
+//    }
 }
