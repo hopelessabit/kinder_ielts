@@ -70,11 +70,10 @@ public class OneDriveServiceImpl {
             if (uploadResult.isUploadSuccessful()) {
                 log.info("Upload complete");
                 log.info("Item ID: " + uploadResult.itemResponse.getId());
-//                String shareLink = createPublicShareLink(graphClient, uploadResult.itemResponse.getId());
-                String shareLink = createPublicImageLink(uploadResult.itemResponse.getId()).toString();
-                if (shareLink != null) {
-                    log.info("Public sharing link created: " + shareLink);
-                    return shareLink;
+                boolean updatePermission = createPublicShareLink(uploadResult.itemResponse.getId());
+                if (updatePermission) {
+                    log.info("Public sharing link created: " + uploadResult.itemResponse.getWebUrl());
+                    return uploadResult.itemResponse.getWebUrl();
                 }
                 else
                     return "Failed to create a public sharing link.";
@@ -91,7 +90,7 @@ public class OneDriveServiceImpl {
     }
 
     // Create a Public Sharing Link
-    public String createPublicShareLink(GraphServiceClient graphClient, String itemId) {
+    public boolean createPublicShareLink(String itemId) {
         try {
             CreateLinkPostRequestBody createLinkPostRequestBody = new CreateLinkPostRequestBody();
             createLinkPostRequestBody.setType("view");
@@ -105,7 +104,33 @@ public class OneDriveServiceImpl {
                     .post(createLinkPostRequestBody);
 
             if (permissionResult != null && permissionResult.getLink() != null) {
-                return permissionResult.getLink().getWebUrl();
+//                return permissionResult.getLink().getWebUrl();
+                return true;
+            }
+            else {
+                return false;
+            }
+
+        } catch (Exception ex) {
+            log.error("Error creating sharing link: " + ex.getMessage());
+            return false;
+        }
+    }
+    public Permission createPublicShareLinkTest(String itemId) {
+        try {
+            CreateLinkPostRequestBody createLinkPostRequestBody = new CreateLinkPostRequestBody();
+            createLinkPostRequestBody.setType("view");
+            createLinkPostRequestBody.setScope("anonymous");
+
+            Permission permissionResult = graphClient.drives()
+                    .byDriveId("b!Lb7664wBnECJaM4v2EeKOSoPmwNkuPFNgAIrg0gVnm-5bK4ObU6pRIa3ZpYmjFEe")
+                    .items()
+                    .byDriveItemId(itemId)
+                    .createLink()
+                    .post(createLinkPostRequestBody);
+
+            if (permissionResult != null && permissionResult.getLink() != null) {
+                return permissionResult;
             }
             else {
                 return null;
