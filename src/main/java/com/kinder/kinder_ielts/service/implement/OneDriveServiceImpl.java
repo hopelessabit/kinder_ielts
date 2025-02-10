@@ -15,6 +15,7 @@ import com.microsoft.graph.serviceclient.GraphServiceClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.support.SimpleTriggerContext;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -72,8 +73,15 @@ public class OneDriveServiceImpl {
                 log.info("Item ID: " + uploadResult.itemResponse.getId());
                 boolean updatePermission = createPublicShareLink(uploadResult.itemResponse.getId());
                 if (updatePermission) {
-                    log.info("Public sharing link created: " + uploadResult.itemResponse.getWebUrl());
-                    return uploadResult.itemResponse.getWebUrl();
+                    DriveItem thisDriveItem = graphClient
+                            .drives()
+                                    .byDriveId(driveId)
+                                            .items()
+                                                    .byDriveItemId(uploadResult.itemResponse.getId())
+                                                            .get();
+                    String downloadUrl = thisDriveItem.getAdditionalData().get("@microsoft.graph.downloadUrl").toString();
+                    log.info("Public sharing link created: " + downloadUrl);
+                    return downloadUrl;
                 }
                 else
                     return "Failed to create a public sharing link.";
@@ -104,7 +112,6 @@ public class OneDriveServiceImpl {
                     .post(createLinkPostRequestBody);
 
             if (permissionResult != null && permissionResult.getLink() != null) {
-//                return permissionResult.getLink().getWebUrl();
                 return true;
             }
             else {
@@ -121,6 +128,8 @@ public class OneDriveServiceImpl {
             CreateLinkPostRequestBody createLinkPostRequestBody = new CreateLinkPostRequestBody();
             createLinkPostRequestBody.setType("view");
             createLinkPostRequestBody.setScope("anonymous");
+
+
 
             Permission permissionResult = graphClient.drives()
                     .byDriveId("b!Lb7664wBnECJaM4v2EeKOSoPmwNkuPFNgAIrg0gVnm-5bK4ObU6pRIa3ZpYmjFEe")
