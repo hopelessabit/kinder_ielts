@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
+import java.time.OffsetDateTime;
 import java.util.Optional;
 
 @Service
@@ -103,6 +104,7 @@ public class OneDriveServiceImpl {
             CreateLinkPostRequestBody createLinkPostRequestBody = new CreateLinkPostRequestBody();
             createLinkPostRequestBody.setType("view");
             createLinkPostRequestBody.setScope("anonymous");
+            createLinkPostRequestBody.setExpirationDateTime(OffsetDateTime.now().plusYears(1000));
 
             Permission permissionResult = graphClient.drives()
                     .byDriveId("b!Lb7664wBnECJaM4v2EeKOSoPmwNkuPFNgAIrg0gVnm-5bK4ObU6pRIa3ZpYmjFEe")
@@ -128,7 +130,8 @@ public class OneDriveServiceImpl {
             CreateLinkPostRequestBody createLinkPostRequestBody = new CreateLinkPostRequestBody();
             createLinkPostRequestBody.setType("view");
             createLinkPostRequestBody.setScope("anonymous");
-
+            OffsetDateTime time = OffsetDateTime.now().plusYears(1000);
+            createLinkPostRequestBody.setExpirationDateTime(time);
 
 
             Permission permissionResult = graphClient.drives()
@@ -151,7 +154,7 @@ public class OneDriveServiceImpl {
         }
     }
 
-    public String createPublicImageLink(String itemId) {
+    public DriveItem createPublicImageLink(String itemId) {
         try {
             DriveItem driveItem = graphClient.drives()
                     .byDriveId("b!Lb7664wBnECJaM4v2EeKOSoPmwNkuPFNgAIrg0gVnm-5bK4ObU6pRIa3ZpYmjFEe")
@@ -163,11 +166,22 @@ public class OneDriveServiceImpl {
 //                String downloadUrl = driveItem.getAdditionalDataManager().get("content").getAsString();
 //                return downloadUrl;  // Direct file URL
 //            }
-            return driveItem.getWebUrl();
+            return driveItem;
         } catch (Exception ex) {
             log.error("Error getting direct image link: " + ex.getMessage());
         }
         return null;
+    }
+
+    public DriveItem getById(String itemId) {
+        CreateLinkPostRequestBody createLinkPostRequestBody = new CreateLinkPostRequestBody();
+        createLinkPostRequestBody.setType("view");
+        createLinkPostRequestBody.setScope("anonymous");
+        return graphClient.drives()
+                .byDriveId("b!Lb7664wBnECJaM4v2EeKOSoPmwNkuPFNgAIrg0gVnm-5bK4ObU6pRIa3ZpYmjFEe")
+                .items()
+                .byDriveItemId(itemId)
+                .get();
     }
 
 }
