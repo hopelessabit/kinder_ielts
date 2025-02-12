@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
 import java.time.OffsetDateTime;
+import java.util.Base64;
 import java.util.Optional;
 
 @Service
@@ -72,17 +73,9 @@ public class OneDriveServiceImpl {
             if (uploadResult.isUploadSuccessful()) {
                 log.info("Upload complete");
                 log.info("Item ID: " + uploadResult.itemResponse.getId());
-                boolean updatePermission = createPublicShareLink(uploadResult.itemResponse.getId());
-                if (updatePermission) {
-                    DriveItem thisDriveItem = graphClient
-                            .drives()
-                                    .byDriveId(driveId)
-                                            .items()
-                                                    .byDriveItemId(uploadResult.itemResponse.getId())
-                                                            .get();
-                    String downloadUrl = thisDriveItem.getAdditionalData().get("@microsoft.graph.downloadUrl").toString();
-                    log.info("Public sharing link created: " + downloadUrl);
-                    return downloadUrl;
+                String downloadLink = createPublicShareLink(uploadResult.itemResponse.getId());
+                if (downloadLink != null) {
+                    return downloadLink + "?download=1";
                 }
                 else
                     return "Failed to create a public sharing link.";
@@ -99,12 +92,11 @@ public class OneDriveServiceImpl {
     }
 
     // Create a Public Sharing Link
-    public boolean createPublicShareLink(String itemId) {
+    public String createPublicShareLink(String itemId) {
         try {
             CreateLinkPostRequestBody createLinkPostRequestBody = new CreateLinkPostRequestBody();
             createLinkPostRequestBody.setType("view");
             createLinkPostRequestBody.setScope("anonymous");
-            createLinkPostRequestBody.setExpirationDateTime(OffsetDateTime.now().plusYears(1000));
 
             Permission permissionResult = graphClient.drives()
                     .byDriveId("b!Lb7664wBnECJaM4v2EeKOSoPmwNkuPFNgAIrg0gVnm-5bK4ObU6pRIa3ZpYmjFEe")
@@ -112,17 +104,18 @@ public class OneDriveServiceImpl {
                     .byDriveItemId(itemId)
                     .createLink()
                     .post(createLinkPostRequestBody);
+            log.info("Link =============================: {}", permissionResult.getLink().getWebUrl());
 
             if (permissionResult != null && permissionResult.getLink() != null) {
-                return true;
+                return permissionResult.getLink().getWebUrl();
             }
             else {
-                return false;
+                return null;
             }
 
         } catch (Exception ex) {
             log.error("Error creating sharing link: " + ex.getMessage());
-            return false;
+            return null;
         }
     }
     public Permission createPublicShareLinkTest(String itemId) {
@@ -154,19 +147,34 @@ public class OneDriveServiceImpl {
         }
     }
 
-    public DriveItem createPublicImageLink(String itemId) {
+    public Object getImage(String itemId) {
         try {
-            DriveItem driveItem = graphClient.drives()
+//            DriveItem driveItem = graphClient.drives()
+//                    .byDriveId("b!Lb7664wBnECJaM4v2EeKOSoPmwNkuPFNgAIrg0gVnm-5bK4ObU6pRIa3ZpYmjFEe")
+//                    .items()
+//                    .byDriveItemId(itemId)
+//                    .get();
+//            String a = driveItem.getWebUrl();
+//            byte[] img = graphClient.drives()
+//                    .byDriveId("b!Lb7664wBnECJaM4v2EeKOSoPmwNkuPFNgAIrg0gVnm-5bK4ObU6pRIa3ZpYmjFEe")
+//                    .items()
+//                    .byDriveItemId(itemId)
+//                    .get().getContent();
+
+            CreateLinkPostRequestBody createLinkPostRequestBody = new CreateLinkPostRequestBody();
+            createLinkPostRequestBody.setType("view");
+            createLinkPostRequestBody.setScope("anonymous");
+            OffsetDateTime time = OffsetDateTime.now().plusYears(1000);
+            createLinkPostRequestBody.setExpirationDateTime(time);
+
+
+            Permission permissionResult = graphClient.drives()
                     .byDriveId("b!Lb7664wBnECJaM4v2EeKOSoPmwNkuPFNgAIrg0gVnm-5bK4ObU6pRIa3ZpYmjFEe")
                     .items()
                     .byDriveItemId(itemId)
-                    .get();
-
-//            if (driveItem != null && driveItem.getAdditionalDataManager() != null) {
-//                String downloadUrl = driveItem.getAdditionalDataManager().get("content").getAsString();
-//                return downloadUrl;  // Direct file URL
-//            }
-            return driveItem;
+                    .createLink()
+                    .post(createLinkPostRequestBody);
+            return permissionResult;
         } catch (Exception ex) {
             log.error("Error getting direct image link: " + ex.getMessage());
         }
