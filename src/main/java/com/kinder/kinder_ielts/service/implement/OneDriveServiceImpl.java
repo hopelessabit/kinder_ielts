@@ -75,7 +75,7 @@ public class OneDriveServiceImpl {
                 log.info("Item ID: " + uploadResult.itemResponse.getId());
                 String downloadLink = createPublicShareLink(uploadResult.itemResponse.getId());
                 if (downloadLink != null) {
-                    return downloadLink + "?download=1";
+                    return downloadLink;
                 }
                 else
                     return "Failed to create a public sharing link.";
@@ -105,9 +105,9 @@ public class OneDriveServiceImpl {
                     .createLink()
                     .post(createLinkPostRequestBody);
             log.info("Link =============================: {}", permissionResult.getLink().getWebUrl());
-
+            String webUrl = permissionResult.getLink().getWebUrl();
             if (permissionResult != null && permissionResult.getLink() != null) {
-                return permissionResult.getLink().getWebUrl();
+                return "https://a151620.sharepoint.com/sites/storage/_layouts/15/download.aspx?share=" + webUrl.substring(webUrl.lastIndexOf("/")+1);
             }
             else {
                 return null;
@@ -149,11 +149,11 @@ public class OneDriveServiceImpl {
 
     public Object getImage(String itemId) {
         try {
-//            DriveItem driveItem = graphClient.drives()
-//                    .byDriveId("b!Lb7664wBnECJaM4v2EeKOSoPmwNkuPFNgAIrg0gVnm-5bK4ObU6pRIa3ZpYmjFEe")
-//                    .items()
-//                    .byDriveItemId(itemId)
-//                    .get();
+            DriveItem driveItem = graphClient.drives()
+                    .byDriveId("b!Lb7664wBnECJaM4v2EeKOSoPmwNkuPFNgAIrg0gVnm-5bK4ObU6pRIa3ZpYmjFEe")
+                    .items()
+                    .byDriveItemId(itemId)
+                    .get();
 //            String a = driveItem.getWebUrl();
 //            byte[] img = graphClient.drives()
 //                    .byDriveId("b!Lb7664wBnECJaM4v2EeKOSoPmwNkuPFNgAIrg0gVnm-5bK4ObU6pRIa3ZpYmjFEe")
@@ -161,20 +161,20 @@ public class OneDriveServiceImpl {
 //                    .byDriveItemId(itemId)
 //                    .get().getContent();
 
-            CreateLinkPostRequestBody createLinkPostRequestBody = new CreateLinkPostRequestBody();
-            createLinkPostRequestBody.setType("view");
-            createLinkPostRequestBody.setScope("anonymous");
-            OffsetDateTime time = OffsetDateTime.now().plusYears(1000);
-            createLinkPostRequestBody.setExpirationDateTime(time);
-
-
-            Permission permissionResult = graphClient.drives()
-                    .byDriveId("b!Lb7664wBnECJaM4v2EeKOSoPmwNkuPFNgAIrg0gVnm-5bK4ObU6pRIa3ZpYmjFEe")
-                    .items()
-                    .byDriveItemId(itemId)
-                    .createLink()
-                    .post(createLinkPostRequestBody);
-            return permissionResult;
+//            CreateLinkPostRequestBody createLinkPostRequestBody = new CreateLinkPostRequestBody();
+//            createLinkPostRequestBody.setType("view");
+//            createLinkPostRequestBody.setScope("anonymous");
+//            OffsetDateTime time = OffsetDateTime.now().plusYears(1000);
+//            createLinkPostRequestBody.setExpirationDateTime(time);
+//
+//
+//            Permission permissionResult = graphClient.drives()
+//                    .byDriveId("b!Lb7664wBnECJaM4v2EeKOSoPmwNkuPFNgAIrg0gVnm-5bK4ObU6pRIa3ZpYmjFEe")
+//                    .items()
+//                    .byDriveItemId(itemId)
+//                    .createLink()
+//                    .post(createLinkPostRequestBody);
+            return driveItem.getContent();
         } catch (Exception ex) {
             log.error("Error getting direct image link: " + ex.getMessage());
         }
