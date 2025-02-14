@@ -28,9 +28,16 @@ public class StudyScheduleController {
 
     @GetMapping("/info/{id}")
     @SecurityRequirement(name = "Bearer")
-    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR','TUTOR','STUDENT')")
     public ResponseEntity<ResponseData<StudyScheduleResponse>> get(@PathVariable String id) {
         return ResponseUtil.getResponse(() -> studyScheduleService.getInfoWithDetail(id), StudyScheduleMessage.FOUND_SUCCESSFULLY);
+    }
+
+    @GetMapping("/detail/{id}")
+    @SecurityRequirement(name = "Bearer")
+    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR')")
+    public ResponseEntity<ResponseData<StudyScheduleResponse>> getDetail(@PathVariable String id) {
+        return ResponseUtil.getResponse(() -> studyScheduleService.getDetailWithDetail(id), StudyScheduleMessage.FOUND_SUCCESSFULLY);
     }
 
     @PutMapping("/{id}")

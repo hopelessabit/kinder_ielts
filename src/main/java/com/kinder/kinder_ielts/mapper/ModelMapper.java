@@ -182,7 +182,7 @@ public class ModelMapper {
         materialLink.setId(IdUtil.generateId());
         materialLink.setTitle(request.getTitle());
         materialLink.setLink(request.getLink());
-        materialLink.setStudyMaterial(studyMaterial);
+        materialLink.setStudyMaterial(StudyMaterial.from(studyMaterial));
 
         materialLink.initForNew(actor, currentTime);
 
@@ -221,7 +221,6 @@ public class ModelMapper {
         Account creator = SecurityContextHolderUtil.getAccount();
         ZonedDateTime currentTime = ZonedDateTime.now();
 
-        Student student = new Student();
         Account account = new Account();
         account.setId(IdUtil.generateId());
         account.setUsername(request.getUsername());
@@ -233,6 +232,7 @@ public class ModelMapper {
         account.setCreateBy(creator);
         account.setCreateTime(currentTime);
 
+        Student student = new Student(account.getId());
         student.setAccount(account);
         student.setId(account.getId());
 

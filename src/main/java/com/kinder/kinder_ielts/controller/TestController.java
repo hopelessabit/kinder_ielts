@@ -268,4 +268,8 @@ public class TestController {
     }
 
 
+    @GetMapping("/get-item-id/{itemId}")
+    public ResponseEntity getItemId(@PathVariable String itemId) {
+        return ResponseUtil.getResponse(() -> oneDriveService.getImage(itemId), "Get item id successfully");
+    }
 }

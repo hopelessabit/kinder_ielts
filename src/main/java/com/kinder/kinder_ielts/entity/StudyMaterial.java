@@ -46,10 +46,10 @@ public class StudyMaterial extends BaseEntity {
     @Column(name = "privacy_status")
     private StudyMaterialStatus privacyStatus;
 
-    @OneToMany(mappedBy = "studyMaterial", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "studyMaterial", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<MaterialLink> materialLinks;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "study_material_student", // Name of the join table
             joinColumns = @JoinColumn(
@@ -64,6 +64,14 @@ public class StudyMaterial extends BaseEntity {
             )
     )
     private List<Student> studyMaterialsForStudents;
+
+    public StudyMaterial(String id) {
+        this.id = id;
+    }
+
+    public static StudyMaterial from(StudyMaterial studyMaterial){
+        return new StudyMaterial(studyMaterial.getId());
+    }
 
     public static StudyMaterial from(TemplateStudyMaterial sm, StudySchedule studySchedule, Account account, ZonedDateTime currentTime) {
         StudyMaterial studyMaterial = new StudyMaterial();

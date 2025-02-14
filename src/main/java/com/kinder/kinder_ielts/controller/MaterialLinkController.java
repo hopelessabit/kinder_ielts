@@ -30,13 +30,13 @@ public class MaterialLinkController {
     @GetMapping("/info/{materialLinkId}")
     @Operation(summary = "Get a material link's info")
     public ResponseEntity<ResponseData<MaterialLinkResponse>> getInfo(@PathVariable String materialLinkId, @RequestParam(defaultValue = "false") Boolean includeForAdmin) {
-        return ResponseUtil.getResponse(() -> materialLinkService.getInfo(materialLinkId, includeForAdmin, MaterialLinkMessage.NOT_FOUND), MaterialLinkMessage.FOUND_SUCCESSFULLY);
+        return ResponseUtil.getResponse(() -> materialLinkService.get(materialLinkId, includeForAdmin, MaterialLinkMessage.NOT_FOUND), MaterialLinkMessage.FOUND_SUCCESSFULLY);
     }
 
     @GetMapping("/detail/{materialLinkId}")
     @Operation(summary = "Get a material link's detail")
     public ResponseEntity<ResponseData<MaterialLinkResponse>> getDetail(@PathVariable String materialLinkId, @RequestParam(defaultValue = "false") Boolean includeForAdmin) {
-        return ResponseUtil.getResponse(() -> materialLinkService.getDetail(materialLinkId, includeForAdmin, MaterialLinkMessage.NOT_FOUND), MaterialLinkMessage.FOUND_SUCCESSFULLY);
+        return ResponseUtil.getResponse(() -> materialLinkService.get(materialLinkId, includeForAdmin, MaterialLinkMessage.NOT_FOUND), MaterialLinkMessage.FOUND_SUCCESSFULLY);
     }
 
     @DeleteMapping("/{materialLinkId}")

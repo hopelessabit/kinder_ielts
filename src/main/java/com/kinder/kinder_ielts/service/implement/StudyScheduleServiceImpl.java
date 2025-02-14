@@ -68,4 +68,8 @@ public class StudyScheduleServiceImpl {
         baseStudyScheduleService.delete(id, deleteFailed);
         return null;
     }
+
+    public StudyScheduleResponse getDetailWithDetail(String id) {
+        return StudyScheduleResponse.detailWithDetail(baseStudyScheduleService.get(id, IsDelete.NOT_DELETED, StudyScheduleMessage.NOT_FOUND));
+    }
 }

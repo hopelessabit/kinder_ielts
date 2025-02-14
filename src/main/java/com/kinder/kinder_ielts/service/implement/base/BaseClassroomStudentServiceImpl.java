@@ -53,6 +53,11 @@ public class BaseClassroomStudentServiceImpl extends BaseEntityServiceImpl<Class
 
     @Override
     public void updateStudent(String classroomId, String studentId, boolean isAdd) {
-        
+
+    }
+
+    @Override
+    public List<ClassroomStudent> getClassRoomStudentsByStudyMaterialId(String studyMaterialId, IsDelete isDelete, String notFound) {
+        return classroomStudentRepository.findByStudyMaterialId(studyMaterialId, isDelete);
     }
 }

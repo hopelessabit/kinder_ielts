@@ -64,15 +64,19 @@ public class Student extends BaseEntity {
     @Column(name = "country")
     private EnumCountry country;
 
-//    @ManyToMany(mappedBy = "studyMaterialsForStudents",fetch = FetchType.LAZY)
-//    private List<StudyMaterial> studyMaterials;
-//
-//    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-//    private List<StudentHomework> studentHomeworks;
-//
-//    @OneToMany(mappedBy = "student", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<CourseStudent> courseStudents;
-//
-//    @OneToMany(mappedBy = "student", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<ClassroomStudent> classroomStudents;
+    @ManyToMany(mappedBy = "studyMaterialsForStudents",fetch = FetchType.LAZY)
+    private List<StudyMaterial> studyMaterials;
+
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<StudentHomework> studentHomeworks;
+
+    @OneToMany(mappedBy = "student", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CourseStudent> courseStudents;
+
+    @OneToMany(mappedBy = "student", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ClassroomStudent> classroomStudents;
+
+    public Student(String id) {
+        this.id = id;
+    }
 }

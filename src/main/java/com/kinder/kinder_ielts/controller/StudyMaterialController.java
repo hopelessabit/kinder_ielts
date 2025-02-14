@@ -18,7 +18,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/stuty-material")
+@RequestMapping("/api/v1/study-material")
 @RequiredArgsConstructor
 @SecurityRequirement(name = "Bearer")
 public class StudyMaterialController {
@@ -48,9 +48,11 @@ public class StudyMaterialController {
         return ResponseUtil.getResponse(() -> studyMaterialService.delete(id, StudyMaterialMessage.DELETE_FAILED), StudyMaterialMessage.DELETED);
     }
 
-//    @PutMapping("/{studyMaterialId}")
-//    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR','TUTOR')")
-//    public ResponseEntity<ResponseData<StudyMaterialResponse>> updateStudyMaterialStatus(@PathVariable("studyMaterialId") String studyMaterialId, ModifyStudyMaterialStatusRequest request) {
-//        return ResponseUtil.getResponse(() -> studyMaterialService.updateStudyMaterialStatus(studyMaterialId, request, StudyMaterialMessage.STATUS_UPDATE_FAILED), StudyMaterialMessage.STATUS_UPDATED);
-//    }
+    @PatchMapping("/{studyMaterialId}")
+    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR','TUTOR')")
+    public ResponseEntity<ResponseData<StudyMaterialResponse>> updateStudyMaterialStatus(@PathVariable(value = "studyMaterialId", required = false) String studyMaterialId, @RequestBody(required = false) ModifyStudyMaterialStatusRequest request) {
+        if (studyMaterialId == null) studyMaterialId = "1b6M-142124";
+        String finalStudyMaterialId = studyMaterialId;
+        return ResponseUtil.getResponse(() -> studyMaterialService.updateStudyMaterialStatus(finalStudyMaterialId, request, StudyMaterialMessage.STATUS_UPDATE_FAILED), StudyMaterialMessage.STATUS_UPDATED);
+    }
 }

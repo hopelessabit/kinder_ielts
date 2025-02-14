@@ -13,4 +13,8 @@ public interface BaseClassroomService extends BaseEntityService<Classroom, Strin
     Page<Classroom> findAll(Specification<Classroom> classroomSpecification, Pageable unsortedPageable);
 
     Page<Classroom> findAll(Specification<Classroom> classroomSpecification);
+
+    Classroom getByStudyMaterialId(String studyMaterialId, Boolean require);
+
+    Classroom getByStudyMaterialId(String studyMaterialId);
 }

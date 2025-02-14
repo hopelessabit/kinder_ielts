@@ -33,7 +33,6 @@ public class MaterialLink extends BaseEntity {
     @Column(name = "link", nullable = false)
     private String link;
 
-    // Relationship with StudyMaterial (using join table)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinTable(
             name = "material_link_study_material", // Name of the join table

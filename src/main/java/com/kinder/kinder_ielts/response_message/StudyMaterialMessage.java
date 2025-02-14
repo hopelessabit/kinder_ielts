@@ -20,4 +20,5 @@ public class StudyMaterialMessage {
 
     public static final String STATUS_UPDATE_FAILED = "Cập nhập trạng thái tài liệu thất bại";
     public static final String STATUS_UPDATED = "Cập nhập trạng thái tài liệu thành công";
+    public static final String STUDENT_NOT_FOUND = "Không tìm thấy học viên trong lớp học";
 }

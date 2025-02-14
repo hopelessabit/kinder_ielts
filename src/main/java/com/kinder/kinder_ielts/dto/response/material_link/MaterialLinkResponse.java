@@ -16,7 +16,7 @@ public class MaterialLinkResponse {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private BaseEntityResponse extendDetail;
 
-    public MaterialLinkResponse(MaterialLink materialLink, boolean includeInfoForAdmin, boolean includeDetails) {
+    public MaterialLinkResponse(MaterialLink materialLink, boolean includeInfoForAdmin) {
         this.id = materialLink.getId();
         this.title = materialLink.getTitle();
         this.link = materialLink.getLink();
@@ -29,18 +29,10 @@ public class MaterialLinkResponse {
     }
 
     public static MaterialLinkResponse info(MaterialLink materialLink) {
-        return new MaterialLinkResponse(materialLink, false, false);
-    }
-
-    public static MaterialLinkResponse infoWithDetails(MaterialLink materialLink) {
-        return new MaterialLinkResponse(materialLink, false, true);
+        return new MaterialLinkResponse(materialLink, false);
     }
 
     public static MaterialLinkResponse detail(MaterialLink materialLink) {
-        return new MaterialLinkResponse(materialLink, true, false);
-    }
-
-    public static MaterialLinkResponse detailWithDetail(MaterialLink materialLink) {
-        return new MaterialLinkResponse(materialLink, true, true);
+        return new MaterialLinkResponse(materialLink, true);
     }
 }

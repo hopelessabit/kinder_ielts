@@ -3,8 +3,9 @@ package com.kinder.kinder_ielts.service.implement.base;
 import com.kinder.kinder_ielts.constant.IsDelete;
 import com.kinder.kinder_ielts.entity.Account;
 import com.kinder.kinder_ielts.entity.Classroom;
+import com.kinder.kinder_ielts.exception.NotFoundException;
 import com.kinder.kinder_ielts.repository.ClassroomRepository;
-import com.kinder.kinder_ielts.response_message.CourseMessage;
+import com.kinder.kinder_ielts.response_message.ClassroomMessage;
 import com.kinder.kinder_ielts.service.base.BaseAccountService;
 import com.kinder.kinder_ielts.service.base.BaseClassroomService;
 import com.kinder.kinder_ielts.util.SecurityContextHolderUtil;
@@ -74,5 +75,19 @@ public class BaseClassroomServiceImpl extends BaseEntityServiceImpl<Classroom, S
     @Override
     public Page<Classroom> findAll(Specification<Classroom> classroomSpecification) {
         return classroomRepository.findAll(classroomSpecification);
+    }
+
+    @Override
+    public Classroom getByStudyMaterialId(String studyMaterialId) {
+        return getByStudyMaterialId(studyMaterialId, false);
+    }
+
+    @Override
+    public Classroom getByStudyMaterialId(String studyMaterialId, Boolean require) {
+        if (Boolean.FALSE.equals(require)) {
+            return classroomRepository.findByStudyMaterialId(studyMaterialId).orElse(null);
+        }
+        return classroomRepository.findByStudyMaterialId(studyMaterialId)
+                .orElseThrow(() -> new NotFoundException(ClassroomMessage.NOT_FOUND));
     }
 }

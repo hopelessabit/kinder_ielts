@@ -10,6 +10,8 @@ import com.kinder.kinder_ielts.dto.response.study_schedule.StudyScheduleResponse
 import com.kinder.kinder_ielts.entity.StudyMaterial;
 import lombok.Getter;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Getter
@@ -29,7 +31,12 @@ public class StudyMaterialResponse {
         this.title = studyMaterial.getTitle();
         this.description = studyMaterial.getDescription();
         this.privacyStatus = StatusResponse.from(studyMaterial.getPrivacyStatus());
-        this.links = studyMaterial.getMaterialLinks() != null ? studyMaterial.getMaterialLinks().stream().filter(a -> a.getIsDeleted().equals(IsDelete.NOT_DELETED)).map(MaterialLinkResponse::infoWithDetails).toList() : null;
+        this.links = studyMaterial.getMaterialLinks() != null ?
+                studyMaterial.getMaterialLinks()
+                        .stream()
+                        .filter(a -> a.getIsDeleted().equals(IsDelete.NOT_DELETED))
+                        .map(MaterialLinkResponse::info).toList()
+                : new ArrayList<>();
 
         mapSubInfo(studyMaterial, includeInfoForAdmin);
         mapDetail(studyMaterial, includeDetails);
@@ -41,10 +48,8 @@ public class StudyMaterialResponse {
     }
 
     public void mapDetail(StudyMaterial studyMaterial, boolean includeDetails) {
-        if (includeDetails){
+        if (includeDetails)
             this.studySchedule = StudyScheduleResponse.info(studyMaterial.getBeLongTo());
-            this.links = studyMaterial.getMaterialLinks().stream().map(MaterialLinkResponse::info).toList();
-        }
     }
 
     public static StudyMaterialResponse info(StudyMaterial studyMaterial) {
