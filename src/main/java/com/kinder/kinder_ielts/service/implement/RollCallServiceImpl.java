@@ -23,6 +23,7 @@ import jakarta.persistence.criteria.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -38,6 +39,35 @@ public class RollCallServiceImpl {
     private final BaseRollCallService baseRollCallService;
     private final BaseStudyScheduleService baseStudyScheduleService;
     private final BaseStudentService baseStudentService;
+
+    public Page<RollCallResponse> test(){
+        PageRequest pageRequest = PageRequest.of(0, 10);
+        ZonedDateTime now = ZonedDateTime.now();
+        Specification<RollCall> specification = getSpec("zggL-124713", now);
+        return baseRollCallService.get(specification, pageRequest).map(RollCallResponse::detailWithExtendDetail);
+    }
+
+    public Specification<RollCall> getSpec(String classId, ZonedDateTime now){
+        return (root, query, criteriaBuilder) -> {
+
+
+            // Create a join to Class through StudySchedule and then a join to Classroom through StudySchedule
+            Join<RollCall, StudySchedule> studyScheduleJoin = root.join("studySchedule", JoinType.RIGHT);
+            Join<StudySchedule, Classroom> classroomJoin = studyScheduleJoin.join("classroom");
+            // Create a join to the student
+            Join<RollCall, Student> studentJoin = root.join("student");
+
+            //Specify the class id condition
+            Predicate classPredicate = criteriaBuilder.equal(classroomJoin.get("id"), classId);
+            //Specify the future schedule condition
+            Predicate futureSchedulesPredicate = criteriaBuilder.greaterThanOrEqualTo(studyScheduleJoin.get("fromTime"), now);
+            // Specify that deleted records will be ignored
+            Predicate isNotDeletedPredicate = criteriaBuilder.equal(root.get("isDeleted"), 0);
+
+            // Return query that applies all predicate requirements
+            return criteriaBuilder.and(classPredicate, futureSchedulesPredicate, isNotDeletedPredicate);
+        };
+    }
 
     public Page<RollCallResponse> search(Pageable pageable, SearchRollCallRequest request) {
         Role role = null;

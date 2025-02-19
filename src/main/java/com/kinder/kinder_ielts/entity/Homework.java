@@ -1,6 +1,6 @@
 package com.kinder.kinder_ielts.entity;
 
-import com.kinder.kinder_ielts.constant.HomeworkPrivacyStatus;
+import com.kinder.kinder_ielts.constant.HomeworkViewStatus;
 import com.kinder.kinder_ielts.constant.HomeworkStatus;
 import com.kinder.kinder_ielts.constant.IsDelete;
 import com.kinder.kinder_ielts.entity.base.BaseEntity;
@@ -17,6 +17,7 @@ import org.hibernate.annotations.Nationalized;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -50,8 +51,8 @@ public class Homework extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Size(max = 7)
-    @Column(name = "privacy_status", nullable = false)
-    private HomeworkPrivacyStatus privacyStatus;
+    @Column(name = "view_status", nullable = false)
+    private HomeworkViewStatus viewStatus;
 
     @Column(name = "due_date")
     private ZonedDateTime dueDate;
@@ -63,6 +64,22 @@ public class Homework extends BaseEntity {
     @JoinColumn(name = "study_schedule_id", nullable = false)
     private StudySchedule beLongTo;
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "homework_student", // Name of the join table
+            joinColumns = @JoinColumn(
+                    name = "homework_id",
+                    referencedColumnName = "id",
+                    foreignKey = @ForeignKey(name = "fk_stu_hw_homework")
+            ),
+            inverseJoinColumns = @JoinColumn(
+                    name = "student_id",
+                    referencedColumnName = "id",
+                    foreignKey = @ForeignKey(name = "fk_stu_hw_student")
+            )
+    )
+    private Set<Student> homeworksForStudents;
+
     @OneToMany(mappedBy = "homework", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<StudentHomework> studentHomeworks;
 
@@ -73,7 +90,7 @@ public class Homework extends BaseEntity {
         homework.setDescription(hw.getDescription());
         homework.setLink(hw.getLink());
         homework.setStatus(hw.getStatus());
-        homework.setPrivacyStatus(hw.getPrivacyStatus());
+        homework.setViewStatus(hw.getPrivacyStatus());
         homework.setDueDate(currentTime);
         homework.setStartDate(hw.getStartDate());
         homework.setBeLongTo(studySchedule);

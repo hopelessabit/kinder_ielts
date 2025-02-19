@@ -2,6 +2,7 @@ package com.kinder.kinder_ielts.entity;
 
 import com.kinder.kinder_ielts.constant.IsDelete;
 import com.kinder.kinder_ielts.constant.StudyMaterialStatus;
+import com.kinder.kinder_ielts.constant.StudyMaterialViewStatus;
 import com.kinder.kinder_ielts.entity.base.BaseEntity;
 import com.kinder.kinder_ielts.entity.course_template.TemplateStudyMaterial;
 import com.kinder.kinder_ielts.util.IdUtil;
@@ -16,6 +17,7 @@ import org.hibernate.annotations.Nationalized;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -43,8 +45,12 @@ public class StudyMaterial extends BaseEntity {
     private StudySchedule beLongTo;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "privacy_status")
-    private StudyMaterialStatus privacyStatus;
+    @Column(name = "view_status", nullable = false)
+    private StudyMaterialViewStatus viewStatus = StudyMaterialViewStatus.VIEW;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "privacy_status", nullable = false)
+    private StudyMaterialStatus privacyStatus = StudyMaterialStatus.PUBLIC;
 
     @OneToMany(mappedBy = "studyMaterial", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<MaterialLink> materialLinks;
@@ -63,7 +69,7 @@ public class StudyMaterial extends BaseEntity {
                     foreignKey = @ForeignKey(name = "fk_stu_mat_student")
             )
     )
-    private List<Student> studyMaterialsForStudents;
+    private Set<Student> studyMaterialsForStudents;
 
     public StudyMaterial(String id) {
         this.id = id;
@@ -80,6 +86,7 @@ public class StudyMaterial extends BaseEntity {
         studyMaterial.setDescription(sm.getDescription());
         studyMaterial.setBeLongTo(studySchedule);
         studyMaterial.setPrivacyStatus(sm.getPrivacyStatus());
+        studyMaterial.setViewStatus(sm.getViewStatus());
 
         List<MaterialLink> materialLinks = new ArrayList<>(sm.getMaterialLinks().stream().map(materialLink -> new MaterialLink(materialLink, studyMaterial, account, currentTime)).toList());
         studyMaterial.setMaterialLinks(materialLinks);

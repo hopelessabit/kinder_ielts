@@ -10,4 +10,5 @@ public interface BaseClassroomStudentService extends BaseEntityService<Classroom
     void updateStudent(String classroomId, String studentId, boolean isAdd);
 
     List<ClassroomStudent> getClassRoomStudentsByStudyMaterialId(String studyMaterialId, IsDelete isDelete, String notFound);
+    List<ClassroomStudent> getClassRoomStudentsByHomeworkId(String homeworkId, IsDelete isDelete, String notFound);
 }

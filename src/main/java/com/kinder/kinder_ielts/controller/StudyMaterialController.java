@@ -5,8 +5,6 @@ import com.kinder.kinder_ielts.dto.request.study_material.CreateStudyMaterialReq
 import com.kinder.kinder_ielts.dto.request.study_material.ModifyStudyMaterialStatusRequest;
 import com.kinder.kinder_ielts.dto.request.study_material.UpdateStudyMaterialRequest;
 import com.kinder.kinder_ielts.dto.response.study_material.StudyMaterialResponse;
-import com.kinder.kinder_ielts.dto.response.study_schedule.StudyScheduleResponse;
-import com.kinder.kinder_ielts.response_message.HomeworkMessage;
 import com.kinder.kinder_ielts.response_message.StudyMaterialMessage;
 import com.kinder.kinder_ielts.response_message.StudyScheduleMessage;
 import com.kinder.kinder_ielts.service.implement.StudyMaterialServiceImpl;
@@ -54,5 +52,11 @@ public class StudyMaterialController {
         if (studyMaterialId == null) studyMaterialId = "1b6M-142124";
         String finalStudyMaterialId = studyMaterialId;
         return ResponseUtil.getResponse(() -> studyMaterialService.updateStudyMaterialStatus(finalStudyMaterialId, request, StudyMaterialMessage.STATUS_UPDATE_FAILED), StudyMaterialMessage.STATUS_UPDATED);
+    }
+
+    @PatchMapping("/{studyMaterialId}/view-status")
+    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR','TUTOR')")
+    public ResponseEntity<ResponseData<StudyMaterialResponse>> updateViewStatus(@PathVariable(value = "studyMaterialId") String studyMaterialId) {
+        return ResponseUtil.getResponse(() -> studyMaterialService.updateViewStatus(studyMaterialId, StudyMaterialMessage.VIEW_STATUS_UPDATE_FAILED), StudyMaterialMessage.VIEW_STATUS_UPDATED);
     }
 }

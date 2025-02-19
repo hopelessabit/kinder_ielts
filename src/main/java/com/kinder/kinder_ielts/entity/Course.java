@@ -44,16 +44,8 @@ public class  Course extends BaseEntity {
     @Column(name = "price", nullable = false, precision = 12, scale = 2)
     private BigDecimal price;
 
-    @Column(name = "sale", precision = 12, scale = 2)
-    private BigDecimal sale;
-
     @Column(name = "slots")
     private Integer slots;
-
-    @Transient
-    public BigDecimal getFinalPrice() {
-        return (sale != null) ? sale : price;
-    }
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = true)

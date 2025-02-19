@@ -17,4 +17,6 @@ public interface BaseClassroomService extends BaseEntityService<Classroom, Strin
     Classroom getByStudyMaterialId(String studyMaterialId, Boolean require);
 
     Classroom getByStudyMaterialId(String studyMaterialId);
+
+    Classroom getByIdWithStudentId(String classroomId, String studentId, String failMessage);
 }

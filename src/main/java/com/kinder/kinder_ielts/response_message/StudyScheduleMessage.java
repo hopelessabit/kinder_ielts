@@ -17,4 +17,6 @@ public class StudyScheduleMessage {
     public static final String INFO_UPDATED = "Cập nhập thông tin buổi học thành công";
     public static final String NOT_EXIST = "Không tồn tại buổi học";
     public static final String ROLL_CALL_NOT_EXIST = "Không tồn tại điểm danh";
+    public static final String VIEW_STATUS_UPDATE_FAILED = "Cập nhật trạng thái hiển thị thất bại";
+    public static final String VIEW_STATUS_UPDATED = "Cập nhật trạng thái hiển thị thành công";
 }

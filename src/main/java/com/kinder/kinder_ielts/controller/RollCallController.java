@@ -6,6 +6,7 @@ import com.kinder.kinder_ielts.dto.request.roll_call.SearchRollCallRequest;
 import com.kinder.kinder_ielts.dto.request.roll_call.UpdateRollCallRequest;
 import com.kinder.kinder_ielts.dto.request.roll_call.UpdateRollCallsRequest;
 import com.kinder.kinder_ielts.dto.response.roll_call.RollCallResponse;
+import com.kinder.kinder_ielts.entity.RollCall;
 import com.kinder.kinder_ielts.response_message.RollCallMessage;
 import com.kinder.kinder_ielts.service.implement.RollCallServiceImpl;
 import com.kinder.kinder_ielts.util.ResponseUtil;
@@ -49,6 +50,11 @@ public class RollCallController {
     @GetMapping("/")
     public ResponseEntity<ResponseData<Page<RollCallResponse>>> search(Pageable pageable, @ModelAttribute SearchRollCallRequest request){
         return ResponseUtil.getResponse(() -> rollCallService.search(pageable, request), RollCallMessage.MULTIPLE_FOUND_SUCCESSFULLY);
+    }
+
+    @GetMapping("/test")
+    public ResponseEntity<ResponseData<Page<RollCallResponse>>> test(){
+        return ResponseUtil.getResponse(() -> rollCallService.test(), RollCallMessage.MULTIPLE_FOUND_SUCCESSFULLY);
     }
 
 }

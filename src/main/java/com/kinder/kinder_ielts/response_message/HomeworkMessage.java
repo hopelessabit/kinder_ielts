@@ -17,4 +17,5 @@ public class HomeworkMessage {
 
     public static final String DELETE_FAILED = "Xóa bài tập thất bại";
     public static final String DELETED = "Xóa bài tập thành công";
+    public static final String STUDENT_NOT_FOUND = "Học sinh không có trong lớp";
 }

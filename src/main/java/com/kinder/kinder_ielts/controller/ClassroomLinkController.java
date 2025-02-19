@@ -7,6 +7,7 @@ import com.kinder.kinder_ielts.dto.response.classroom_link.ClassroomLinkResponse
 import com.kinder.kinder_ielts.response_message.ClassroomLinkMessage;
 import com.kinder.kinder_ielts.service.implement.ClassroomLinkServiceImpl;
 import com.kinder.kinder_ielts.util.ResponseUtil;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -46,5 +47,12 @@ public class ClassroomLinkController {
     @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR','TUTOR')")
     public ResponseEntity<ResponseData<Void>> delete(@PathVariable String id){
         return ResponseUtil.getResponse(() -> classroomLinkService.delete(id, ClassroomLinkMessage.DELETE_FAILED), ClassroomLinkMessage.DELETED);
+    }
+
+    @PatchMapping("/{id}/status")
+    @Operation(summary = "Update a classroom link's status")
+    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR','TUTOR')")
+    public ResponseEntity<ResponseData<ClassroomLinkResponse>> updateStatus(@PathVariable String id) {
+        return ResponseUtil.getResponse(() -> classroomLinkService.updateViewStatus(id, ClassroomLinkMessage.VIEW_STATUS_UPDATE_FAILED), ClassroomLinkMessage.VIEW_STATUS_UPDATED);
     }
 }

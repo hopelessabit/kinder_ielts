@@ -1,7 +1,9 @@
 package com.kinder.kinder_ielts.dto.response.material_link;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.kinder.kinder_ielts.constant.MaterialLinkViewStatus;
 import com.kinder.kinder_ielts.dto.response.BaseEntityResponse;
+import com.kinder.kinder_ielts.dto.response.StatusResponse;
 import com.kinder.kinder_ielts.dto.response.template.study_material.TemplateStudyMaterialResponse;
 import com.kinder.kinder_ielts.entity.MaterialLink;
 import lombok.Getter;
@@ -11,6 +13,7 @@ public class MaterialLinkResponse {
     private String id;
     private String title;
     private String link;
+    private StatusResponse<MaterialLinkViewStatus> viewStatus;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private TemplateStudyMaterialResponse studyMaterial;
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -20,6 +23,7 @@ public class MaterialLinkResponse {
         this.id = materialLink.getId();
         this.title = materialLink.getTitle();
         this.link = materialLink.getLink();
+        this.viewStatus = StatusResponse.from(materialLink.getViewStatus());
         mapSubInfo(materialLink, includeInfoForAdmin);
     }
 

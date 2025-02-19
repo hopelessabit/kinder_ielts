@@ -16,4 +16,6 @@ public class MaterialLinkMessage {
     public static final String INFO_UPDATE_FAILED = "Cập nhập thông tin link tài liệu thất bại";
     public static final String INFO_UPDATED = "Cập nhập thông tin link tài liệu thành công";
     public static final String DELETE_FAILED = "Xóa link tài liệu thất bại";
+    public static final String VIEW_STATUS_UPDATE_FAILED = "Cập nhập trạng thái hiển thị link tài liệu thất bại";
+    public static final String VIEW_STATUS_UPDATED = "Cập nhập trạng thái hiển thị link tài liệu thành công";
 }

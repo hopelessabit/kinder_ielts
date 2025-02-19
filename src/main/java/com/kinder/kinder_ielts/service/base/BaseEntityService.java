@@ -1,6 +1,9 @@
 package com.kinder.kinder_ielts.service.base;
 
 import com.kinder.kinder_ielts.constant.IsDelete;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
 
@@ -11,6 +14,13 @@ import java.util.List;
  * @param <ID> The type of the entity ID.
  */
 public interface BaseEntityService<T, ID> {
+    /**
+     * Fetch all entities that match the given specification.
+     *
+     * @param specification The specification to filter entities.
+     * @return A list of fetched entities.
+     */
+    public Page<T> get(Specification<T> specification);
 
     public List<T> get(IsDelete isDelete, String message);
 

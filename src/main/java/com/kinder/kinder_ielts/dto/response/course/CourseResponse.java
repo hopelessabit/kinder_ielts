@@ -37,7 +37,6 @@ public class CourseResponse {
         this.status = StatusResponse.from(course.getStatus());
         this.level = CourseLevelResponse.info(course.getLevel());
         this.price = course.getPrice();
-        this.sale = course.getSale();
         this.tutors = course.getCourseTutors() != null
                 ? course.getCourseTutors().stream()
                 .filter(courseTutor -> !courseTutor.getIsDeleted().isDeleted())
@@ -61,7 +60,6 @@ public class CourseResponse {
         this.status = StatusResponse.from(course.getStatus());
         this.level = CourseLevelResponse.info(course.getLevel());
         this.price = course.getPrice();
-        this.sale = course.getSale();
         this.tutors = course.getCourseTutors() != null
                 ? course.getCourseTutors().stream()
                 .filter(courseTutor -> !courseTutor.getIsDeleted().isDeleted())

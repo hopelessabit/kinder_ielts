@@ -19,4 +19,14 @@ public interface ClassroomStudentRepository extends BaseEntityRepository<Classro
             AND cs.is_deleted = :isDelete
             """, nativeQuery = true)
     List<ClassroomStudent> findByStudyMaterialId(String studyMaterialId, IsDelete isDelete);
+
+    @Query(value = """
+            SELECT distinct cs.*
+            FROM homework hw 
+            INNER JOIN study_schedule ss ON hw.study_schedule_id = ss.id
+            INNER JOIN class_student cs ON ss.class_id = cs.class_id
+            WHERE hw.id = :studyMaterialId
+            AND cs.is_deleted = :isDelete
+            """, nativeQuery = true)
+    List<ClassroomStudent> findByHomeworkId(String homeworkId, IsDelete isDelete);
 }

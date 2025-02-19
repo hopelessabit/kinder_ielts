@@ -60,4 +60,9 @@ public class BaseClassroomStudentServiceImpl extends BaseEntityServiceImpl<Class
     public List<ClassroomStudent> getClassRoomStudentsByStudyMaterialId(String studyMaterialId, IsDelete isDelete, String notFound) {
         return classroomStudentRepository.findByStudyMaterialId(studyMaterialId, isDelete);
     }
+
+    @Override
+    public List<ClassroomStudent> getClassRoomStudentsByHomeworkId(String homeworkId, IsDelete isDelete, String notFound) {
+        return classroomStudentRepository.findByHomeworkId(homeworkId, isDelete);
+    }
 }

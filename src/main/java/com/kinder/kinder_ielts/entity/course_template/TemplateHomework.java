@@ -1,6 +1,6 @@
 package com.kinder.kinder_ielts.entity.course_template;
 
-import com.kinder.kinder_ielts.constant.HomeworkPrivacyStatus;
+import com.kinder.kinder_ielts.constant.HomeworkViewStatus;
 import com.kinder.kinder_ielts.constant.HomeworkStatus;
 import com.kinder.kinder_ielts.entity.base.BaseEntity;
 import jakarta.persistence.*;
@@ -45,7 +45,7 @@ public class TemplateHomework extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Size(max = 7)
     @Column(name = "privacy_status", nullable = false)
-    private HomeworkPrivacyStatus privacyStatus;
+    private HomeworkViewStatus privacyStatus;
 
     @Column(name = "due_date")
     private ZonedDateTime dueDate;

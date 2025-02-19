@@ -21,7 +21,7 @@ public class StudyScheduleController {
 
     @PostMapping("/classroom/{id}")
     @SecurityRequirement(name = "Bearer")
-    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR','TUTOR')")
     public ResponseEntity<ResponseData<StudyScheduleResponse>> create(@PathVariable String id ,@RequestBody CreateStudyScheduleRequest request) {
         return ResponseUtil.getResponse(() -> studyScheduleService.createStudySchedule(id, request, StudyScheduleMessage.CREATE_FAILED), StudyScheduleMessage.CREATED);
     }
@@ -35,20 +35,26 @@ public class StudyScheduleController {
 
     @GetMapping("/detail/{id}")
     @SecurityRequirement(name = "Bearer")
-    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR','TUTOR')")
     public ResponseEntity<ResponseData<StudyScheduleResponse>> getDetail(@PathVariable String id) {
         return ResponseUtil.getResponse(() -> studyScheduleService.getDetailWithDetail(id), StudyScheduleMessage.FOUND_SUCCESSFULLY);
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR','TUTOR')")
     public ResponseEntity<ResponseData<StudyScheduleResponse>> update(@PathVariable String id, @RequestBody UpdateStudyScheduleRequest request) {
         return ResponseUtil.getResponse(() -> studyScheduleService.updateInfo(id, request, StudyScheduleMessage.INFO_UPDATE_FAILED), StudyScheduleMessage.INFO_UPDATED);
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR','TUTOR')")
     public ResponseEntity<ResponseData<Void>> delete(@PathVariable String id) {
         return ResponseUtil.getResponse(() -> studyScheduleService.delete(id, StudyScheduleMessage.DELETE_FAILED), StudyScheduleMessage.DELETED);
+    }
+
+    @PatchMapping("/{studyScheduleId}/view-status")
+    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR','TUTOR')")
+    public ResponseEntity<ResponseData<StudyScheduleResponse>> updateViewStatus(@PathVariable String studyScheduleId) {
+        return ResponseUtil.getResponse(() -> studyScheduleService.updateViewStatus(studyScheduleId, StudyScheduleMessage.VIEW_STATUS_UPDATE_FAILED), StudyScheduleMessage.VIEW_STATUS_UPDATED);
     }
 }

@@ -16,4 +16,6 @@ public interface BaseEntityRepository<T, ID> extends JpaRepository<T, ID> {
     List<T> findByIdInAndIsDeletedIn(List<ID> ids, List<IsDelete> isDeletes);
     Optional<T> findFirstById(ID id);
     Page<T> findAll(Specification<T> specification, Pageable pageable);
+
+    Page<T> findAll(Specification<T> specification);
 }

@@ -48,7 +48,6 @@ public class ModelMapper {
         course.setDescription(request.getDescription());
         course.setDetail(request.getDetail());
         course.setPrice(request.getPrice());
-        course.setSale(request.getSale());
         course.setStatus(CourseStatus.INACTIVE);
         return course;
     }
@@ -160,7 +159,7 @@ public class ModelMapper {
         templateStudyMaterial.setTitle(request.getTitle());
         templateStudyMaterial.setDescription(request.getDescription());
         templateStudyMaterial.setPrivacyStatus(request.getPrivacyStatus() != null ? request.getPrivacyStatus() : StudyMaterialStatus.PUBLIC);
-
+        templateStudyMaterial.setViewStatus(request.getViewStatus() != null ? request.getViewStatus() : StudyMaterialViewStatus.VIEW);
         templateStudyMaterial.initForNew(actor, currentTime);
         return templateStudyMaterial;
     }

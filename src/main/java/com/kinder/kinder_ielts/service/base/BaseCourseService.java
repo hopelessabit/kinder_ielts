@@ -1,6 +1,7 @@
 package com.kinder.kinder_ielts.service.base;
 
 import com.kinder.kinder_ielts.constant.IsDelete;
+import com.kinder.kinder_ielts.entity.Classroom;
 import com.kinder.kinder_ielts.entity.Course;
 import com.kinder.kinder_ielts.exception.NotFoundException;
 import com.kinder.kinder_ielts.exception.SqlException;

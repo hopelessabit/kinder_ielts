@@ -15,4 +15,6 @@ public class WarmUpMessage {
 
     public static final String DELETE_FAILED = "Xóa warm-up test thất bại";
     public static final String DELETED = "Xóa warm-up test thành công";
+    public static final String VIEW_STATUS_UPDATED = "Cập nhật trạng thái hiển thị thành công";
+    public static final String VIEW_STATUS_UPDATE_FAILED = "Cập nhật trạng thái hiển thị thất bại";
 }

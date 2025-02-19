@@ -39,10 +39,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.*;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -102,7 +99,7 @@ public class ClassroomServiceImpl implements ClassroomService {
         addWeeklySchedule(classroom, request.getSchedules(), classroomWeeklySchedules, account, currentTime);
         classroom.setWeeklySchedule(classroomWeeklySchedules);
 
-        List<StudySchedule> studySchedules = generateAllStudySchedule(request.getStartDate(),
+        Set<StudySchedule> studySchedules = generateAllStudySchedule(request.getStartDate(),
                 request.getSchedules(),
                 request.getSlots() == null ? belongToCourse.getSlots() : request.getSlots(),
                 request.getFromTime(),
@@ -130,7 +127,7 @@ public class ClassroomServiceImpl implements ClassroomService {
         }
     }
 
-    protected List<StudySchedule> generateAllStudySchedule(ZonedDateTime startDate,
+    protected Set<StudySchedule> generateAllStudySchedule(ZonedDateTime startDate,
                                                            List<DateOfWeek> schedules,
                                                            int slots,
                                                            Time fromTime,
@@ -150,7 +147,7 @@ public class ClassroomServiceImpl implements ClassroomService {
             currentDate = currentDate.plusDays(1);
         }
 
-        List<StudySchedule> studySchedules = new ArrayList<>();
+        Set<StudySchedule> studySchedules = new HashSet<>();
 
         int place = 0;
         for (ZonedDateTime zonedDateTime : zonedDateTimes) {
@@ -174,34 +171,51 @@ public class ClassroomServiceImpl implements ClassroomService {
         return studySchedules;
     }
 
-    public void addStudyScheduleHaveTemplate(List<StudySchedule> studySchedules, List<TemplateStudySchedule> templateStudySchedules, Account account, ZonedDateTime currentTime) {
+    public void addStudyScheduleHaveTemplate(Set<StudySchedule> studySchedules,
+                                             List<TemplateStudySchedule> templateStudySchedules,
+                                             Account account,
+                                             ZonedDateTime currentTime) {
+        Set<StudySchedule> updatedSchedules = new HashSet<>();
+
         for (TemplateStudySchedule templateStudySchedule : templateStudySchedules) {
             StudySchedule studySchedule = studySchedules.stream()
                     .filter(s -> s.getPlace().equals(templateStudySchedule.getPlace()))
                     .findFirst()
-                    .orElseThrow(() -> new NotFoundException("", Error.build("", List.of(templateStudySchedule.getPlace()))));
+                    .orElseThrow(() -> new NotFoundException("",
+                            Error.build("", List.of(templateStudySchedule.getPlace()))));
 
             studySchedule.setTitle(templateStudySchedule.getTitle());
             studySchedule.setDescription(templateStudySchedule.getDescription());
 
             List<ClassroomLink> classroomLinks = templateStudySchedule.getClassroomLinks().stream()
-                    .map(c -> ClassroomLink.from(c, studySchedule, account, currentTime)).toList();
+                    .map(c -> ClassroomLink.from(c, studySchedule, account, currentTime))
+                    .toList();
             List<WarmUpTest> warmUpTests = templateStudySchedule.getWarmUpTests().stream()
-                    .map(w -> WarmUpTest.from(w, studySchedule, account, currentTime)).toList();
+                    .map(w -> WarmUpTest.from(w, studySchedule, account, currentTime))
+                    .toList();
             List<StudyMaterial> studyMaterials = templateStudySchedule.getStudyMaterials().stream()
-                    .map(sm -> StudyMaterial.from(sm, studySchedule, account, currentTime)).toList();
+                    .map(sm -> StudyMaterial.from(sm, studySchedule, account, currentTime))
+                    .toList();
             List<Homework> homeworks = templateStudySchedule.getHomework().stream()
-                    .map(hw -> Homework.from(hw, studySchedule, account, currentTime)).toList();
+                    .map(hw -> Homework.from(hw, studySchedule, account, currentTime))
+                    .toList();
 
             studySchedule.setClassroomLinks(classroomLinks);
             studySchedule.setWarmUpTests(warmUpTests);
             studySchedule.setStudyMaterials(studyMaterials);
             studySchedule.setHomework(homeworks);
             studySchedule.setStatus(templateStudySchedule.getStatus());
-            studySchedules.set(templateStudySchedule.getPlace() - 1, studySchedule);
 
+            // Remove the old schedule and add the updated one
+            updatedSchedules.remove(studySchedule);
+            updatedSchedules.add(studySchedule);
         }
+
+        // Replace the original set with the updated set
+        studySchedules.clear();
+        studySchedules.addAll(updatedSchedules);
     }
+
 
     /**
      * Get basic information about a classroom.
@@ -620,5 +634,10 @@ public class ClassroomServiceImpl implements ClassroomService {
         log.info("[REMOVE CLASSROOM STUDENTS] Successfully removed {} students.", removeClassroomStudents.size());
 
         return removeClassroomStudents.size();
+    }
+
+    public ClassroomResponse test(){
+//        return ClassroomResponse.detailWithDetails(baseClassroomService.getByIdWithStudentId("8RdF-205013", "4", "Not found"));
+        return ClassroomResponse.detailWithDetails(baseClassroomService.getByIdWithStudentId("Fuz3-124601", "0", "Not found"));
     }
 }

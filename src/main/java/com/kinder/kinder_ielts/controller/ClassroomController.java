@@ -81,4 +81,9 @@ public class ClassroomController {
     public ResponseEntity<ResponseData<Void>> delete(@PathVariable String id){
         return ResponseUtil.getResponse(() -> classroomService.deleteCourse(id), ClassroomMessage.CLASS_IS_DELETED);
     }
+
+    @GetMapping("/test/1")
+    public ResponseEntity<ResponseData<ClassroomResponse>> test(){
+        return ResponseUtil.getResponse(classroomService::test, ClassroomMessage.FOUND_SUCCESSFULLY);
+    }
 }

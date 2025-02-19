@@ -90,4 +90,9 @@ public class BaseClassroomServiceImpl extends BaseEntityServiceImpl<Classroom, S
         return classroomRepository.findByStudyMaterialId(studyMaterialId)
                 .orElseThrow(() -> new NotFoundException(ClassroomMessage.NOT_FOUND));
     }
+
+    public Classroom getByIdWithStudentId(String classroomId, String studentId, String failMessage) {
+        return classroomRepository.findByIdWithStudentId(classroomId, studentId)
+                .orElseThrow(() -> new NotFoundException(failMessage));
+    }
 }

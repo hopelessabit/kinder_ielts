@@ -15,6 +15,7 @@ import org.hibernate.annotations.Nationalized;
 import java.time.OffsetTime;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -50,7 +51,7 @@ public class Classroom extends BaseEntity {
     private Course course;
 
     @OneToMany(mappedBy = "classroom", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<StudySchedule> studySchedules;
+    private Set<StudySchedule> studySchedules;
 
     @OneToMany(mappedBy = "classroom", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ClassroomTutor> classroomTutors;

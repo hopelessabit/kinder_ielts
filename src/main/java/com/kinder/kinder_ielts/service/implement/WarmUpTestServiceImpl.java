@@ -1,6 +1,7 @@
 package com.kinder.kinder_ielts.service.implement;
 
 import com.kinder.kinder_ielts.constant.IsDelete;
+import com.kinder.kinder_ielts.constant.WarmUpTestStatus;
 import com.kinder.kinder_ielts.dto.request.warm_up_test.CreateWarmUpTestRequest;
 import com.kinder.kinder_ielts.dto.request.warm_up_test.UpdateWarmUpTestInfoRequest;
 import com.kinder.kinder_ielts.dto.response.warm_up_test.WarmUpTestResponse;
@@ -67,5 +68,16 @@ public class WarmUpTestServiceImpl {
     public Void deleteWarmUpTest(String warmUpTestId, String failMessage) {
         baseWarmUpTestService.delete(warmUpTestId, failMessage);
         return null;
+    }
+
+    public WarmUpTestResponse updateViewStatus(String warmUpTestId, String failMessage) {
+        WarmUpTest warmUpTest = baseWarmUpTestService.get(warmUpTestId, IsDelete.NOT_DELETED, failMessage);
+
+        warmUpTest.setStatus(warmUpTest.getStatus().equals(WarmUpTestStatus.VIEW) ? WarmUpTestStatus.HIDDEN : WarmUpTestStatus.VIEW);
+
+        updateAuditInfo(warmUpTest, SecurityContextHolderUtil.getAccount(), ZonedDateTime.now());
+
+        baseWarmUpTestService.update(warmUpTest, failMessage);
+        return WarmUpTestResponse.detail(warmUpTest);
     }
 }

@@ -19,8 +19,6 @@ public interface ClassroomRepository extends BaseEntityRepository<Classroom, Str
 
     Page<Classroom> findAll(Specification<Classroom> classroomSpecification, Pageable unsortedPageable);
 
-    Page<Classroom> findAll(Specification<Classroom> classroomSpecification);
-
     @Query(value = """
 select c.*
 from study_material sm
@@ -29,4 +27,12 @@ left join classroom c on sc.classroom_id = c.id
 where sm.id = :studyMaterialId
 """, nativeQuery = true)
     Optional<Classroom> findByStudyMaterialId(String studyMaterialId);
+
+    @Query("SELECT c FROM class c " +
+            "LEFT JOIN FETCH c.studySchedules s " +
+            "LEFT JOIN FETCH s.studyMaterials sm " +
+            "LEFT JOIN FETCH sm.studyMaterialsForStudents sms " +
+            "WHERE c.id = :classroomId " +
+            "AND (sm.privacyStatus = 'PUBLIC' OR sms.id = :studentId)")
+    Optional<Classroom> findByIdWithStudentId(String classroomId, String studentId);
 }

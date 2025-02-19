@@ -16,7 +16,6 @@ public class CreateCourseRequest {
     private String description;
     private String detail;
     private BigDecimal price;
-    private BigDecimal sale;
     private String levelId;
     private Integer slots;
     private List<String> tutorIds;

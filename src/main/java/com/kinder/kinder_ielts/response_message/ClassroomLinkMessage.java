@@ -13,4 +13,6 @@ public class ClassroomLinkMessage {
     public static final String INFO_UPDATE_FAILED = "Cập nhật thông tin link lớp học thất bại";
     public static final String DELETE_FAILED = "Xóa link lớp học thất bại";
     public static final String DELETED = "Xóa link lớp học thành công";
+    public static final String VIEW_STATUS_UPDATE_FAILED = "Cập nhật trạng thái hiển thị link lớp học thất bại";
+    public static final String VIEW_STATUS_UPDATED = "Cập nhật trạng thái hiển thị link lớp học thành công";
 }

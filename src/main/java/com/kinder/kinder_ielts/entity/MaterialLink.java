@@ -1,6 +1,7 @@
 package com.kinder.kinder_ielts.entity;
 
 import com.kinder.kinder_ielts.constant.IsDelete;
+import com.kinder.kinder_ielts.constant.MaterialLinkViewStatus;
 import com.kinder.kinder_ielts.entity.base.BaseEntity;
 import com.kinder.kinder_ielts.entity.course_template.TemplateStudyMaterial;
 import com.kinder.kinder_ielts.util.IdUtil;
@@ -28,6 +29,10 @@ public class MaterialLink extends BaseEntity {
     @Size(max = 255)
     @Column(name = "title", nullable = false)
     private String title;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "view_status", nullable = false)
+    private MaterialLinkViewStatus viewStatus = MaterialLinkViewStatus.VIEW;
 
     @Size(max = 255)
     @Column(name = "link", nullable = false)

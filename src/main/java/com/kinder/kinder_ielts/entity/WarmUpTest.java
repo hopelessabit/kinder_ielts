@@ -15,6 +15,7 @@ import lombok.Setter;
 import org.hibernate.annotations.Nationalized;
 
 import java.time.ZonedDateTime;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -44,11 +45,28 @@ public class WarmUpTest extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Size(max = 11)
     @Column(name = "status", nullable = false)
-    private WarmUpTestStatus status;
+    private WarmUpTestStatus status = WarmUpTestStatus.VIEW;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "study_schedule_id", nullable = false)
     private StudySchedule beLongTo;
+
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "warm_up_test_student", // Name of the join table
+            joinColumns = @JoinColumn(
+                    name = "warm_up_test_id",
+                    referencedColumnName = "id",
+                    foreignKey = @ForeignKey(name = "fk_stu_wu_warm_up_test")
+            ),
+            inverseJoinColumns = @JoinColumn(
+                    name = "student_id",
+                    referencedColumnName = "id",
+                    foreignKey = @ForeignKey(name = "fk_stu_wu_student")
+            )
+    )
+    private Set<Student> warmUpTestsForStudents;
 
     public static WarmUpTest from(TemplateWarmUpTest templateWarmUpTest, StudySchedule studySchedule, Account account, ZonedDateTime currentTime) {
         WarmUpTest warmUpTest = new WarmUpTest();

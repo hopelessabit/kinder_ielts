@@ -1,5 +1,6 @@
 package com.kinder.kinder_ielts.service.implement;
 import com.kinder.kinder_ielts.constant.IsDelete;
+import com.kinder.kinder_ielts.constant.StudyScheduleStatus;
 import com.kinder.kinder_ielts.dto.request.study_schedule.CreateStudyScheduleRequest;
 import com.kinder.kinder_ielts.dto.request.study_schedule.UpdateStudyScheduleRequest;
 import com.kinder.kinder_ielts.dto.response.study_schedule.StudyScheduleResponse;
@@ -17,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Service
@@ -71,5 +73,17 @@ public class StudyScheduleServiceImpl {
 
     public StudyScheduleResponse getDetailWithDetail(String id) {
         return StudyScheduleResponse.detailWithDetail(baseStudyScheduleService.get(id, IsDelete.NOT_DELETED, StudyScheduleMessage.NOT_FOUND));
+    }
+
+    public StudyScheduleResponse updateViewStatus(String studyScheduleId, String failMessage){
+
+        StudySchedule studySchedule = baseStudyScheduleService.get(studyScheduleId, IsDelete.NOT_DELETED, failMessage);
+
+        studySchedule.setStatus(studySchedule.getStatus().equals(StudyScheduleStatus.VIEW) ? StudyScheduleStatus.HIDDEN : StudyScheduleStatus.VIEW);
+
+        studySchedule.updateAudit(SecurityContextHolderUtil.getAccount(), ZonedDateTime.now());
+
+        baseStudyScheduleService.update(studySchedule, failMessage);
+        return StudyScheduleResponse.detail(studySchedule);
     }
 }

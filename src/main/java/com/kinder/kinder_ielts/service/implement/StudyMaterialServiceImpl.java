@@ -1,9 +1,6 @@
 package com.kinder.kinder_ielts.service.implement;
 
-import com.kinder.kinder_ielts.constant.AccountStatus;
-import com.kinder.kinder_ielts.constant.IsDelete;
-import com.kinder.kinder_ielts.constant.Role;
-import com.kinder.kinder_ielts.constant.StudyMaterialStatus;
+import com.kinder.kinder_ielts.constant.*;
 import com.kinder.kinder_ielts.dto.Error;
 import com.kinder.kinder_ielts.dto.request.material_link.CreateMaterialLinkRequest;
 import com.kinder.kinder_ielts.dto.request.study_material.CreateStudyMaterialRequest;
@@ -31,7 +28,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -88,7 +87,7 @@ public class StudyMaterialServiceImpl {
 
         if (studyMaterial.getPrivacyStatus().equals(StudyMaterialStatus.PRIVATE) && request.getStudentIds() != null && !request.getStudentIds().isEmpty()) {
             List<Student> students = baseStudentService.get(request.getStudentIds(), AccountStatus.ACTIVE, failMessage);
-            studyMaterial.setStudyMaterialsForStudents(students);
+            studyMaterial.setStudyMaterialsForStudents(new HashSet<>(students));
         }
         StudyMaterial result = baseStudyMaterialService.create(studyMaterial, failMessage);
 
@@ -150,7 +149,7 @@ public class StudyMaterialServiceImpl {
                 throw new BadRequestException(failMessage, Error.build(StudyMaterialMessage.STUDENT_NOT_FOUND, studentIdsNotFound));
             }
 
-            studyMaterial.setStudyMaterialsForStudents(studyMaterialsForStudents);
+            studyMaterial.setStudyMaterialsForStudents(new HashSet<>(studyMaterialsForStudents));
         }
 
         baseStudyMaterialService.update(studyMaterial, failMessage);
@@ -164,5 +163,19 @@ public class StudyMaterialServiceImpl {
         List<MaterialLink> newMaterialLinks = studyMaterial.getMaterialLinks().stream().filter(ml -> !request.getRemove().contains(ml.getId())).toList();
 
         return StudyMaterialResponse.detailWithDetails(baseStudyMaterialService.update(studyMaterial, failMessage));
+    }
+
+    public StudyMaterialResponse updateViewStatus(String studyMaterialId, String failMessage) {
+        StudyMaterial studyMaterial = baseStudyMaterialService.get(studyMaterialId, IsDelete.NOT_DELETED, failMessage);
+
+        if (studyMaterial.getViewStatus().equals(StudyMaterialViewStatus.VIEW))
+            studyMaterial.setViewStatus(StudyMaterialViewStatus.HIDDEN);
+        else
+            studyMaterial.setViewStatus(StudyMaterialViewStatus.VIEW);
+
+        studyMaterial.updateAudit(SecurityContextHolderUtil.getAccount(), ZonedDateTime.now());
+
+        baseStudyMaterialService.update(studyMaterial, failMessage);
+        return StudyMaterialResponse.detailWithDetails(studyMaterial);
     }
 }

@@ -1,5 +1,6 @@
 package com.kinder.kinder_ielts.service.implement;
 
+import com.kinder.kinder_ielts.constant.ClassroomLinkStatus;
 import com.kinder.kinder_ielts.constant.IsDelete;
 import com.kinder.kinder_ielts.dto.request.classroom.link.CreateClassroomLinkRequest;
 import com.kinder.kinder_ielts.dto.request.classroom.link.UpdateClassroomLinkRequest;
@@ -16,6 +17,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+
+import java.time.ZonedDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -54,6 +57,18 @@ public class ClassroomLinkServiceImpl {
     public Void delete(String id, String deleteFailed) {
         baseClassroomLinkService.delete(id, deleteFailed);
         return null;
+    }
+
+    public ClassroomLinkResponse updateViewStatus(String classroomLinkId, String failMessage) {
+        ClassroomLink classroomLink = baseClassroomLinkService.get(classroomLinkId, IsDelete.NOT_DELETED, failMessage);
+
+        classroomLink.setStatus(classroomLink.getStatus().equals(ClassroomLinkStatus.VIEW) ? ClassroomLinkStatus.HIDDEN : ClassroomLinkStatus.VIEW);
+
+        classroomLink.updateAudit(SecurityContextHolderUtil.getAccount(), ZonedDateTime.now());
+
+        baseClassroomLinkService.update(classroomLink, failMessage);
+
+        return ClassroomLinkResponse.detail(classroomLink);
     }
 
     public Page<ClassroomLinkResponse> get(String scheduleId, String title, String description, boolean includeStudySchedule, Page page, String foundSuccessfully) {

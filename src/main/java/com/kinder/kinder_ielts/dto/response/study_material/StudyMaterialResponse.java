@@ -3,6 +3,7 @@ package com.kinder.kinder_ielts.dto.response.study_material;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.kinder.kinder_ielts.constant.IsDelete;
 import com.kinder.kinder_ielts.constant.StudyMaterialStatus;
+import com.kinder.kinder_ielts.constant.StudyMaterialViewStatus;
 import com.kinder.kinder_ielts.dto.response.BaseEntityResponse;
 import com.kinder.kinder_ielts.dto.response.StatusResponse;
 import com.kinder.kinder_ielts.dto.response.material_link.MaterialLinkResponse;
@@ -20,6 +21,7 @@ public class StudyMaterialResponse {
     private String title;
     private String description;
     private StatusResponse<StudyMaterialStatus> privacyStatus;
+    private StatusResponse<StudyMaterialViewStatus> viewStatus;
     private List<MaterialLinkResponse> links;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private StudyScheduleResponse studySchedule;
@@ -31,6 +33,7 @@ public class StudyMaterialResponse {
         this.title = studyMaterial.getTitle();
         this.description = studyMaterial.getDescription();
         this.privacyStatus = StatusResponse.from(studyMaterial.getPrivacyStatus());
+        this.viewStatus = StatusResponse.from(studyMaterial.getViewStatus());
         this.links = studyMaterial.getMaterialLinks() != null ?
                 studyMaterial.getMaterialLinks()
                         .stream()

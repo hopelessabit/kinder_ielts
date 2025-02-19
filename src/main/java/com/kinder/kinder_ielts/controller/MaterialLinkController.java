@@ -46,4 +46,10 @@ public class MaterialLinkController {
         return ResponseUtil.getResponse(() -> materialLinkService.delete(materialLinkId, MaterialLinkMessage.DELETE_FAILED), MaterialLinkMessage.IS_DELETED);
     }
 
+    @PatchMapping("/{materialLinkId}/view-status")
+    @Operation(summary = "Update a material link's view status")
+    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR','TUTOR')")
+    public ResponseEntity<ResponseData<MaterialLinkResponse>> updateViewStatus(@PathVariable String materialLinkId) {
+        return ResponseUtil.getResponse(() -> materialLinkService.updateViewStatus(materialLinkId, MaterialLinkMessage.VIEW_STATUS_UPDATE_FAILED), MaterialLinkMessage.VIEW_STATUS_UPDATED);
+    }
 }

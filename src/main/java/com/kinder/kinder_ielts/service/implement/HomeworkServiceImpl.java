@@ -2,25 +2,27 @@ package com.kinder.kinder_ielts.service.implement;
 
 import com.kinder.kinder_ielts.constant.GradeStatus;
 import com.kinder.kinder_ielts.constant.HomeWorkSubmitStatus;
-import com.kinder.kinder_ielts.constant.HomeworkPrivacyStatus;
+import com.kinder.kinder_ielts.constant.HomeworkViewStatus;
 import com.kinder.kinder_ielts.constant.IsDelete;
+import com.kinder.kinder_ielts.dto.Error;
 import com.kinder.kinder_ielts.dto.request.homework.CreateHomeworkRequest;
+import com.kinder.kinder_ielts.dto.request.homework.ModifyHomeworkPrivacyStatusRequest;
 import com.kinder.kinder_ielts.dto.request.homework.UpdateHomeworkRequest;
 import com.kinder.kinder_ielts.dto.response.homework.HomeworkResponse;
 import com.kinder.kinder_ielts.entity.Account;
 import com.kinder.kinder_ielts.entity.Homework;
+import com.kinder.kinder_ielts.entity.Student;
 import com.kinder.kinder_ielts.entity.StudySchedule;
 import com.kinder.kinder_ielts.entity.id.ClassStudentId;
 import com.kinder.kinder_ielts.entity.id.StudentHomeworkId;
 import com.kinder.kinder_ielts.entity.join_entity.ClassroomStudent;
 import com.kinder.kinder_ielts.entity.join_entity.StudentHomework;
+import com.kinder.kinder_ielts.exception.BadRequestException;
 import com.kinder.kinder_ielts.mapper.ModelMapper;
+import com.kinder.kinder_ielts.response_message.ClassroomMessage;
 import com.kinder.kinder_ielts.response_message.HomeworkMessage;
 import com.kinder.kinder_ielts.service.HomeworkService;
-import com.kinder.kinder_ielts.service.base.BaseAccountService;
-import com.kinder.kinder_ielts.service.base.BaseHomeworkService;
-import com.kinder.kinder_ielts.service.base.BaseStudentHomeworkService;
-import com.kinder.kinder_ielts.service.base.BaseStudyScheduleService;
+import com.kinder.kinder_ielts.service.base.*;
 import com.kinder.kinder_ielts.util.CompareUtil;
 import com.kinder.kinder_ielts.util.SecurityContextHolderUtil;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +30,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -38,6 +43,7 @@ public class HomeworkServiceImpl implements HomeworkService {
     private final BaseHomeworkService baseHomeworkService;
     private final BaseStudyScheduleService baseStudyScheduleService;
     private final BaseStudentHomeworkService baseStudentHomeworkService;
+    private final BaseClassroomStudentService baseClassroomStudentService;
 
     public HomeworkResponse createHomework(String studyScheduleId, CreateHomeworkRequest request, String message){
         Homework homework = ModelMapper.map(request);
@@ -65,14 +71,14 @@ public class HomeworkServiceImpl implements HomeworkService {
                             .build())
                     .toList();
             if (studentHomeworks.isEmpty())
-                homework.setPrivacyStatus(HomeworkPrivacyStatus.PUBLIC);
+                homework.setViewStatus(HomeworkViewStatus.PUBLIC);
             else {
-                homework.setPrivacyStatus(HomeworkPrivacyStatus.PRIVATE);
+                homework.setViewStatus(HomeworkViewStatus.PRIVATE);
                 baseStudentHomeworkService.create(studentHomeworks, message);
                 homework.setStudentHomeworks(studentHomeworks);
             }
         } else {
-            homework.setPrivacyStatus(HomeworkPrivacyStatus.PUBLIC);
+            homework.setViewStatus(HomeworkViewStatus.PUBLIC);
         }
 
         return HomeworkResponse.detail(baseHomeworkService.create(homework, message));
@@ -109,5 +115,48 @@ public class HomeworkServiceImpl implements HomeworkService {
     public Void deleteHomework(String homeworkId, String deleteFailed) {
         baseHomeworkService.delete(homeworkId, deleteFailed);
         return null;
+    }
+
+    public HomeworkResponse updateHomeworkPrivacyStatus(String homeworkId, ModifyHomeworkPrivacyStatusRequest request, String failMessage) {
+        // Fetch the existing Homework entity
+        Homework homework = baseHomeworkService.get(homeworkId, IsDelete.NOT_DELETED, failMessage);
+
+        // Update privacy status
+        homework.setViewStatus(request.status);
+
+        if (request.status.equals(HomeworkViewStatus.PUBLIC)) {
+            // If the homework is public, remove all student-specific assignments
+            homework.setHomeworksForStudents(null);
+        } else {
+            // Fetch students from the classroom related to this homework
+            List<ClassroomStudent> classroomStudents = baseClassroomStudentService.getClassRoomStudentsByHomeworkId(homeworkId, IsDelete.NOT_DELETED, ClassroomMessage.NOT_FOUND);
+            List<String> studentIdsNotFound = new ArrayList<>();
+            Set<Student> homeworksForStudents = new HashSet<>();
+
+            for (String studentId : request.studentIds) {
+                ClassroomStudent classroomStudent = classroomStudents.stream()
+                        .filter(a -> a.getStudent().getId().equals(studentId))
+                        .findFirst()
+                        .orElse(null);
+
+                if (classroomStudent == null) {
+                    studentIdsNotFound.add(studentId);
+                    continue;
+                }
+
+                // Add student to the homework's student set
+                homeworksForStudents.add(new Student(studentId));
+            }
+
+            if (!studentIdsNotFound.isEmpty()) {
+                throw new BadRequestException(failMessage, Error.build(HomeworkMessage.STUDENT_NOT_FOUND, studentIdsNotFound));
+            }
+
+            // Set the updated list of students who have access to this homework
+            homework.setHomeworksForStudents(homeworksForStudents);
+        }
+
+        // Save and return updated homework details
+        return HomeworkResponse.detailWithDetails(baseHomeworkService.update(homework, failMessage));
     }
 }

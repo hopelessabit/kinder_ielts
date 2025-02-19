@@ -44,4 +44,10 @@ public class WarmUpTestController {
     public ResponseEntity<ResponseData<Void>> delete(@PathVariable String warmUpTestId) {
         return ResponseUtil.getResponse(() -> warmUpTestService.deleteWarmUpTest(warmUpTestId, WarmUpMessage.DELETE_FAILED), WarmUpMessage.DELETED);
     }
+
+    @PatchMapping("/{warmUpTestId}/view-status")
+    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR','TUTOR')")
+    public ResponseEntity<ResponseData<WarmUpTestResponse>> updateViewStatus(@PathVariable String warmUpTestId) {
+        return ResponseUtil.getResponse(() -> warmUpTestService.updateViewStatus(warmUpTestId, WarmUpMessage.VIEW_STATUS_UPDATE_FAILED), WarmUpMessage.VIEW_STATUS_UPDATED);
+    }
 }

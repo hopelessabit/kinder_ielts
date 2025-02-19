@@ -132,7 +132,6 @@ public class CourseServiceImpl implements CourseService {
         course.setDescription(CompareUtil.compare(request.getDescription(), course.getDescription()));
         course.setDetail(CompareUtil.compare(request.getDetail(), course.getDetail()));
         course.setPrice(CompareUtil.compare(request.getPrice(), course.getPrice()));
-        course.setSale(CompareUtil.compare(request.getSale(), course.getSale()));
 
         if (request.getLevelId() != null) {
             log.debug("[UPDATE COURSE FIELDS] Updating level with ID: {}", request.getLevelId());
