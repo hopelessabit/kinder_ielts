@@ -42,7 +42,7 @@ public class ClassroomLink extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Size(max = 11)
-    @Column(name = "status", nullable = false)
+    @Column(name = "view_status")
     private ClassroomLinkStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)

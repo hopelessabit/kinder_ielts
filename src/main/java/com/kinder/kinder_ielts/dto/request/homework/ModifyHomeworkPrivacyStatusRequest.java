@@ -1,10 +1,10 @@
 package com.kinder.kinder_ielts.dto.request.homework;
 
-import com.kinder.kinder_ielts.constant.HomeworkViewStatus;
+import com.kinder.kinder_ielts.constant.HomeworkPrivacyStatus;
 
 import java.util.List;
 
 public class ModifyHomeworkPrivacyStatusRequest {
-    public HomeworkViewStatus status;
+    public HomeworkPrivacyStatus status;
     public List<String> studentIds;
 }

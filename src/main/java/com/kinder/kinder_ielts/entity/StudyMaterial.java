@@ -45,11 +45,11 @@ public class StudyMaterial extends BaseEntity {
     private StudySchedule beLongTo;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "view_status", nullable = false)
+    @Column(name = "view_status")
     private StudyMaterialViewStatus viewStatus = StudyMaterialViewStatus.VIEW;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "privacy_status", nullable = false)
+    @Column(name = "privacy_status")
     private StudyMaterialStatus privacyStatus = StudyMaterialStatus.PUBLIC;
 
     @OneToMany(mappedBy = "studyMaterial", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)

@@ -1,7 +1,8 @@
 package com.kinder.kinder_ielts.entity;
 
-import com.kinder.kinder_ielts.constant.HomeworkViewStatus;
+import com.kinder.kinder_ielts.constant.HomeworkPrivacyStatus;
 import com.kinder.kinder_ielts.constant.HomeworkStatus;
+import com.kinder.kinder_ielts.constant.HomeworkViewStatus;
 import com.kinder.kinder_ielts.constant.IsDelete;
 import com.kinder.kinder_ielts.entity.base.BaseEntity;
 import com.kinder.kinder_ielts.entity.course_template.TemplateHomework;
@@ -51,7 +52,12 @@ public class Homework extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Size(max = 7)
-    @Column(name = "view_status", nullable = false)
+    @Column(name = "privacy_status")
+    private HomeworkPrivacyStatus privacyStatus;
+
+    @Enumerated(EnumType.STRING)
+    @Size(max = 6)
+    @Column(name = "view_status")
     private HomeworkViewStatus viewStatus;
 
     @Column(name = "due_date")
@@ -90,7 +96,7 @@ public class Homework extends BaseEntity {
         homework.setDescription(hw.getDescription());
         homework.setLink(hw.getLink());
         homework.setStatus(hw.getStatus());
-        homework.setViewStatus(hw.getPrivacyStatus());
+        homework.setPrivacyStatus(hw.getPrivacyStatus());
         homework.setDueDate(currentTime);
         homework.setStartDate(hw.getStartDate());
         homework.setBeLongTo(studySchedule);

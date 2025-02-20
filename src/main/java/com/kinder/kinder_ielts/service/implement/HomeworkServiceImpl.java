@@ -1,9 +1,6 @@
 package com.kinder.kinder_ielts.service.implement;
 
-import com.kinder.kinder_ielts.constant.GradeStatus;
-import com.kinder.kinder_ielts.constant.HomeWorkSubmitStatus;
-import com.kinder.kinder_ielts.constant.HomeworkViewStatus;
-import com.kinder.kinder_ielts.constant.IsDelete;
+import com.kinder.kinder_ielts.constant.*;
 import com.kinder.kinder_ielts.dto.Error;
 import com.kinder.kinder_ielts.dto.request.homework.CreateHomeworkRequest;
 import com.kinder.kinder_ielts.dto.request.homework.ModifyHomeworkPrivacyStatusRequest;
@@ -71,14 +68,14 @@ public class HomeworkServiceImpl implements HomeworkService {
                             .build())
                     .toList();
             if (studentHomeworks.isEmpty())
-                homework.setViewStatus(HomeworkViewStatus.PUBLIC);
+                homework.setPrivacyStatus(HomeworkPrivacyStatus.PUBLIC);
             else {
-                homework.setViewStatus(HomeworkViewStatus.PRIVATE);
+                homework.setPrivacyStatus(HomeworkPrivacyStatus.PRIVATE);
                 baseStudentHomeworkService.create(studentHomeworks, message);
                 homework.setStudentHomeworks(studentHomeworks);
             }
         } else {
-            homework.setViewStatus(HomeworkViewStatus.PUBLIC);
+            homework.setPrivacyStatus(HomeworkPrivacyStatus.PUBLIC);
         }
 
         return HomeworkResponse.detail(baseHomeworkService.create(homework, message));
@@ -122,9 +119,9 @@ public class HomeworkServiceImpl implements HomeworkService {
         Homework homework = baseHomeworkService.get(homeworkId, IsDelete.NOT_DELETED, failMessage);
 
         // Update privacy status
-        homework.setViewStatus(request.status);
+        homework.setPrivacyStatus(request.status);
 
-        if (request.status.equals(HomeworkViewStatus.PUBLIC)) {
+        if (request.status.equals(HomeworkPrivacyStatus.PUBLIC)) {
             // If the homework is public, remove all student-specific assignments
             homework.setHomeworksForStudents(null);
         } else {
@@ -162,7 +159,9 @@ public class HomeworkServiceImpl implements HomeworkService {
 
     public HomeworkResponse changeViewStatus(String homeworkId, String failMessage) {
         Homework homework = baseHomeworkService.get(homeworkId, IsDelete.NOT_DELETED, failMessage);
-        homework.setViewStatus(homework.getViewStatus().equals(HomeworkViewStatus.PUBLIC) ? HomeworkViewStatus.PRIVATE : HomeworkViewStatus.PUBLIC);
+
+        homework.setViewStatus(homework.getViewStatus().equals(HomeworkViewStatus.VIEW) ? HomeworkViewStatus.HIDDEN : HomeworkViewStatus.VIEW);
+
         homework.updateAudit(SecurityContextHolderUtil.getAccount(), ZonedDateTime.now());
         return HomeworkResponse.detail(baseHomeworkService.update(homework, failMessage));
     }

@@ -1,7 +1,7 @@
 package com.kinder.kinder_ielts.dto.response.homework;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.kinder.kinder_ielts.constant.HomeworkViewStatus;
+import com.kinder.kinder_ielts.constant.HomeworkPrivacyStatus;
 import com.kinder.kinder_ielts.constant.HomeworkStatus;
 import com.kinder.kinder_ielts.dto.response.BaseEntityResponse;
 import com.kinder.kinder_ielts.dto.response.StatusResponse;
@@ -17,7 +17,7 @@ public class HomeworkResponse {
     private final String description;
     private final String link;
     private final StatusResponse<HomeworkStatus> status;
-    private final StatusResponse<HomeworkViewStatus> viewStatus;
+    private final StatusResponse<HomeworkPrivacyStatus> viewStatus;
     private final ZonedDateTime dueDate;
     private final ZonedDateTime startDate;
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -31,7 +31,7 @@ public class HomeworkResponse {
         this.description = homework.getDescription();
         this.link = homework.getLink();
         this.status = StatusResponse.from(homework.getStatus());
-        this.viewStatus = StatusResponse.from(homework.getViewStatus());
+        this.viewStatus = StatusResponse.from(homework.getPrivacyStatus());
         this.dueDate = homework.getDueDate();
         this.startDate = homework.getStartDate();
 

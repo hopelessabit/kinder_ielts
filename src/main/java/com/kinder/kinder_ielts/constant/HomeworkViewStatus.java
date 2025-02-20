@@ -4,10 +4,11 @@ import lombok.Getter;
 
 @Getter
 public enum HomeworkViewStatus implements StatusEnum {
-    PUBLIC("Công khai"),
-    PRIVATE("Không công khai");
+    VIEW("Đang hiện"),
+    HIDDEN("Bị ẩn");
     private String vietnamese;
     HomeworkViewStatus(String vietnamese) {
         this.vietnamese = vietnamese;
     }
 }
+

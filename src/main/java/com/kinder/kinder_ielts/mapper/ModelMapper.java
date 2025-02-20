@@ -122,6 +122,8 @@ public class ModelMapper {
         homework.setTitle(request.getTitle());
         homework.setLink(request.getLink());
         homework.setStatus(HomeworkStatus.ASSIGNED);
+        homework.setViewStatus(request.getViewStatus() != null ? request.getViewStatus() : HomeworkViewStatus.VIEW);
+        homework.setPrivacyStatus(request.getPrivacyStatus() != null ? request.getPrivacyStatus() : HomeworkPrivacyStatus.PUBLIC);
         homework.setDueDate(request.getDueDate());
         homework.setStartDate(request.getStartDate());
         return homework;

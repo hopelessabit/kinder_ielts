@@ -31,7 +31,7 @@ public class MaterialLink extends BaseEntity {
     private String title;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "view_status", nullable = false)
+    @Column(name = "view_status")
     private MaterialLinkViewStatus viewStatus = MaterialLinkViewStatus.VIEW;
 
     @Size(max = 255)

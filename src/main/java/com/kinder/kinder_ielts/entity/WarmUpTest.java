@@ -44,7 +44,7 @@ public class WarmUpTest extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Size(max = 11)
-    @Column(name = "status", nullable = false)
+    @Column(name = "status")
     private WarmUpTestStatus status = WarmUpTestStatus.VIEW;
 
     @ManyToOne(fetch = FetchType.LAZY)
