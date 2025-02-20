@@ -18,4 +18,8 @@ public class HomeworkMessage {
     public static final String DELETE_FAILED = "Xóa bài tập thất bại";
     public static final String DELETED = "Xóa bài tập thành công";
     public static final String STUDENT_NOT_FOUND = "Học sinh không có trong lớp";
+    public static final String VIEW_STATUS_UPDATE_FAILED = "Cập nhật trạng thái hiển thị bài tập thất bại";
+    public static final String VIEW_STATUS_UPDATED = "Cập nhật trạng thái hiển thị bài tập thành công";
+    public static final String PRIVACY_STATUS_UPDATE_FAILED = "Cập nhật trạng thái riêng tư cho bài tập thất bại";
+    public static final String PRIVACY_STATUS_UPDATED = "Cập nhật trạng thái riêng tư cho bài tập thành công";
 }

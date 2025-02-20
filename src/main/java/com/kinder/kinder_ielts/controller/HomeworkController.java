@@ -2,6 +2,7 @@ package com.kinder.kinder_ielts.controller;
 
 import com.kinder.kinder_ielts.dto.ResponseData;
 import com.kinder.kinder_ielts.dto.request.homework.CreateHomeworkRequest;
+import com.kinder.kinder_ielts.dto.request.homework.ModifyHomeworkPrivacyStatusRequest;
 import com.kinder.kinder_ielts.dto.request.homework.UpdateHomeworkRequest;
 import com.kinder.kinder_ielts.dto.response.homework.HomeworkResponse;
 import com.kinder.kinder_ielts.response_message.HomeworkMessage;
@@ -43,5 +44,17 @@ public class HomeworkController {
     @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR','TUTOR')")
     public ResponseEntity<ResponseData<Void>> delete(@PathVariable String homeworkId){
         return ResponseUtil.getResponse(() -> homeworkService.deleteHomework(homeworkId, HomeworkMessage.DELETE_FAILED), HomeworkMessage.DELETED);
+    }
+
+    @PatchMapping("/{homeworkId}/view-status")
+    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR','TUTOR')")
+    public ResponseEntity<ResponseData<HomeworkResponse>> changeViewStatus(@PathVariable String homeworkId){
+        return ResponseUtil.getResponse(() -> homeworkService.changeViewStatus(homeworkId, HomeworkMessage.VIEW_STATUS_UPDATE_FAILED), HomeworkMessage.VIEW_STATUS_UPDATED);
+    }
+
+    @PatchMapping("/{homeworkId}")
+    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR','TUTOR')")
+    public ResponseEntity<ResponseData<HomeworkResponse>> changePrivacyStatus(@PathVariable String homeworkId, @RequestBody ModifyHomeworkPrivacyStatusRequest request){
+        return ResponseUtil.getResponse(() -> homeworkService.updateHomeworkPrivacyStatus(homeworkId, request, HomeworkMessage.PRIVACY_STATUS_UPDATE_FAILED), HomeworkMessage.PRIVACY_STATUS_UPDATED);
     }
 }

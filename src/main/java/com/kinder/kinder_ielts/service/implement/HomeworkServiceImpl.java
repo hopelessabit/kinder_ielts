@@ -159,4 +159,11 @@ public class HomeworkServiceImpl implements HomeworkService {
         // Save and return updated homework details
         return HomeworkResponse.detailWithDetails(baseHomeworkService.update(homework, failMessage));
     }
+
+    public HomeworkResponse changeViewStatus(String homeworkId, String failMessage) {
+        Homework homework = baseHomeworkService.get(homeworkId, IsDelete.NOT_DELETED, failMessage);
+        homework.setViewStatus(homework.getViewStatus().equals(HomeworkViewStatus.PUBLIC) ? HomeworkViewStatus.PRIVATE : HomeworkViewStatus.PUBLIC);
+        homework.updateAudit(SecurityContextHolderUtil.getAccount(), ZonedDateTime.now());
+        return HomeworkResponse.detail(baseHomeworkService.update(homework, failMessage));
+    }
 }
