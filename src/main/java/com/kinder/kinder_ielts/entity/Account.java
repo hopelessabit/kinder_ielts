@@ -33,8 +33,7 @@ public class Account extends BaseEntity implements UserDetails {
     @Column(name = "password")
     private String password;
 
-    @Lob
-    @Column(name = "avatar")
+    @Column(name = "avatar", columnDefinition = "varchar(MAX)")
     private String avatar;
 
     @Column(name = "role", length = 10)

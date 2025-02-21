@@ -41,12 +41,10 @@ public class  Course extends BaseEntity {
     @Column(name = "detail", length = 4000)
     private String detail;
 
-    @Lob
-    @Column(name = "thumbnail_link")
+    @Column(name = "thumbnail_link", columnDefinition = "varchar(MAX)")
     private String thumbnailLink;
 
-    @Lob
-    @Column(name = "icon_link")
+    @Column(name = "icon_link", columnDefinition = "varchar(MAX)")
     private String iconLink;
 
     @Column(name = "price", nullable = false, precision = 12, scale = 2)

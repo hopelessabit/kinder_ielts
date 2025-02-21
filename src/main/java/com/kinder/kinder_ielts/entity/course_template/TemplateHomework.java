@@ -31,9 +31,7 @@ public class TemplateHomework extends BaseEntity {
     @Column(name = "description", length = 4000)
     private String description;
 
-    @Lob
-    @Nationalized
-    @Column(name = "link", nullable = false)
+    @Column(name = "link", columnDefinition = "varchar(MAX)", nullable = false)
     private String link;
 
     @Enumerated(EnumType.STRING)

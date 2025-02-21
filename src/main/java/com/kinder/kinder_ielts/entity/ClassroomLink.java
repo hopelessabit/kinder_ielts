@@ -34,9 +34,7 @@ public class ClassroomLink extends BaseEntity {
     @Column(name = "description", length = 4000)
     private String description;
 
-    @Lob
-    @Size(max = 255)
-    @Column(name = "link", nullable = false)
+    @Column(name = "link", nullable = false, columnDefinition = "varchar(MAX)")
     private String link;
 
     @Enumerated(EnumType.STRING)

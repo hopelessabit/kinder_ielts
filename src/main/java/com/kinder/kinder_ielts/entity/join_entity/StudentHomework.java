@@ -43,12 +43,10 @@ public class StudentHomework extends BaseEntity {
     @Column(name = "score")
     private Integer score;
 
-    @Lob
-    @Column(name = "submit_file")
+    @Column(name = "submit_file", columnDefinition = "varchar(MAX)")
     private String submitFile;
 
-    @Lob
-    @Column(name = "submit_text")
+    @Column(name = "submit_text", columnDefinition = "varchar(MAX)")
     private String submitText;
 
     @Enumerated(EnumType.STRING)
