@@ -31,13 +31,11 @@ public class StudyMaterial extends BaseEntity {
     private String id;
 
     @Nationalized
-    @Size(max = 255)
-    @Column(name = "title", nullable = false)
+    @Column(name = "title", nullable = false, length = 500)
     private String title;
 
     @Nationalized
-    @Size(max = 500)
-    @Column(name = "description", nullable = false)
+    @Column(name = "description", nullable = false, length = 4000)
     private String description;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -30,15 +30,14 @@ public class WarmUpTest extends BaseEntity {
 
     @Size(max = 255)
     @Nationalized
-    @Column(name = "title", nullable = false)
+    @Column(name = "title", nullable = false, length = 500)
     private String title;
 
-    @Size(max = 500)
     @Nationalized
-    @Column(name = "description")
+    @Column(name = "description", length = 4000)
     private String description;
 
-    @Size(max = 255)
+    @Lob
     @Column(name = "link", nullable = false)
     private String link;
 

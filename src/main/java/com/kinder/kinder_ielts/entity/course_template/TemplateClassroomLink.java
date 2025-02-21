@@ -25,9 +25,8 @@ public class TemplateClassroomLink extends BaseEntity {
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Size(max = 500)
     @Nationalized
-    @Column(name = "description")
+    @Column(name = "description", length = 4000)
     private String description;
 
     @Lob
@@ -36,8 +35,8 @@ public class TemplateClassroomLink extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Size(max = 11)
-    @Column(name = "status", nullable = false)
-    private ClassroomLinkStatus status;
+    @Column(name = "status")
+    private ClassroomLinkStatus status = ClassroomLinkStatus.VIEW;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "template_study_schedule_id", nullable = false)

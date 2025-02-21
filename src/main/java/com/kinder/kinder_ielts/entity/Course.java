@@ -34,12 +34,20 @@ public class  Course extends BaseEntity {
     private CourseLevel level;
 
     @Nationalized
-    @Column(name = "description", nullable = false, length = 255)
+    @Column(name = "description", length = 4000)
     private String description;
 
     @Nationalized
-    @Column(name = "detail", nullable = false, length = 500)
+    @Column(name = "detail", length = 4000)
     private String detail;
+
+    @Lob
+    @Column(name = "thumbnail_link")
+    private String thumbnailLink;
+
+    @Lob
+    @Column(name = "icon_link")
+    private String iconLink;
 
     @Column(name = "price", nullable = false, precision = 12, scale = 2)
     private BigDecimal price;

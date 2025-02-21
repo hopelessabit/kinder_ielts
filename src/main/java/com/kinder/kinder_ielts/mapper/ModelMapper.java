@@ -47,6 +47,8 @@ public class ModelMapper {
         course.setIsDeleted(IsDelete.NOT_DELETED);
         course.setDescription(request.getDescription());
         course.setDetail(request.getDetail());
+        course.setThumbnailLink(request.getThumbnailLink());
+        course.setIconLink(request.getIconLink());
         course.setPrice(request.getPrice());
         course.setStatus(CourseStatus.INACTIVE);
         return course;

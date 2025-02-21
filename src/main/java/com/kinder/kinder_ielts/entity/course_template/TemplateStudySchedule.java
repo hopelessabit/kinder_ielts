@@ -24,14 +24,12 @@ public class TemplateStudySchedule extends BaseEntity {
     @Column(name = "id", nullable = false)
     private String id;
 
-    @Size(max = 500)
     @Nationalized
-    @Column(name = "title", nullable = false)
+    @Column(name = "title", nullable = false, length = 500)
     private String title;
 
-    @Lob
     @Nationalized
-    @Column(name = "description")
+    @Column(name = "description", length = 4000)
     private String description;
 
     @Column(name = "place")

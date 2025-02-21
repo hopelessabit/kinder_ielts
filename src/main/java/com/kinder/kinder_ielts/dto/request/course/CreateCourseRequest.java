@@ -15,6 +15,8 @@ import lombok.Setter;
 public class CreateCourseRequest {
     private String description;
     private String detail;
+    private String thumbnailLink;
+    private String iconLink;
     private BigDecimal price;
     private String levelId;
     private Integer slots;

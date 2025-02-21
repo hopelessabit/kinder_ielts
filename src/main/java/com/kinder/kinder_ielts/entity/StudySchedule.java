@@ -29,16 +29,14 @@ public class StudySchedule extends BaseEntity {
     private ZonedDateTime toTime;
 
     @Nationalized
-    @Size(max = 500)
-    @Column(name = "title", nullable = false)
+    @Column(name = "title", length = 500, nullable = false)
     private String title;
 
     @Column(name = "place")
     private Integer place;
 
     @Nationalized
-    @Size(max = 500)
-    @Column(name = "description")
+    @Column(name = "description", length = 4000)
     private String description;
 
     @Enumerated(EnumType.STRING)

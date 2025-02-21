@@ -26,16 +26,15 @@ public class ClassroomLink extends BaseEntity {
     @Column(name = "id", nullable = false)
     private String id;
 
-    @Size(max = 255)
     @Nationalized
-    @Column(name = "title", nullable = false)
+    @Column(name = "title", nullable = false, length = 500)
     private String title;
 
-    @Size(max = 500)
     @Nationalized
-    @Column(name = "description")
+    @Column(name = "description", length = 4000)
     private String description;
 
+    @Lob
     @Size(max = 255)
     @Column(name = "link", nullable = false)
     private String link;

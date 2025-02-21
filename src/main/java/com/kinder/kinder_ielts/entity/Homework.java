@@ -32,15 +32,14 @@ public class Homework extends BaseEntity {
     private String id;
 
     @Nationalized
-    @Size(max = 255)
-    @Column(name = "title", nullable = false)
+    @Column(name = "title", nullable = false, length = 255)
     private String title;
 
     @Nationalized
-    @Size(max = 500)
-    @Column(name = "description")
+    @Column(name = "description", length = 4000)
     private String description;
 
+    @Lob
     @Size(max = 255)
     @Column(name = "link", nullable = false)
     private String link;
@@ -97,6 +96,7 @@ public class Homework extends BaseEntity {
         homework.setLink(hw.getLink());
         homework.setStatus(hw.getStatus());
         homework.setPrivacyStatus(hw.getPrivacyStatus());
+        homework.setViewStatus(hw.getViewStatus());
         homework.setDueDate(currentTime);
         homework.setStartDate(hw.getStartDate());
         homework.setBeLongTo(studySchedule);

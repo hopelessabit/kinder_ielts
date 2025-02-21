@@ -25,14 +25,12 @@ public class TemplateStudyMaterial extends BaseEntity {
     @Column(name = "id", nullable = false)
     private String id;
 
-    @Size(max = 255)
     @Nationalized
-    @Column(name = "title", nullable = false)
+    @Column(name = "title", nullable = false, length = 500)
     private String title;
 
-    @Size(max = 500)
     @Nationalized
-    @Column(name = "description", nullable = false)
+    @Column(name = "description", nullable = false, length = 4000)
     private String description;
 
     @Enumerated(EnumType.STRING)
