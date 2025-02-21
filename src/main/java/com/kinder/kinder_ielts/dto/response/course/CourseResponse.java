@@ -21,6 +21,8 @@ public class CourseResponse {
     private BigDecimal price;
     private BigDecimal sale;
     private Integer slots;
+    private String thumbnail;
+    private String icon;
     private List<TutorResponse> tutors;
     private CourseLevelResponse level;
     private StatusResponse<CourseStatus> status;
@@ -34,6 +36,8 @@ public class CourseResponse {
         this.description = course.getDescription();
         this.detail = course.getDetail();
         this.slots = course.getSlots();
+        this.thumbnail = course.getThumbnailLink();
+        this.icon = course.getIconLink();
         this.status = StatusResponse.from(course.getStatus());
         this.level = CourseLevelResponse.info(course.getLevel());
         this.price = course.getPrice();
