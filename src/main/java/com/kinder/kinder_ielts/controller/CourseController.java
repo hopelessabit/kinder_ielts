@@ -3,6 +3,7 @@ package com.kinder.kinder_ielts.controller;
 import com.kinder.kinder_ielts.constant.IsDelete;
 import com.kinder.kinder_ielts.dto.ResponseData;
 import com.kinder.kinder_ielts.dto.request.course.CreateCourseRequest;
+import com.kinder.kinder_ielts.dto.request.course.UpdateCourseInfoRequest;
 import com.kinder.kinder_ielts.dto.request.course.UpdateCourseStudent;
 import com.kinder.kinder_ielts.dto.request.course.UpdateCourseTutors;
 import com.kinder.kinder_ielts.dto.response.course.CourseResponse;
@@ -86,5 +87,10 @@ public class CourseController {
         return ResponseUtil.getResponse(() -> courseService.updateCourseStudent(id, request, CourseMessage.UPDATE_STUDENTS_FAILED), CourseMessage.UPDATE_STUDENTS_SUCCESSFULLY);
     }
 
-
+    @PutMapping("/{id}")
+    @SecurityRequirement(name = "Bearer")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'MODERATOR', 'TUTOR')")
+    public ResponseEntity<ResponseData<CourseResponse>> updateCourseInfo(@PathVariable String id, @RequestBody UpdateCourseInfoRequest request){
+        return ResponseUtil.getResponse(() -> courseService.updateCourseInfo(id, request), CourseMessage.UPDATE_INFO_SUCCESSFULLY);
+    }
 }

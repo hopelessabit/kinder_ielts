@@ -19,7 +19,6 @@ public class CourseResponse {
     private String description;
     private String detail;
     private BigDecimal price;
-    private BigDecimal sale;
     private Integer slots;
     private String thumbnail;
     private String icon;

@@ -14,7 +14,6 @@ public class UpdateCourseInfoRequest {
     private String description;
     private String detail;
     private BigDecimal price;
-    private BigDecimal sale;
     private String levelId;
     private String thumbnail;
     private String icon;
