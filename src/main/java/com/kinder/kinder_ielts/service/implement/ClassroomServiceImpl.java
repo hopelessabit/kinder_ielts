@@ -212,6 +212,11 @@ public class ClassroomServiceImpl implements ClassroomService {
         }
 
         // Replace the original set with the updated set
+        for (StudySchedule studySchedule: studySchedules){
+            if (!updatedSchedules.contains(studySchedule))
+                updatedSchedules.add(studySchedule);
+        }
+
         studySchedules.clear();
         studySchedules.addAll(updatedSchedules);
     }
