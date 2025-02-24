@@ -11,6 +11,8 @@ import com.kinder.kinder_ielts.exception.SqlException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 /**
  * Service interface for managing Classroom entities.
  * <p>
@@ -87,7 +89,7 @@ public interface ClassroomService {
      * }
      * </pre>
      */
-    ClassroomResponse getDetail(String id, IsDelete isDelete, ViewStatus studyScheduleStatus);
+    ClassroomResponse getDetail(String id, IsDelete isDelete, List<ViewStatus> studyScheduleStatuses);
 
     /**
      * Delete a classroom by its ID.

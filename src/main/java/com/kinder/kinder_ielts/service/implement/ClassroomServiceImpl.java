@@ -236,10 +236,10 @@ public class ClassroomServiceImpl implements ClassroomService {
     /**
      * Get detailed information about a classroom.
      */
-    public ClassroomResponse getDetail(String id, IsDelete isDelete, ViewStatus status) {
+    public ClassroomResponse getDetail(String id, IsDelete isDelete, List<ViewStatus> studyScheduleStatus) {
         log.info("Fetching detailed info for Classroom ID: {}", id);
         Classroom classroom = baseClassroomService.get(id, IsDelete.NOT_DELETED, ClassroomMessage.NOT_FOUND);
-        classroom.setStudySchedules(baseStudyScheduleService.findByClassId(id, isDelete, status));
+        classroom.setStudySchedules(baseStudyScheduleService.findByClassId(id, isDelete, studyScheduleStatus));
         classroom.setClassroomTutors(baseClassroomTutorService.getByClassroomId(id, IsDelete.NOT_DELETED));
         ClassroomResponse response = ClassroomResponse.detailWithDetails(
                 classroom

@@ -18,6 +18,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/class")
 @SecurityRequirement(name = "Bearer")
@@ -54,10 +56,10 @@ public class ClassroomController {
 
     @GetMapping("/detail/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR', 'TUTOR')")
-    public ResponseEntity<ResponseData<ClassroomResponse>> getDetail(@PathVariable String id, @RequestParam(required = false) IsDelete isDelete, @RequestParam(required = false) ViewStatus studyScheduleStatus){
+    public ResponseEntity<ResponseData<ClassroomResponse>> getDetail(@PathVariable String id, @RequestParam(required = false) IsDelete isDelete, @RequestParam(required = false) List<ViewStatus> studyScheduleStatuses){
         return ResponseUtil.getResponse(() -> classroomService.getDetail(id,
                         isDelete == null ? IsDelete.NOT_DELETED : isDelete,
-                        studyScheduleStatus == null ? ViewStatus.VIEW : studyScheduleStatus),
+                        studyScheduleStatuses),
                 ClassroomMessage.FOUND_SUCCESSFULLY);
     }
 
