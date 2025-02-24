@@ -1,7 +1,7 @@
 package com.kinder.kinder_ielts.entity;
 
 import com.kinder.kinder_ielts.constant.IsDelete;
-import com.kinder.kinder_ielts.constant.StudyScheduleStatus;
+import com.kinder.kinder_ielts.constant.ViewStatus;
 import com.kinder.kinder_ielts.entity.base.BaseEntity;
 import com.kinder.kinder_ielts.util.IdUtil;
 import jakarta.persistence.*;
@@ -41,7 +41,7 @@ public class StudySchedule extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    private StudyScheduleStatus status;
+    private ViewStatus status;
 
     @OneToMany(mappedBy = "beLongToStudySchedule", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<ClassroomLink> classroomLinks;
@@ -68,7 +68,7 @@ public class StudySchedule extends BaseEntity {
         this.fromTime = fromTime;
         this.toTime = toTime;
         this.title = title;
-        this.status = StudyScheduleStatus.HIDDEN;
+        this.status = ViewStatus.HIDDEN;
         this.classroom = classroom;
     }
 

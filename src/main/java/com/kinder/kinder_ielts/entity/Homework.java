@@ -2,8 +2,8 @@ package com.kinder.kinder_ielts.entity;
 
 import com.kinder.kinder_ielts.constant.HomeworkPrivacyStatus;
 import com.kinder.kinder_ielts.constant.HomeworkStatus;
-import com.kinder.kinder_ielts.constant.HomeworkViewStatus;
 import com.kinder.kinder_ielts.constant.IsDelete;
+import com.kinder.kinder_ielts.constant.ViewStatus;
 import com.kinder.kinder_ielts.entity.base.BaseEntity;
 import com.kinder.kinder_ielts.entity.course_template.TemplateHomework;
 import com.kinder.kinder_ielts.entity.join_entity.StudentHomework;
@@ -55,7 +55,7 @@ public class Homework extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Size(max = 6)
     @Column(name = "view_status")
-    private HomeworkViewStatus viewStatus;
+    private ViewStatus viewStatus;
 
     @Column(name = "due_date")
     private ZonedDateTime dueDate;

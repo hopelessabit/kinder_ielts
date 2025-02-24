@@ -1,6 +1,6 @@
 package com.kinder.kinder_ielts.service.implement;
 import com.kinder.kinder_ielts.constant.IsDelete;
-import com.kinder.kinder_ielts.constant.MaterialLinkViewStatus;
+import com.kinder.kinder_ielts.constant.ViewStatus;
 import com.kinder.kinder_ielts.dto.request.material_link.UpdateMaterialLinkRequest;
 import com.kinder.kinder_ielts.dto.response.material_link.MaterialLinkResponse;
 import com.kinder.kinder_ielts.entity.MaterialLink;
@@ -50,7 +50,7 @@ public class MaterialLinkServiceImpl {
     public MaterialLinkResponse updateViewStatus(String materialLinkId, String failMessage) {
         MaterialLink materialLink = baseMaterialLinkService.get(materialLinkId, IsDelete.NOT_DELETED, failMessage);
 
-        materialLink.setViewStatus(materialLink.getViewStatus().equals(MaterialLinkViewStatus.VIEW) ? MaterialLinkViewStatus.HIDDEN : MaterialLinkViewStatus.VIEW);
+        materialLink.setViewStatus(materialLink.getViewStatus().equals(ViewStatus.VIEW) ? ViewStatus.HIDDEN : ViewStatus.VIEW);
 
         materialLink.updateAudit(SecurityContextHolderUtil.getAccount(), ZonedDateTime.now());
 

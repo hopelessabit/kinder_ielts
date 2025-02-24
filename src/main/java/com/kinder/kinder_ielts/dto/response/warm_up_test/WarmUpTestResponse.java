@@ -1,19 +1,13 @@
 package com.kinder.kinder_ielts.dto.response.warm_up_test;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.kinder.kinder_ielts.constant.WarmUpTestStatus;
+import com.kinder.kinder_ielts.constant.ViewStatus;
 import com.kinder.kinder_ielts.dto.response.BaseEntityResponse;
 import com.kinder.kinder_ielts.dto.response.StatusResponse;
-import com.kinder.kinder_ielts.dto.response.account.SubAccountResponse;
-import com.kinder.kinder_ielts.dto.response.constant.IsDeletedResponse;
 import com.kinder.kinder_ielts.dto.response.study_schedule.StudyScheduleResponse;
 import com.kinder.kinder_ielts.entity.WarmUpTest;
 import lombok.Setter;
 import lombok.Getter;
-
-import java.time.ZonedDateTime;
 
 @Getter
 @Setter
@@ -22,7 +16,7 @@ public class WarmUpTestResponse {
     private String title;
     private String description;
     private String link;
-    private StatusResponse<WarmUpTestStatus> status;
+    private StatusResponse<ViewStatus> status;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private StudyScheduleResponse studySchedule;
     @JsonInclude(JsonInclude.Include.NON_NULL)

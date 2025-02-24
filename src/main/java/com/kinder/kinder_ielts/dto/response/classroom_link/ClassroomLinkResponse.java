@@ -1,7 +1,9 @@
 package com.kinder.kinder_ielts.dto.response.classroom_link;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.kinder.kinder_ielts.constant.ViewStatus;
 import com.kinder.kinder_ielts.dto.response.BaseEntityResponse;
+import com.kinder.kinder_ielts.dto.response.StatusResponse;
 import com.kinder.kinder_ielts.dto.response.account.SubAccountResponse;
 import com.kinder.kinder_ielts.dto.response.constant.IsDeletedResponse;
 import com.kinder.kinder_ielts.dto.response.study_schedule.StudyScheduleResponse;
@@ -16,7 +18,7 @@ public class ClassroomLinkResponse {
     private String title;
     private String description;
     private String link;
-    private ClassroomLinkStatusResponse status;
+    private StatusResponse<ViewStatus> status;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private StudyScheduleResponse studySchedule;
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -27,7 +29,7 @@ public class ClassroomLinkResponse {
         this.title = classroomLink.getTitle();
         this.description = classroomLink.getDescription();
         this.link = classroomLink.getLink();
-        this.status = ClassroomLinkStatusResponse.from(classroomLink.getStatus());
+        this.status = StatusResponse.from(classroomLink.getStatus());
 
         if (includeStudySchedule)
             this.studySchedule = StudyScheduleResponse.info(classroomLink.getBeLongToStudySchedule());

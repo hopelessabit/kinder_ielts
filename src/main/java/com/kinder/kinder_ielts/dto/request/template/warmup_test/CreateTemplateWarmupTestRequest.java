@@ -1,5 +1,5 @@
 package com.kinder.kinder_ielts.dto.request.template.warmup_test;
-import com.kinder.kinder_ielts.constant.WarmUpTestStatus;
+import com.kinder.kinder_ielts.constant.ViewStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,5 +13,5 @@ public class CreateTemplateWarmupTestRequest {
     private String title;
     private String description;
     private String link;
-    private WarmUpTestStatus status;
+    private ViewStatus status;
 }

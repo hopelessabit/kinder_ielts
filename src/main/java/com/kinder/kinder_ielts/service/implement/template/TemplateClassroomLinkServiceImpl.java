@@ -1,5 +1,5 @@
 package com.kinder.kinder_ielts.service.implement.template;
-import com.kinder.kinder_ielts.constant.ClassroomLinkStatus;
+import com.kinder.kinder_ielts.constant.ViewStatus;
 import com.kinder.kinder_ielts.constant.IsDelete;
 import com.kinder.kinder_ielts.dto.request.template.classroom_link.CreateTemplateClassroomLink;
 import com.kinder.kinder_ielts.dto.request.template.classroom_link.UpdateTemplateClassroomLinkRequest;
@@ -104,7 +104,7 @@ public class TemplateClassroomLinkServiceImpl implements TemplateClassroomLinkSe
     }
 
     @Override
-    public TemplateClassroomLinkResponse updateStatus(String templateClassroomLinkId, ClassroomLinkStatus status, String failMessage) {
+    public TemplateClassroomLinkResponse updateStatus(String templateClassroomLinkId, ViewStatus status, String failMessage) {
         log.info("[UPDATE CLASSROOM LINK STATUS] Updating status for classroom link ID: {}", templateClassroomLinkId);
 
         TemplateClassroomLink templateClassroomLink = fetchTemplateClassroomLink(templateClassroomLinkId, failMessage);

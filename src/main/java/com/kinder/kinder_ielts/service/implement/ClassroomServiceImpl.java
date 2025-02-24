@@ -226,7 +226,7 @@ public class ClassroomServiceImpl implements ClassroomService {
     public ClassroomResponse getInfo(String id) {
         log.info("Fetching basic info for Classroom ID: {}", id);
         Classroom classroom = baseClassroomService.get(id, IsDelete.NOT_DELETED, ClassroomMessage.NOT_FOUND);
-        classroom.setStudySchedules(baseStudyScheduleService.findByClassId(id, IsDelete.NOT_DELETED, StudyScheduleStatus.VIEW));
+        classroom.setStudySchedules(baseStudyScheduleService.findByClassId(id, IsDelete.NOT_DELETED, ViewStatus.VIEW));
         classroom.setClassroomTutors(baseClassroomTutorService.getByClassroomId(id, IsDelete.NOT_DELETED));
         ClassroomResponse response = ClassroomResponse.infoWithDetails(classroom);
         log.info("Successfully fetched classroom info for ID: {}", id);
@@ -236,7 +236,7 @@ public class ClassroomServiceImpl implements ClassroomService {
     /**
      * Get detailed information about a classroom.
      */
-    public ClassroomResponse getDetail(String id, IsDelete isDelete, StudyScheduleStatus status) {
+    public ClassroomResponse getDetail(String id, IsDelete isDelete, ViewStatus status) {
         log.info("Fetching detailed info for Classroom ID: {}", id);
         Classroom classroom = baseClassroomService.get(id, IsDelete.NOT_DELETED, ClassroomMessage.NOT_FOUND);
         classroom.setStudySchedules(baseStudyScheduleService.findByClassId(id, isDelete, status));

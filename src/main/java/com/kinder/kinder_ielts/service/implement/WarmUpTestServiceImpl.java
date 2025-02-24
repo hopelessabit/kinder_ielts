@@ -1,14 +1,13 @@
 package com.kinder.kinder_ielts.service.implement;
 
 import com.kinder.kinder_ielts.constant.IsDelete;
-import com.kinder.kinder_ielts.constant.WarmUpTestStatus;
+import com.kinder.kinder_ielts.constant.ViewStatus;
 import com.kinder.kinder_ielts.dto.request.warm_up_test.CreateWarmUpTestRequest;
 import com.kinder.kinder_ielts.dto.request.warm_up_test.UpdateWarmUpTestInfoRequest;
 import com.kinder.kinder_ielts.dto.response.warm_up_test.WarmUpTestResponse;
 import com.kinder.kinder_ielts.entity.Account;
 import com.kinder.kinder_ielts.entity.WarmUpTest;
 import com.kinder.kinder_ielts.mapper.ModelMapper;
-import com.kinder.kinder_ielts.response_message.CourseMessage;
 import com.kinder.kinder_ielts.response_message.WarmUpMessage;
 import com.kinder.kinder_ielts.service.base.BaseAccountService;
 import com.kinder.kinder_ielts.service.base.BaseStudyScheduleService;
@@ -73,7 +72,7 @@ public class WarmUpTestServiceImpl {
     public WarmUpTestResponse updateViewStatus(String warmUpTestId, String failMessage) {
         WarmUpTest warmUpTest = baseWarmUpTestService.get(warmUpTestId, IsDelete.NOT_DELETED, failMessage);
 
-        warmUpTest.setStatus(warmUpTest.getStatus().equals(WarmUpTestStatus.VIEW) ? WarmUpTestStatus.HIDDEN : WarmUpTestStatus.VIEW);
+        warmUpTest.setStatus(warmUpTest.getStatus().equals(ViewStatus.VIEW) ? ViewStatus.HIDDEN : ViewStatus.VIEW);
 
         updateAuditInfo(warmUpTest, SecurityContextHolderUtil.getAccount(), ZonedDateTime.now());
 

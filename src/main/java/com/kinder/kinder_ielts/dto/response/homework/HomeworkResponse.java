@@ -3,7 +3,7 @@ package com.kinder.kinder_ielts.dto.response.homework;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.kinder.kinder_ielts.constant.HomeworkPrivacyStatus;
 import com.kinder.kinder_ielts.constant.HomeworkStatus;
-import com.kinder.kinder_ielts.constant.HomeworkViewStatus;
+import com.kinder.kinder_ielts.constant.ViewStatus;
 import com.kinder.kinder_ielts.dto.response.BaseEntityResponse;
 import com.kinder.kinder_ielts.dto.response.StatusResponse;
 import com.kinder.kinder_ielts.entity.Homework;
@@ -18,7 +18,7 @@ public class HomeworkResponse {
     private final String description;
     private final String link;
     private final StatusResponse<HomeworkStatus> status;
-    private final StatusResponse<HomeworkViewStatus> viewStatus;
+    private final StatusResponse<ViewStatus> viewStatus;
     private final StatusResponse<HomeworkPrivacyStatus> privacyStatus;
     private final ZonedDateTime dueDate;
     private final ZonedDateTime startDate;

@@ -1,6 +1,6 @@
 package com.kinder.kinder_ielts.service.implement.base;
 
-import com.kinder.kinder_ielts.constant.ClassroomLinkStatus;
+import com.kinder.kinder_ielts.constant.ViewStatus;
 import com.kinder.kinder_ielts.constant.IsDelete;
 import com.kinder.kinder_ielts.entity.Account;
 import com.kinder.kinder_ielts.entity.ClassroomLink;
@@ -39,7 +39,7 @@ public class BaseClassroomLinkServiceImpl extends BaseEntityServiceImpl<Classroo
     @Override
     protected void markAsDeleted(ClassroomLink entity) {
         entity.setIsDeleted(IsDelete.DELETED);
-        entity.setStatus(ClassroomLinkStatus.HIDDEN);
+        entity.setStatus(ViewStatus.HIDDEN);
         entity.updateAudit(SecurityContextHolderUtil.getAccount(), ZonedDateTime.now());
     }
 
@@ -47,7 +47,7 @@ public class BaseClassroomLinkServiceImpl extends BaseEntityServiceImpl<Classroo
     protected void markAsDeleted(List<ClassroomLink> entity, Account modifier, ZonedDateTime currentTime) {
         for (ClassroomLink classroomLink : entity) {
             classroomLink.setIsDeleted(IsDelete.DELETED);
-            classroomLink.setStatus(ClassroomLinkStatus.HIDDEN);
+            classroomLink.setStatus(ViewStatus.HIDDEN);
             classroomLink.updateAudit(modifier, currentTime);
         }
     }

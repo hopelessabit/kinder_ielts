@@ -1,7 +1,7 @@
 package com.kinder.kinder_ielts.service.implement.base;
 
 import com.kinder.kinder_ielts.constant.IsDelete;
-import com.kinder.kinder_ielts.constant.StudyScheduleStatus;
+import com.kinder.kinder_ielts.constant.ViewStatus;
 import com.kinder.kinder_ielts.entity.Account;
 import com.kinder.kinder_ielts.entity.StudySchedule;
 import com.kinder.kinder_ielts.repository.StudyScheduleRepository;
@@ -52,7 +52,9 @@ public class BaseStudyScheduleServiceImpl extends BaseEntityServiceImpl<StudySch
     }
 
     @Override
-    public Set<StudySchedule> findByClassId(String classId, IsDelete isDelete, StudyScheduleStatus status) {
+    public Set<StudySchedule> findByClassId(String classId, IsDelete isDelete, ViewStatus status) {
         return studyScheduleRepository.findByClassroom_IdAndIsDeletedAndStatus(classId, isDelete, status);
     }
+
+
 }

@@ -6,7 +6,7 @@ import com.kinder.kinder_ielts.constant.HomeworkStatus;
 import java.time.ZonedDateTime;
 import java.util.List;
 
-import com.kinder.kinder_ielts.constant.HomeworkViewStatus;
+import com.kinder.kinder_ielts.constant.ViewStatus;
 import jakarta.annotation.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,7 +26,7 @@ public class CreateHomeworkRequest {
     @Nullable
     private HomeworkPrivacyStatus privacyStatus;
     @Nullable
-    private HomeworkViewStatus viewStatus;
+    private ViewStatus viewStatus;
     private ZonedDateTime dueDate;
     private ZonedDateTime startDate;
 }

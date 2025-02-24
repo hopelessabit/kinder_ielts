@@ -1,12 +1,11 @@
 package com.kinder.kinder_ielts.controller.template;
-import com.kinder.kinder_ielts.constant.WarmUpTestStatus;
+import com.kinder.kinder_ielts.constant.ViewStatus;
 import com.kinder.kinder_ielts.dto.ResponseData;
 import com.kinder.kinder_ielts.dto.request.template.warmup_test.CreateTemplateWarmupTestRequest;
 import com.kinder.kinder_ielts.dto.request.template.warmup_test.UpdateTemplateWarmupTestRequest;
 import com.kinder.kinder_ielts.dto.response.template.warm_up_test.TemplateWarmUpTestResponse;
 import com.kinder.kinder_ielts.response_message.TemplateWarmupTestMessage;
 import com.kinder.kinder_ielts.service.implement.template.TemplateWarmupTestServiceImpl;
-import com.kinder.kinder_ielts.service.template.TemplateWarmupTestService;
 import com.kinder.kinder_ielts.util.ResponseUtil;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
@@ -53,7 +52,7 @@ public class TemplateWarmupTestController {
     @PatchMapping("/{templateWarmupTestId}")
     @SecurityRequirement(name = "Bearer")
     @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR','TUTOR')")
-    public ResponseEntity<ResponseData<TemplateWarmUpTestResponse>> updateStatus(@PathVariable String templateWarmupTestId, @RequestParam WarmUpTestStatus status){
+    public ResponseEntity<ResponseData<TemplateWarmUpTestResponse>> updateStatus(@PathVariable String templateWarmupTestId, @RequestParam ViewStatus status){
         return ResponseUtil.getResponse(() -> templateWarmupTestService.updateStatus(templateWarmupTestId, status, TemplateWarmupTestMessage.UPDATE_STATUS_FAILED), TemplateWarmupTestMessage.STATUS_UPDATED);
     }
 

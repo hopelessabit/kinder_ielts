@@ -1,5 +1,5 @@
 package com.kinder.kinder_ielts.controller.template;
-import com.kinder.kinder_ielts.constant.ClassroomLinkStatus;
+import com.kinder.kinder_ielts.constant.ViewStatus;
 import com.kinder.kinder_ielts.dto.ResponseData;
 import com.kinder.kinder_ielts.dto.request.template.classroom_link.CreateTemplateClassroomLink;
 import com.kinder.kinder_ielts.dto.request.template.classroom_link.UpdateTemplateClassroomLinkRequest;
@@ -53,7 +53,7 @@ public class TemplateClassroomLinkController {
     @PatchMapping("/{templateClassroomLinkId}")
     @SecurityRequirement(name = "Bearer")
     @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR','TUTOR')")
-    public ResponseEntity<ResponseData<TemplateClassroomLinkResponse>> updateStatus(@PathVariable String templateClassroomLinkId, @RequestParam ClassroomLinkStatus status) {
+    public ResponseEntity<ResponseData<TemplateClassroomLinkResponse>> updateStatus(@PathVariable String templateClassroomLinkId, @RequestParam ViewStatus status) {
         return ResponseUtil.getResponse(() -> templateClassroomLinkService.updateStatus(templateClassroomLinkId, status, TemplateClassroomLinkMessage.UPDATE_STATUS_FAILED), TemplateClassroomLinkMessage.STATUS_UPDATED);
     }
 }

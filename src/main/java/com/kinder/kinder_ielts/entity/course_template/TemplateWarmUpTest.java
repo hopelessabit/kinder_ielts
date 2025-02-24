@@ -1,6 +1,6 @@
 package com.kinder.kinder_ielts.entity.course_template;
 
-import com.kinder.kinder_ielts.constant.WarmUpTestStatus;
+import com.kinder.kinder_ielts.constant.ViewStatus;
 import com.kinder.kinder_ielts.entity.base.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
@@ -33,7 +33,7 @@ public class TemplateWarmUpTest extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Size(max = 11)
     @Column(name = "status", nullable = false)
-    private WarmUpTestStatus status;
+    private ViewStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "template_study_schedule_id", nullable = false)

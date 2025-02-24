@@ -1,12 +1,11 @@
 package com.kinder.kinder_ielts.service.implement.base;
 
 import com.kinder.kinder_ielts.constant.IsDelete;
-import com.kinder.kinder_ielts.constant.WarmUpTestStatus;
+import com.kinder.kinder_ielts.constant.ViewStatus;
 import com.kinder.kinder_ielts.entity.Account;
 import com.kinder.kinder_ielts.entity.WarmUpTest;
 import com.kinder.kinder_ielts.repository.BaseEntityRepository;
 import com.kinder.kinder_ielts.repository.WarmUpTestRepository;
-import com.kinder.kinder_ielts.response_message.CourseMessage;
 import com.kinder.kinder_ielts.service.base.BaseAccountService;
 import com.kinder.kinder_ielts.service.base.BaseWarmUpTestService;
 
@@ -42,7 +41,7 @@ public class BaseWarmUpTestTestServiceImpl extends BaseEntityServiceImpl<WarmUpT
     @Override
     protected void markAsDeleted(WarmUpTest entity) {
         entity.setIsDeleted(IsDelete.DELETED);
-        entity.setStatus(WarmUpTestStatus.HIDDEN);
+        entity.setStatus(ViewStatus.HIDDEN);
         entity.updateAudit(SecurityContextHolderUtil.getAccount(), ZonedDateTime.now());
     }
 
@@ -50,7 +49,7 @@ public class BaseWarmUpTestTestServiceImpl extends BaseEntityServiceImpl<WarmUpT
     protected void markAsDeleted(List<WarmUpTest> entity, Account modifier, ZonedDateTime currentTime) {
         for (WarmUpTest warmUpTest : entity) {
             warmUpTest.setIsDeleted(IsDelete.DELETED);
-            warmUpTest.setStatus(WarmUpTestStatus.HIDDEN);
+            warmUpTest.setStatus(ViewStatus.HIDDEN);
             warmUpTest.updateAudit(modifier, currentTime);
         }
     }

@@ -168,10 +168,10 @@ public class StudyMaterialServiceImpl {
     public StudyMaterialResponse updateViewStatus(String studyMaterialId, String failMessage) {
         StudyMaterial studyMaterial = baseStudyMaterialService.get(studyMaterialId, IsDelete.NOT_DELETED, failMessage);
 
-        if (studyMaterial.getViewStatus().equals(StudyMaterialViewStatus.VIEW))
-            studyMaterial.setViewStatus(StudyMaterialViewStatus.HIDDEN);
+        if (studyMaterial.getViewStatus().equals(ViewStatus.VIEW))
+            studyMaterial.setViewStatus(ViewStatus.HIDDEN);
         else
-            studyMaterial.setViewStatus(StudyMaterialViewStatus.VIEW);
+            studyMaterial.setViewStatus(ViewStatus.VIEW);
 
         studyMaterial.updateAudit(SecurityContextHolderUtil.getAccount(), ZonedDateTime.now());
 

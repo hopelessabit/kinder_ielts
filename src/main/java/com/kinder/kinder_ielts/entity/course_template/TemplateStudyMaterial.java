@@ -1,7 +1,7 @@
 package com.kinder.kinder_ielts.entity.course_template;
 
 import com.kinder.kinder_ielts.constant.StudyMaterialStatus;
-import com.kinder.kinder_ielts.constant.StudyMaterialViewStatus;
+import com.kinder.kinder_ielts.constant.ViewStatus;
 import com.kinder.kinder_ielts.entity.MaterialLink;
 import com.kinder.kinder_ielts.entity.Student;
 import com.kinder.kinder_ielts.entity.StudySchedule;
@@ -39,7 +39,7 @@ public class TemplateStudyMaterial extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "view_status")
-    private StudyMaterialViewStatus viewStatus;
+    private ViewStatus viewStatus;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "template_study_schedule_id", nullable = false)

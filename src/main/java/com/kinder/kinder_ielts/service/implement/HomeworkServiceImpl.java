@@ -160,7 +160,7 @@ public class HomeworkServiceImpl implements HomeworkService {
     public HomeworkResponse changeViewStatus(String homeworkId, String failMessage) {
         Homework homework = baseHomeworkService.get(homeworkId, IsDelete.NOT_DELETED, failMessage);
 
-        homework.setViewStatus(homework.getViewStatus().equals(HomeworkViewStatus.VIEW) ? HomeworkViewStatus.HIDDEN : HomeworkViewStatus.VIEW);
+        homework.setViewStatus(homework.getViewStatus().equals(ViewStatus.VIEW) ? ViewStatus.HIDDEN : ViewStatus.VIEW);
 
         homework.updateAudit(SecurityContextHolderUtil.getAccount(), ZonedDateTime.now());
         return HomeworkResponse.detail(baseHomeworkService.update(homework, failMessage));

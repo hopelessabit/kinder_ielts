@@ -1,5 +1,5 @@
 package com.kinder.kinder_ielts.dto.request.template.study_schedule;
-import com.kinder.kinder_ielts.constant.StudyScheduleStatus;
+import com.kinder.kinder_ielts.constant.ViewStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,5 +13,5 @@ public class CreateTemplateStudyScheduleRequest {
     private String title;
     private String description;
     private Integer place;
-    private StudyScheduleStatus status;
+    private ViewStatus status;
 }

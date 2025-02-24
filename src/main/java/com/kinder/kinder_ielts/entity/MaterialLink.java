@@ -1,7 +1,7 @@
 package com.kinder.kinder_ielts.entity;
 
 import com.kinder.kinder_ielts.constant.IsDelete;
-import com.kinder.kinder_ielts.constant.MaterialLinkViewStatus;
+import com.kinder.kinder_ielts.constant.ViewStatus;
 import com.kinder.kinder_ielts.entity.base.BaseEntity;
 import com.kinder.kinder_ielts.entity.course_template.TemplateStudyMaterial;
 import com.kinder.kinder_ielts.util.IdUtil;
@@ -13,7 +13,6 @@ import lombok.Setter;
 import org.hibernate.annotations.Nationalized;
 
 import java.time.ZonedDateTime;
-import java.util.List;
 
 @Getter
 @Setter
@@ -32,7 +31,7 @@ public class MaterialLink extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "view_status")
-    private MaterialLinkViewStatus viewStatus = MaterialLinkViewStatus.VIEW;
+    private ViewStatus viewStatus = ViewStatus.VIEW;
 
     @Size(max = 255)
     @Column(name = "link", nullable = false)

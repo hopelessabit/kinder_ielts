@@ -1,7 +1,7 @@
 package com.kinder.kinder_ielts.dto.response.template.warm_up_test;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.kinder.kinder_ielts.constant.WarmUpTestStatus;
+import com.kinder.kinder_ielts.constant.ViewStatus;
 import com.kinder.kinder_ielts.dto.response.BaseEntityResponse;
 import com.kinder.kinder_ielts.dto.response.StatusResponse;
 import com.kinder.kinder_ielts.dto.response.template.study_schedule.TemplateStudyScheduleResponse;
@@ -14,7 +14,7 @@ public class TemplateWarmUpTestResponse {
     private String title;
     private String description;
     private String link;
-    private StatusResponse<WarmUpTestStatus> status;
+    private StatusResponse<ViewStatus> status;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private TemplateStudyScheduleResponse studyScheduleTemplate;
     @JsonInclude(JsonInclude.Include.NON_NULL)

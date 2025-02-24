@@ -1,11 +1,10 @@
 package com.kinder.kinder_ielts.service;
 
 import com.kinder.kinder_ielts.constant.IsDelete;
-import com.kinder.kinder_ielts.constant.StudyScheduleStatus;
+import com.kinder.kinder_ielts.constant.ViewStatus;
 import com.kinder.kinder_ielts.dto.ResponseData;
 import com.kinder.kinder_ielts.dto.request.classroom.CreateClassroomRequest;
 import com.kinder.kinder_ielts.dto.request.classroom.UpdateClassroomRequest;
-import com.kinder.kinder_ielts.dto.request.classroom.UpdateClassroomTutorRequest;
 import com.kinder.kinder_ielts.dto.response.classroom.ClassroomResponse;
 import com.kinder.kinder_ielts.exception.NotFoundException;
 import com.kinder.kinder_ielts.exception.SqlException;
@@ -88,7 +87,7 @@ public interface ClassroomService {
      * }
      * </pre>
      */
-    ClassroomResponse getDetail(String id, IsDelete isDelete, StudyScheduleStatus studyScheduleStatus);
+    ClassroomResponse getDetail(String id, IsDelete isDelete, ViewStatus studyScheduleStatus);
 
     /**
      * Delete a classroom by its ID.

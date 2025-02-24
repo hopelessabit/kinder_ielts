@@ -1,6 +1,6 @@
 package com.kinder.kinder_ielts.service.implement;
 
-import com.kinder.kinder_ielts.constant.ClassroomLinkStatus;
+import com.kinder.kinder_ielts.constant.ViewStatus;
 import com.kinder.kinder_ielts.constant.IsDelete;
 import com.kinder.kinder_ielts.dto.request.classroom.link.CreateClassroomLinkRequest;
 import com.kinder.kinder_ielts.dto.request.classroom.link.UpdateClassroomLinkRequest;
@@ -8,7 +8,6 @@ import com.kinder.kinder_ielts.dto.response.classroom_link.ClassroomLinkResponse
 import com.kinder.kinder_ielts.entity.Account;
 import com.kinder.kinder_ielts.entity.ClassroomLink;
 import com.kinder.kinder_ielts.mapper.ModelMapper;
-import com.kinder.kinder_ielts.response_message.CourseMessage;
 import com.kinder.kinder_ielts.service.base.BaseAccountService;
 import com.kinder.kinder_ielts.service.base.BaseClassroomLinkService;
 import com.kinder.kinder_ielts.service.base.BaseStudyScheduleService;
@@ -62,7 +61,7 @@ public class ClassroomLinkServiceImpl {
     public ClassroomLinkResponse updateViewStatus(String classroomLinkId, String failMessage) {
         ClassroomLink classroomLink = baseClassroomLinkService.get(classroomLinkId, IsDelete.NOT_DELETED, failMessage);
 
-        classroomLink.setStatus(classroomLink.getStatus().equals(ClassroomLinkStatus.VIEW) ? ClassroomLinkStatus.HIDDEN : ClassroomLinkStatus.VIEW);
+        classroomLink.setStatus(classroomLink.getStatus().equals(ViewStatus.VIEW) ? ViewStatus.HIDDEN : ViewStatus.VIEW);
 
         classroomLink.updateAudit(SecurityContextHolderUtil.getAccount(), ZonedDateTime.now());
 

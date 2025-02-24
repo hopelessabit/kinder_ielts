@@ -1,8 +1,7 @@
 package com.kinder.kinder_ielts.entity;
 
-import com.kinder.kinder_ielts.constant.HomeworkStatus;
 import com.kinder.kinder_ielts.constant.IsDelete;
-import com.kinder.kinder_ielts.constant.WarmUpTestStatus;
+import com.kinder.kinder_ielts.constant.ViewStatus;
 import com.kinder.kinder_ielts.entity.base.BaseEntity;
 import com.kinder.kinder_ielts.entity.course_template.TemplateWarmUpTest;
 import com.kinder.kinder_ielts.util.IdUtil;
@@ -43,7 +42,7 @@ public class WarmUpTest extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Size(max = 11)
     @Column(name = "status")
-    private WarmUpTestStatus status = WarmUpTestStatus.VIEW;
+    private ViewStatus status = ViewStatus.VIEW;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "study_schedule_id", nullable = false)

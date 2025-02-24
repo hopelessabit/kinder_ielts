@@ -1,8 +1,7 @@
 package com.kinder.kinder_ielts.entity.course_template;
 
 
-import com.kinder.kinder_ielts.constant.StudyScheduleStatus;
-import com.kinder.kinder_ielts.entity.*;
+import com.kinder.kinder_ielts.constant.ViewStatus;
 import com.kinder.kinder_ielts.entity.base.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
@@ -11,7 +10,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Nationalized;
 
-import java.time.ZonedDateTime;
 import java.util.List;
 
 @Getter
@@ -37,7 +35,7 @@ public class TemplateStudySchedule extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    private StudyScheduleStatus status;
+    private ViewStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private TemplateClassroom templateClassroom;

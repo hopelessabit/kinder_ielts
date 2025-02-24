@@ -1,7 +1,7 @@
 package com.kinder.kinder_ielts.entity;
 
-import com.kinder.kinder_ielts.constant.ClassroomLinkStatus;
 import com.kinder.kinder_ielts.constant.IsDelete;
+import com.kinder.kinder_ielts.constant.ViewStatus;
 import com.kinder.kinder_ielts.entity.base.BaseEntity;
 import com.kinder.kinder_ielts.entity.course_template.TemplateClassroomLink;
 import com.kinder.kinder_ielts.util.IdUtil;
@@ -40,7 +40,7 @@ public class ClassroomLink extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Size(max = 11)
     @Column(name = "view_status")
-    private ClassroomLinkStatus status;
+    private ViewStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "study_schedule_id", nullable = false)

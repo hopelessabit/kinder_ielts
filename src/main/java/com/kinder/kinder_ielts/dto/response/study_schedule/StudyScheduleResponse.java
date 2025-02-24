@@ -1,7 +1,7 @@
 package com.kinder.kinder_ielts.dto.response.study_schedule;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.kinder.kinder_ielts.constant.StudyScheduleStatus;
+import com.kinder.kinder_ielts.constant.ViewStatus;
 import com.kinder.kinder_ielts.dto.response.BaseEntityResponse;
 import com.kinder.kinder_ielts.dto.response.StatusResponse;
 import com.kinder.kinder_ielts.entity.*;
@@ -19,7 +19,7 @@ public class StudyScheduleResponse {
     private ZonedDateTime toTime;
     private String title;
     private String description;
-    private StatusResponse<StudyScheduleStatus> status;
+    private StatusResponse<ViewStatus> status;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private StudyScheduleDetailInfoResponse detailInfo;

@@ -1,6 +1,6 @@
 package com.kinder.kinder_ielts.service.implement.template;
 import com.kinder.kinder_ielts.constant.IsDelete;
-import com.kinder.kinder_ielts.constant.WarmUpTestStatus;
+import com.kinder.kinder_ielts.constant.ViewStatus;
 import com.kinder.kinder_ielts.dto.request.template.warmup_test.CreateTemplateWarmupTestRequest;
 import com.kinder.kinder_ielts.dto.request.template.warmup_test.UpdateTemplateWarmupTestRequest;
 import com.kinder.kinder_ielts.dto.response.template.warm_up_test.TemplateWarmUpTestResponse;
@@ -61,7 +61,7 @@ public class TemplateWarmupTestServiceImpl {
         return TemplateWarmUpTestResponse.detailWithStudySchedule(baseTemplateWarmUpTestService.update(templateWarmUpTest, failMessage));
     }
 
-    public TemplateWarmUpTestResponse updateStatus(String templateWarmupTestId, WarmUpTestStatus warmUpTestStatus, String failMessage) {
+    public TemplateWarmUpTestResponse updateStatus(String templateWarmupTestId, ViewStatus warmUpTestStatus, String failMessage) {
         TemplateWarmUpTest templateWarmUpTest = baseTemplateWarmUpTestService.get(templateWarmupTestId, IsDelete.NOT_DELETED, failMessage);
         templateWarmUpTest.setStatus(warmUpTestStatus);
 

@@ -2,7 +2,7 @@ package com.kinder.kinder_ielts.entity.course_template;
 
 import com.kinder.kinder_ielts.constant.HomeworkPrivacyStatus;
 import com.kinder.kinder_ielts.constant.HomeworkStatus;
-import com.kinder.kinder_ielts.constant.HomeworkViewStatus;
+import com.kinder.kinder_ielts.constant.ViewStatus;
 import com.kinder.kinder_ielts.entity.base.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
@@ -47,7 +47,7 @@ public class TemplateHomework extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Size(max = 7)
     @Column(name = "view_status", nullable = false)
-    private HomeworkViewStatus viewStatus = HomeworkViewStatus.VIEW;
+    private ViewStatus viewStatus = ViewStatus.VIEW;
 
     @Column(name = "due_date")
     private ZonedDateTime dueDate;

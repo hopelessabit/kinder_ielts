@@ -1,7 +1,7 @@
 package com.kinder.kinder_ielts.dto.response.material_link;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.kinder.kinder_ielts.constant.MaterialLinkViewStatus;
+import com.kinder.kinder_ielts.constant.ViewStatus;
 import com.kinder.kinder_ielts.dto.response.BaseEntityResponse;
 import com.kinder.kinder_ielts.dto.response.StatusResponse;
 import com.kinder.kinder_ielts.dto.response.template.study_material.TemplateStudyMaterialResponse;
@@ -13,7 +13,7 @@ public class MaterialLinkResponse {
     private String id;
     private String title;
     private String link;
-    private StatusResponse<MaterialLinkViewStatus> viewStatus;
+    private StatusResponse<ViewStatus> viewStatus;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private TemplateStudyMaterialResponse studyMaterial;
     @JsonInclude(JsonInclude.Include.NON_NULL)

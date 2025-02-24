@@ -1,6 +1,6 @@
 package com.kinder.kinder_ielts.controller;
 import com.kinder.kinder_ielts.constant.IsDelete;
-import com.kinder.kinder_ielts.constant.StudyScheduleStatus;
+import com.kinder.kinder_ielts.constant.ViewStatus;
 import com.kinder.kinder_ielts.dto.ResponseData;
 import com.kinder.kinder_ielts.dto.request.classroom.CreateClassroomRequest;
 import com.kinder.kinder_ielts.dto.request.classroom.UpdateClassroomRequest;
@@ -54,10 +54,10 @@ public class ClassroomController {
 
     @GetMapping("/detail/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR', 'TUTOR')")
-    public ResponseEntity<ResponseData<ClassroomResponse>> getDetail(@PathVariable String id, @RequestParam(required = false) IsDelete isDelete, @RequestParam(required = false)StudyScheduleStatus studyScheduleStatus){
+    public ResponseEntity<ResponseData<ClassroomResponse>> getDetail(@PathVariable String id, @RequestParam(required = false) IsDelete isDelete, @RequestParam(required = false) ViewStatus studyScheduleStatus){
         return ResponseUtil.getResponse(() -> classroomService.getDetail(id,
                         isDelete == null ? IsDelete.NOT_DELETED : isDelete,
-                        studyScheduleStatus == null ? StudyScheduleStatus.VIEW : studyScheduleStatus),
+                        studyScheduleStatus == null ? ViewStatus.VIEW : studyScheduleStatus),
                 ClassroomMessage.FOUND_SUCCESSFULLY);
     }
 

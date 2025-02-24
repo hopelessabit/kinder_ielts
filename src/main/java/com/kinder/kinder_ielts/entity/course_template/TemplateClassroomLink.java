@@ -1,7 +1,7 @@
 package com.kinder.kinder_ielts.entity.course_template;
 
 
-import com.kinder.kinder_ielts.constant.ClassroomLinkStatus;
+import com.kinder.kinder_ielts.constant.ViewStatus;
 import com.kinder.kinder_ielts.entity.base.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
@@ -35,7 +35,7 @@ public class TemplateClassroomLink extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Size(max = 11)
     @Column(name = "status")
-    private ClassroomLinkStatus status = ClassroomLinkStatus.VIEW;
+    private ViewStatus status = ViewStatus.VIEW;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "template_study_schedule_id", nullable = false)

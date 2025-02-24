@@ -1,6 +1,6 @@
 package com.kinder.kinder_ielts.service.implement;
 import com.kinder.kinder_ielts.constant.IsDelete;
-import com.kinder.kinder_ielts.constant.StudyScheduleStatus;
+import com.kinder.kinder_ielts.constant.ViewStatus;
 import com.kinder.kinder_ielts.dto.request.study_schedule.CreateStudyScheduleRequest;
 import com.kinder.kinder_ielts.dto.request.study_schedule.UpdateStudyScheduleRequest;
 import com.kinder.kinder_ielts.dto.response.study_schedule.StudyScheduleResponse;
@@ -79,7 +79,7 @@ public class StudyScheduleServiceImpl {
 
         StudySchedule studySchedule = baseStudyScheduleService.get(studyScheduleId, IsDelete.NOT_DELETED, failMessage);
 
-        studySchedule.setStatus(studySchedule.getStatus().equals(StudyScheduleStatus.VIEW) ? StudyScheduleStatus.HIDDEN : StudyScheduleStatus.VIEW);
+        studySchedule.setStatus(studySchedule.getStatus().equals(ViewStatus.VIEW) ? ViewStatus.HIDDEN : ViewStatus.VIEW);
 
         studySchedule.updateAudit(SecurityContextHolderUtil.getAccount(), ZonedDateTime.now());
 

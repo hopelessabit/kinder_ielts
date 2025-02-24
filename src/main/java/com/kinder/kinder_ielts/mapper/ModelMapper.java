@@ -74,7 +74,7 @@ public class ModelMapper {
         if (request.getStatus() != null)
             templateStudySchedule.setStatus(request.getStatus());
         else
-            templateStudySchedule.setStatus(StudyScheduleStatus.VIEW);
+            templateStudySchedule.setStatus(ViewStatus.VIEW);
         templateStudySchedule.setCreateBy(SecurityContextHolderUtil.getAccount());
         templateStudySchedule.setCreateTime(ZonedDateTime.now());
         templateStudySchedule.setIsDeleted(IsDelete.NOT_DELETED);
@@ -101,7 +101,7 @@ public class ModelMapper {
         classroomLink.setDescription(request.getDescription());
         classroomLink.setTitle(request.getTitle());
         classroomLink.setLink(request.getLink());
-        classroomLink.setStatus(ClassroomLinkStatus.VIEW);
+        classroomLink.setStatus(ViewStatus.VIEW);
         return classroomLink;
     }
     public static WarmUpTest map(CreateWarmUpTestRequest request){
@@ -112,7 +112,7 @@ public class ModelMapper {
         warmUpTest.setDescription(request.getDescription());
         warmUpTest.setTitle(request.getTitle());
         warmUpTest.setLink(request.getLink());
-        warmUpTest.setStatus(WarmUpTestStatus.VIEW);
+        warmUpTest.setStatus(ViewStatus.VIEW);
         return warmUpTest;
     }
     public static Homework map(CreateHomeworkRequest request){
@@ -124,7 +124,7 @@ public class ModelMapper {
         homework.setTitle(request.getTitle());
         homework.setLink(request.getLink());
         homework.setStatus(HomeworkStatus.ASSIGNED);
-        homework.setViewStatus(request.getViewStatus() != null ? request.getViewStatus() : HomeworkViewStatus.VIEW);
+        homework.setViewStatus(request.getViewStatus() != null ? request.getViewStatus() : ViewStatus.VIEW);
         homework.setPrivacyStatus(request.getPrivacyStatus() != null ? request.getPrivacyStatus() : HomeworkPrivacyStatus.PUBLIC);
         homework.setDueDate(request.getDueDate());
         homework.setStartDate(request.getStartDate());
@@ -163,7 +163,7 @@ public class ModelMapper {
         templateStudyMaterial.setTitle(request.getTitle());
         templateStudyMaterial.setDescription(request.getDescription());
         templateStudyMaterial.setPrivacyStatus(request.getPrivacyStatus() != null ? request.getPrivacyStatus() : StudyMaterialStatus.PUBLIC);
-        templateStudyMaterial.setViewStatus(request.getViewStatus() != null ? request.getViewStatus() : StudyMaterialViewStatus.VIEW);
+        templateStudyMaterial.setViewStatus(request.getViewStatus() != null ? request.getViewStatus() : ViewStatus.VIEW);
         templateStudyMaterial.initForNew(actor, currentTime);
         return templateStudyMaterial;
     }

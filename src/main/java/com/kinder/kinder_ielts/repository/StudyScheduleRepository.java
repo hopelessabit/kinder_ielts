@@ -1,9 +1,8 @@
 package com.kinder.kinder_ielts.repository;
 
 import com.kinder.kinder_ielts.constant.IsDelete;
-import com.kinder.kinder_ielts.constant.StudyScheduleStatus;
+import com.kinder.kinder_ielts.constant.ViewStatus;
 import com.kinder.kinder_ielts.entity.StudySchedule;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -16,6 +15,6 @@ public interface StudyScheduleRepository extends BaseEntityRepository<StudySched
 
     Optional<StudySchedule> findByIdAndIsDeleted(String id, IsDelete findDeleted);
 
-    Set<StudySchedule> findByClassroom_IdAndIsDeletedAndStatus(String id, IsDelete isDeleted, StudyScheduleStatus status);
+    Set<StudySchedule> findByClassroom_IdAndIsDeletedAndStatus(String id, IsDelete isDeleted, ViewStatus status);
 //    List<StudySchedule> findById_ClassIdAndIsDeleted(String classId, IsDelete isDelete);
 }

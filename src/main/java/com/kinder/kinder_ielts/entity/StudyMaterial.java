@@ -2,7 +2,7 @@ package com.kinder.kinder_ielts.entity;
 
 import com.kinder.kinder_ielts.constant.IsDelete;
 import com.kinder.kinder_ielts.constant.StudyMaterialStatus;
-import com.kinder.kinder_ielts.constant.StudyMaterialViewStatus;
+import com.kinder.kinder_ielts.constant.ViewStatus;
 import com.kinder.kinder_ielts.entity.base.BaseEntity;
 import com.kinder.kinder_ielts.entity.course_template.TemplateStudyMaterial;
 import com.kinder.kinder_ielts.util.IdUtil;
@@ -44,7 +44,7 @@ public class StudyMaterial extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "view_status")
-    private StudyMaterialViewStatus viewStatus = StudyMaterialViewStatus.VIEW;
+    private ViewStatus viewStatus = ViewStatus.VIEW;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "privacy_status")
