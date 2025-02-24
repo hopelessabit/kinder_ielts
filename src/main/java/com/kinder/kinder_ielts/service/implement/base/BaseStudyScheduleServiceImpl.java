@@ -1,6 +1,7 @@
 package com.kinder.kinder_ielts.service.implement.base;
 
 import com.kinder.kinder_ielts.constant.IsDelete;
+import com.kinder.kinder_ielts.constant.StudyScheduleStatus;
 import com.kinder.kinder_ielts.entity.Account;
 import com.kinder.kinder_ielts.entity.StudySchedule;
 import com.kinder.kinder_ielts.repository.StudyScheduleRepository;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -50,8 +52,7 @@ public class BaseStudyScheduleServiceImpl extends BaseEntityServiceImpl<StudySch
     }
 
     @Override
-    public List<StudySchedule> findByClassId(String classId, IsDelete isDelete, String failMessage) {
-//        return studyScheduleRepository.findById_ClassIdAndIsDeleted(classId, isDelete);
-        return null;
+    public Set<StudySchedule> findByClassId(String classId, IsDelete isDelete, StudyScheduleStatus status) {
+        return studyScheduleRepository.findByClassroom_IdAndIsDeletedAndStatus(classId, isDelete, status);
     }
 }

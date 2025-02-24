@@ -53,4 +53,9 @@ public class BaseClassroomTutorServiceImpl extends BaseEntityServiceImpl<Classro
             classroomTutor.updateAudit(modifier, currentTime);
         }
     }
+
+    @Override
+    public List<ClassroomTutor> getByClassroomId(String classroomId, IsDelete isDelete) {
+        return classroomTutorRepository.findById_ClassIdAndIsDeleted(classroomId, isDelete);
+    }
 }

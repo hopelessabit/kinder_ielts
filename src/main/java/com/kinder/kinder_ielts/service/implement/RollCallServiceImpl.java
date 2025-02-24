@@ -3,6 +3,7 @@ package com.kinder.kinder_ielts.service.implement;
 import com.kinder.kinder_ielts.constant.IsDelete;
 import com.kinder.kinder_ielts.constant.Role;
 import com.kinder.kinder_ielts.constant.RollCallStatus;
+import com.kinder.kinder_ielts.constant.StudyScheduleStatus;
 import com.kinder.kinder_ielts.dto.Error;
 import com.kinder.kinder_ielts.dto.request.roll_call.SearchRollCallRequest;
 import com.kinder.kinder_ielts.dto.request.roll_call.UpdateRollCallRequest;
@@ -31,6 +32,7 @@ import org.springframework.stereotype.Service;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -226,7 +228,7 @@ public class RollCallServiceImpl {
     }
 
     public List<RollCallResponse> getByStudentIdAndClassId(String studentId, String classId, Boolean includeForAdmin, String failMessage) {
-        List<StudySchedule> studySchedules = baseStudyScheduleService.findByClassId(classId, IsDelete.NOT_DELETED, failMessage);
+        List<StudySchedule> studySchedules = baseStudyScheduleService.findByClassId(classId, IsDelete.NOT_DELETED, StudyScheduleStatus.VIEW).stream().toList();
         if (studySchedules.isEmpty()) {
             throw new NotFoundException(failMessage, Error.build(StudyScheduleMessage.NOT_EXIST, List.of(classId)));
         }

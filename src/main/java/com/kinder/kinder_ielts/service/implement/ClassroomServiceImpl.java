@@ -1,9 +1,6 @@
 package com.kinder.kinder_ielts.service.implement;
 
-import com.kinder.kinder_ielts.constant.AccountStatus;
-import com.kinder.kinder_ielts.constant.DateOfWeek;
-import com.kinder.kinder_ielts.constant.IsDelete;
-import com.kinder.kinder_ielts.constant.Role;
+import com.kinder.kinder_ielts.constant.*;
 import com.kinder.kinder_ielts.dto.Error;
 import com.kinder.kinder_ielts.dto.request.classroom.UpdateClassroomRequest;
 import com.kinder.kinder_ielts.dto.request.classroom.UpdateClassroomStudentRequest;
@@ -52,6 +49,7 @@ public class ClassroomServiceImpl implements ClassroomService {
     private final BaseClassroomService baseClassroomService;
     private final BaseCourseTutorService baseCourseTutorService;
     private final BaseClassroomTutorService baseClassroomTutorService;
+    private final BaseStudyScheduleService baseStudyScheduleService;
     private BaseClassroomStudentService baseClassroomStudentService;
 
 
@@ -227,9 +225,10 @@ public class ClassroomServiceImpl implements ClassroomService {
      */
     public ClassroomResponse getInfo(String id) {
         log.info("Fetching basic info for Classroom ID: {}", id);
-        ClassroomResponse response = ClassroomResponse.infoWithDetails(
-                baseClassroomService.get(id, IsDelete.NOT_DELETED, ClassroomMessage.NOT_FOUND)
-        );
+        Classroom classroom = baseClassroomService.get(id, IsDelete.NOT_DELETED, ClassroomMessage.NOT_FOUND);
+        classroom.setStudySchedules(baseStudyScheduleService.findByClassId(id, IsDelete.NOT_DELETED, StudyScheduleStatus.VIEW));
+        classroom.setClassroomTutors(baseClassroomTutorService.getByClassroomId(id, IsDelete.NOT_DELETED));
+        ClassroomResponse response = ClassroomResponse.infoWithDetails(classroom);
         log.info("Successfully fetched classroom info for ID: {}", id);
         return response;
     }
@@ -237,11 +236,15 @@ public class ClassroomServiceImpl implements ClassroomService {
     /**
      * Get detailed information about a classroom.
      */
-    public ClassroomResponse getDetail(String id) {
+    public ClassroomResponse getDetail(String id, IsDelete isDelete, StudyScheduleStatus status) {
         log.info("Fetching detailed info for Classroom ID: {}", id);
+        Classroom classroom = baseClassroomService.get(id, IsDelete.NOT_DELETED, ClassroomMessage.NOT_FOUND);
+        classroom.setStudySchedules(baseStudyScheduleService.findByClassId(id, isDelete, status));
+        classroom.setClassroomTutors(baseClassroomTutorService.getByClassroomId(id, IsDelete.NOT_DELETED));
         ClassroomResponse response = ClassroomResponse.detailWithDetails(
-                baseClassroomService.get(id, IsDelete.NOT_DELETED, ClassroomMessage.NOT_FOUND)
+                classroom
         );
+
         log.info("Successfully fetched detailed classroom info for ID: {}", id);
         return response;
     }

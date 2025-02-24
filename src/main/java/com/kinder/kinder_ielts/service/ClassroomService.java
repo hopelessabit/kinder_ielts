@@ -1,6 +1,7 @@
 package com.kinder.kinder_ielts.service;
 
 import com.kinder.kinder_ielts.constant.IsDelete;
+import com.kinder.kinder_ielts.constant.StudyScheduleStatus;
 import com.kinder.kinder_ielts.dto.ResponseData;
 import com.kinder.kinder_ielts.dto.request.classroom.CreateClassroomRequest;
 import com.kinder.kinder_ielts.dto.request.classroom.UpdateClassroomRequest;
@@ -87,7 +88,7 @@ public interface ClassroomService {
      * }
      * </pre>
      */
-    ClassroomResponse getDetail(String id);
+    ClassroomResponse getDetail(String id, IsDelete isDelete, StudyScheduleStatus studyScheduleStatus);
 
     /**
      * Delete a classroom by its ID.
