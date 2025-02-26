@@ -31,4 +31,6 @@ public interface ClassroomStudentRepository extends BaseEntityRepository<Classro
     List<ClassroomStudent> findByHomeworkId(String homeworkId, IsDelete isDelete);
 
     List<ClassroomStudent> findById_ClassIdAndIsDeleted(String classId, IsDelete isDeleted);
+
+    List<ClassroomStudent> findById_StudentIdIn(List<String> studentIds);
 }

@@ -8,7 +8,7 @@ public enum Role {
     STUDENT ("Học sinh"),
     ADMIN ("Admin"),
     MODERATOR ("Quản lý"),
-    TUTOR ("Giảng viên"),
+    TUTOR ("Gia sư"),
     SYSTEM ("Hệ thống");
 
     private String vietnamese;

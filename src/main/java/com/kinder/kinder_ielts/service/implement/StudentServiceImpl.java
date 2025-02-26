@@ -7,6 +7,7 @@ import com.kinder.kinder_ielts.entity.Account;
 import com.kinder.kinder_ielts.entity.Classroom;
 import com.kinder.kinder_ielts.entity.Course;
 import com.kinder.kinder_ielts.entity.Student;
+import com.kinder.kinder_ielts.entity.join_entity.ClassroomStudent;
 import com.kinder.kinder_ielts.entity.join_entity.CourseStudent;
 import com.kinder.kinder_ielts.mapper.ModelMapper;
 import com.kinder.kinder_ielts.response_message.ClassroomMessage;
@@ -20,6 +21,7 @@ import jakarta.persistence.criteria.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -66,7 +68,23 @@ public class StudentServiceImpl {
         Specification<Student> spec = createStudentSearchingspecification(courseIds, classIds, name);
 
         Page<Student> studentPage = baseStudentService.get(spec, pageable);
-        return studentPage.map(StudentResponse::info);
+
+        List<String> studentIds = studentPage.getContent().stream().map(Student::getId).toList();
+
+        List<ClassroomStudent> classroomStudents = baseClassroomStudentService.getByStudentIds(studentIds);
+        List<String> belongToClassIds = classroomStudents.stream().map(cs -> cs.getClassroom().getId()).distinct().toList();
+
+        List<Classroom> classrooms = baseClassroomService.get(belongToClassIds, List.of(IsDelete.NOT_DELETED), ClassroomMessage.NOT_FOUND);
+
+        List<StudentResponse> studentResponses = new ArrayList<>();
+        for (Student student: studentPage.getContent()){
+            List<ClassroomStudent> classroomStudents1 = classroomStudents.stream().filter(cs -> cs.getStudent().getId().equals(student.getId())).toList();
+            List<Classroom> belongToClasses = classrooms.stream().filter(classroom -> classroomStudents1.stream().anyMatch(cs -> cs.getClassroom().getId().equals(classroom.getId()))).toList();
+            studentResponses.add(StudentResponse.withCourses(student, belongToClasses));
+        }
+
+        Page<StudentResponse> result = new PageImpl<>(studentResponses, pageable, studentPage.getTotalElements());
+        return result;
     }
 
     private Specification<Student> createStudentSearchingspecification(List<String> courseIds, List<String> classIds, String name) {

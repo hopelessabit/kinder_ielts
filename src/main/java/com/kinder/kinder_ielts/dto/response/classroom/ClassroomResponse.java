@@ -27,7 +27,6 @@ import java.util.List;
 public class ClassroomResponse {
     private String id;
     private String description;
-    private String timeDescription;
     private String code;
     private OffsetTime fromTime;
     private OffsetTime toTime;

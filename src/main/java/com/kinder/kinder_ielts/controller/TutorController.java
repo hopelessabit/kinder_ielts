@@ -2,6 +2,7 @@ package com.kinder.kinder_ielts.controller;
 
 import com.kinder.kinder_ielts.constant.IsDelete;
 import com.kinder.kinder_ielts.dto.ResponseData;
+import com.kinder.kinder_ielts.dto.request.tutor.CreateTutorRequest;
 import com.kinder.kinder_ielts.dto.response.tutor.TutorResponse;
 import com.kinder.kinder_ielts.response_message.TutorMessage;
 import com.kinder.kinder_ielts.service.implement.TutorServiceImpl;
@@ -16,9 +17,16 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/tutor/")
+@SecurityRequirement(name = "Bearer")
 @RequiredArgsConstructor
 public class TutorController {
     private final TutorServiceImpl tutorService;
+
+    @PostMapping("/create")
+    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR')")
+    public ResponseEntity<ResponseData<TutorResponse>> createTutor(@RequestBody CreateTutorRequest request) {
+        return ResponseUtil.getResponse(() -> tutorService.create(request, TutorMessage.CREATE_FAILED), TutorMessage.CREATED);
+    }
 
     @GetMapping("/info/{id}")
     public ResponseEntity<ResponseData<TutorResponse>> getInfoById(@PathVariable String id) {

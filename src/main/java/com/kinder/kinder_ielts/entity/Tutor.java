@@ -26,7 +26,7 @@ public class Tutor extends BaseEntity {
     @Column(name = "id", nullable = false)
     private String id;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @MapsId
     @JoinColumn(name = "id")
     private Account account;
@@ -46,6 +46,11 @@ public class Tutor extends BaseEntity {
     @Nationalized
     @Column(name = "last_name")
     private String lastName;
+
+    @Size(max = 500)
+    @Nationalized
+    @Column(name = "full_name")
+    private String fullName;
 
     @Size(max = 500)
     @NotNull

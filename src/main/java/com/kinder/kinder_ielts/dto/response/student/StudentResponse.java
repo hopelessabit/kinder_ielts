@@ -5,12 +5,17 @@ import com.kinder.kinder_ielts.dto.response.account.AccountResponse;
 import com.kinder.kinder_ielts.dto.response.account.SubAccountResponse;
 import com.kinder.kinder_ielts.dto.response.constant.CountryResponse;
 import com.kinder.kinder_ielts.dto.response.constant.IsDeletedResponse;
+import com.kinder.kinder_ielts.dto.response.course.CourseInfoRequest;
+import com.kinder.kinder_ielts.entity.Classroom;
+import com.kinder.kinder_ielts.entity.Course;
 import com.kinder.kinder_ielts.entity.Student;
 import com.kinder.kinder_ielts.util.name.NameUtil;
+import jdk.jfr.Frequency;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -35,6 +40,8 @@ public class StudentResponse{
     private SubAccountResponse modifyBy;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private IsDeletedResponse isDeleted;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private List<CourseInfoRequest> courses;
 
     public StudentResponse(Student student, boolean includeInfoForAdmin) {
         this.account = new AccountResponse(student.getAccount(), includeInfoForAdmin);
@@ -70,5 +77,18 @@ public class StudentResponse{
 
     public static StudentResponse detail(Student student) {
         return new StudentResponse(student, true);
+    }
+
+    public static StudentResponse withCourses(Student student, List<Classroom> classrooms) {
+        StudentResponse response = new StudentResponse(student, false);
+
+        List<Course> courses = classrooms.stream().map(Classroom::getCourse).distinct().toList();
+
+        for (Course course : courses) {
+            course.setClassrooms(classrooms.stream().filter(classroom -> classroom.getCourse().getId().equals(course.getId())).toList());
+        }
+
+        response.courses = courses.stream().map(CourseInfoRequest::info).toList();
+        return response;
     }
 }

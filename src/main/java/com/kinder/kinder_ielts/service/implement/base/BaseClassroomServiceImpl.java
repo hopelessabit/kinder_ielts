@@ -100,4 +100,10 @@ public class BaseClassroomServiceImpl extends BaseEntityServiceImpl<Classroom, S
     public List<Classroom> getByCourseId(String courseId, IsDelete isDelete, String s) {
         return classroomRepository.findByCourse_Id(courseId);
     }
+
+    @Override
+    public List<Classroom> getByStudentIds(List<String> studentIds) {
+//        return classroomRepository.findByStudents_IdIn(studentIds);
+        return null;
+    }
 }

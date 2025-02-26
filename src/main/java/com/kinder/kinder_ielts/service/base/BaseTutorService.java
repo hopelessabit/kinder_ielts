@@ -52,4 +52,5 @@ public interface BaseTutorService extends BaseEntityService<Tutor, String> {
      * @see SqlException
      */
     List<Tutor> get(List<String> ids, AccountStatus accountStatus, String message);
+    Tutor create(Tutor tutor, String failMessage);
 }

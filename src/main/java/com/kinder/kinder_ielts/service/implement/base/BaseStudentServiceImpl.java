@@ -109,6 +109,6 @@ public class BaseStudentServiceImpl extends BaseEntityServiceImpl<Student, Strin
     }
 
     public void saveStudent(Student student) {
-        studentRepository.saveStudent(student.getId(), student.getCreateTime(), student.getIsDeleted(), student.getEmail(), student.getFirstName(), student.getLastName(), student.getMiddleName(), student.getCreateBy().getId());
+        studentRepository.saveStudent(student.getId(), student.getCreateTime(), student.getIsDeleted(), student.getEmail(), student.getFirstName(), student.getLastName(), student.getMiddleName(), student.getFullName(), student.getCreateBy().getId());
     }
 }

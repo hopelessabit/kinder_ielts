@@ -245,8 +245,52 @@ public class ModelMapper {
         student.setCreateBy(creator);
         student.setCreateTime(currentTime);
 
-        account.setUsername(nameParts.firstName + nameParts.lastName + request.getPhone().substring(request.getPhone().length() -5));
+        account.setUsername(nameParts.firstName.toLowerCase() + nameParts.lastName.toLowerCase() + request.getPhone().substring(request.getPhone().length() -4));
         student.setAccount(account);
         return student;
+    }
+
+    public static Tutor map(CreateTutorRequest request, Account creator, ZonedDateTime currentTime) {
+        Account account = new Account();
+        account.setId(IdUtil.generateId());
+        account.setPassword(PasswordUtil.hashPassword(request.getPassword()));
+        account.setRole(Role.TUTOR);
+        account.setIsDeleted(IsDelete.NOT_DELETED);
+        account.setStatus(AccountStatus.ACTIVE);
+        account.initForNew(creator, currentTime);
+
+        Tutor tutor = new Tutor();
+        tutor.setId(account.getId());
+        NameParts nameParts = NameUtil.splitName(request.getName());
+        tutor.setFirstName(nameParts.firstName);
+        tutor.setMiddleName(nameParts.middleName);
+        tutor.setLastName(nameParts.lastName);
+        tutor.setFullName(request.getName());
+        tutor.setEmail(request.getEmail());
+        tutor.setPhone(request.getPhone());
+        tutor.setCountry(request.getCountry());
+        tutor.setReading(request.getReading());
+        tutor.setListening(request.getListening());
+        tutor.setSpeaking(request.getSpeaking());
+        tutor.setWriting(request.getWriting());
+        tutor.setOverall(request.getOverall());
+        tutor.initForNew(creator, currentTime);
+
+        if (request.getCertificate() != null && !request.getCertificate().isEmpty()) {
+            tutor.setCertificates(request.getCertificate()
+                    .stream()
+                    .map(certificate -> {
+                        TutorCertificate cert = new TutorCertificate();
+                        cert.setId(IdUtil.generateId());
+                        cert.setTutor(tutor);
+                        cert.setDetail(certificate);
+                        cert.initForNew(creator, currentTime);
+                        return cert;
+                    })
+                    .toList());
+        }
+        account.setUsername("t_" + nameParts.firstName + nameParts.lastName);
+        tutor.setAccount(account);
+        return tutor;
     }
 }

@@ -27,7 +27,7 @@ public interface StudentRepository extends BaseEntityRepository<Student, String>
 
     @Modifying
     @Query(value = """
-insert into student (id, create_time, is_deleted, email, first_name, last_name, middle_name, create_by) values (:id, :createTime, :isDeleted, :email, :firstName, :lastName, :middleName, :createBy);
+insert into student (id, create_time, is_deleted, email, first_name, last_name, middle_name, full_name, create_by) values (:id, :createTime, :isDeleted, :email, :firstName, :lastName, :middleName, :fullName, :createBy);
 """, nativeQuery = true)
     void saveStudent(@Param("id") String id,
                      @Param("createTime") ZonedDateTime createTime,
@@ -36,5 +36,6 @@ insert into student (id, create_time, is_deleted, email, first_name, last_name, 
                      @Param("firstName") String firstName,
                      @Param("lastName") String lastName,
                      @Param("middleName") String middleName,
+                     @Param("fullName") String fullName,
                      @Param("createBy") String createBy);
 }

@@ -37,4 +37,15 @@ where sm.id = :studyMaterialId
     Optional<Classroom> findByIdWithStudentId(String classroomId, String studentId);
 
     List<Classroom> findByCourse_Id(String id);
+
+//    @Query(value = """
+//select clr
+//from class clr
+//inner join class_student cls
+//inner join fetch course
+//where cls.id.studentId in :studentIds
+//and cls.isDeleted = 'NOT_DELETED'
+//and clr.isDeleted = 'NOT_DELETED'
+//""")
+//    List<Classroom> findByStudents_IdIn(List<String> studentIds);
 }

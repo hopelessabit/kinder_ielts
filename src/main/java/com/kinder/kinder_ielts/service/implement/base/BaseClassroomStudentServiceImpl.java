@@ -77,4 +77,9 @@ public class BaseClassroomStudentServiceImpl extends BaseEntityServiceImpl<Class
     public void create(Student student, Classroom classroom, Account creator, ZonedDateTime currentTime) {
         create(new ClassroomStudent(classroom, student, creator, currentTime), ClassroomStudentMessage.CREATE_FAILED);
     }
+
+    @Override
+    public List<ClassroomStudent> getByStudentIds(List<String> studentIds) {
+        return classroomStudentRepository.findById_StudentIdIn(studentIds);
+    }
 }
