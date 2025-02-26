@@ -15,6 +15,7 @@ import com.kinder.kinder_ielts.dto.request.template.classroom_link.CreateTemplat
 import com.kinder.kinder_ielts.dto.request.template.homework.CreateTemplateHomeworkRequest;
 import com.kinder.kinder_ielts.dto.request.template.study_schedule.CreateTemplateStudyScheduleRequest;
 import com.kinder.kinder_ielts.dto.request.template.warmup_test.CreateTemplateWarmupTestRequest;
+import com.kinder.kinder_ielts.dto.request.tutor.CreateTutorRequest;
 import com.kinder.kinder_ielts.dto.request.warm_up_test.CreateWarmUpTestRequest;
 import com.kinder.kinder_ielts.entity.*;
 import com.kinder.kinder_ielts.entity.course_template.*;
@@ -232,7 +233,6 @@ public class ModelMapper {
         account.setCreateTime(currentTime);
 
         Student student = new Student(account.getId());
-        student.setAccount(account);
         student.setId(account.getId());
 
         NameParts nameParts = NameUtil.splitName(request.getName());
@@ -246,6 +246,7 @@ public class ModelMapper {
         student.setCreateTime(currentTime);
 
         account.setUsername(nameParts.firstName + nameParts.lastName + request.getPhone().substring(request.getPhone().length() -5));
+        student.setAccount(account);
         return student;
     }
 }
