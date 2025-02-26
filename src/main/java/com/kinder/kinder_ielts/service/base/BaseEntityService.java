@@ -21,6 +21,7 @@ public interface BaseEntityService<T, ID> {
      * @return A list of fetched entities.
      */
     public Page<T> get(Specification<T> specification);
+    public Page<T> get(Specification<T> specification, Pageable pageable);
 
     public List<T> get(IsDelete isDelete, String message);
 

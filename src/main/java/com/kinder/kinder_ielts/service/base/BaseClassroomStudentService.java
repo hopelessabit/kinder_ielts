@@ -11,4 +11,6 @@ public interface BaseClassroomStudentService extends BaseEntityService<Classroom
 
     List<ClassroomStudent> getClassRoomStudentsByStudyMaterialId(String studyMaterialId, IsDelete isDelete, String notFound);
     List<ClassroomStudent> getClassRoomStudentsByHomeworkId(String homeworkId, IsDelete isDelete, String notFound);
+
+    List<ClassroomStudent> findByClassroomId(String classId, IsDelete isDelete);
 }

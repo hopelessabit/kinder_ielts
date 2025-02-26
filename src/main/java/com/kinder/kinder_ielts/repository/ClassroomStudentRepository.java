@@ -29,4 +29,6 @@ public interface ClassroomStudentRepository extends BaseEntityRepository<Classro
             AND cs.is_deleted = :isDelete
             """, nativeQuery = true)
     List<ClassroomStudent> findByHomeworkId(String homeworkId, IsDelete isDelete);
+
+    List<ClassroomStudent> findById_ClassIdAndIsDeleted(String classId, IsDelete isDeleted);
 }

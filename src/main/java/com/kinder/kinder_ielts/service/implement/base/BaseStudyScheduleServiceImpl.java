@@ -52,15 +52,15 @@ public class BaseStudyScheduleServiceImpl extends BaseEntityServiceImpl<StudySch
     }
 
     @Override
-    public Set<StudySchedule> findByClassId(String classId, IsDelete isDelete, ViewStatus status) {
+    public Set<StudySchedule> findByClassIdWithViewStatus(String classId, IsDelete isDelete, ViewStatus status) {
         return studyScheduleRepository.findByClassroom_IdAndIsDeletedAndStatus(classId, isDelete, status);
     }
 
     @Override
     public Set<StudySchedule> findByClassId(String classId, IsDelete isDelete, List<ViewStatus> statuses) {
         if (statuses == null || statuses.isEmpty())
-            return studyScheduleRepository.findByClassroom_IdAndIsDeleted(classId, isDelete);
-        return studyScheduleRepository.findByClassroom_IdAndIsDeletedAndStatusIn(classId, isDelete, statuses);
+            return studyScheduleRepository.findByClassroom_IdAndIsDeletedOrderByFromTimeAsc(classId, isDelete);
+        return studyScheduleRepository.findByClassroom_IdAndIsDeletedAndStatusInOrderByFromTimeAsc(classId, isDelete, statuses);
     }
 
 }

@@ -13,5 +13,5 @@ import java.util.Set;
  */
 public interface BaseStudyScheduleService extends BaseEntityService<StudySchedule, String> {
     Set<StudySchedule> findByClassId(String classId, IsDelete isDelete, List<ViewStatus> statuses);
-    Set<StudySchedule> findByClassId(String classId, IsDelete isDelete, ViewStatus status);
+    Set<StudySchedule> findByClassIdWithViewStatus(String classId, IsDelete isDelete, ViewStatus status);
 }

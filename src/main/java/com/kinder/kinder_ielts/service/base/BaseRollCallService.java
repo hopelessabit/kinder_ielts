@@ -15,6 +15,8 @@ public interface BaseRollCallService extends BaseEntityService<RollCall, RollCal
 
     List<RollCall> findByStudentIdAndClassId(String studentId, String classId, IsDelete isDelete, String failMessage);
 
+    List<RollCall> findByClassId(String classId, IsDelete isDelete, String failMessage);
+
     List<RollCall> findByStudentIdAndStudyScheduleIds(String studentId, List<String> studyScheduleIds, IsDelete isDelete, String failMessage);
 
     Page<RollCall> get(Specification<RollCall> rollCallSpecification, Pageable pageable);

@@ -72,6 +72,11 @@ public class BaseRollCallServiceImpl extends BaseEntityServiceImpl<RollCall, Rol
     }
 
     @Override
+    public List<RollCall> findByClassId(String classId, IsDelete isDelete, String failMessage) {
+        return rollCallRepository.findByStudySchedule_Classroom_IdAndIsDeletedOrderByStudySchedule_FromTimeAsc(classId, isDelete);
+    }
+
+    @Override
     public List<RollCall> findByStudentIdAndStudyScheduleIds(String studentId, List<String> studyScheduleIds, IsDelete isDelete, String failMessage) {
         return rollCallRepository.findById_StudentIdAndId_StudyScheduleIdInAndIsDeleted(studentId, studyScheduleIds, isDelete);
     }

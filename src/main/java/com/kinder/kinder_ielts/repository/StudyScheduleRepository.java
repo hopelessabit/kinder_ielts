@@ -18,7 +18,9 @@ public interface StudyScheduleRepository extends BaseEntityRepository<StudySched
 
     Set<StudySchedule> findByClassroom_IdAndIsDeletedAndStatus(String id, IsDelete isDeleted, ViewStatus status);
 
-    Set<StudySchedule> findByClassroom_IdAndIsDeleted(String id, IsDelete isDeleted); //    List<StudySchedule> findById_ClassIdAndIsDeleted(String classId, IsDelete isDelete);
+    Set<StudySchedule> findByClassroom_IdAndIsDeletedOrderByFromTimeAsc(String id, IsDelete isDeleted); //    List<StudySchedule> findById_ClassIdAndIsDeleted(String classId, IsDelete isDelete);
 
     Set<StudySchedule> findByClassroom_IdAndIsDeletedAndStatusIn(String id, IsDelete isDeleted, Collection<ViewStatus> statuses);
+
+    Set<StudySchedule> findByClassroom_IdAndIsDeletedAndStatusInOrderByFromTimeAsc(String id, IsDelete isDeleted, Collection<ViewStatus> statuses);
 }

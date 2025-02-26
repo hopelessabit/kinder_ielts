@@ -1,9 +1,6 @@
 package com.kinder.kinder_ielts.service.implement;
 
-import com.kinder.kinder_ielts.constant.IsDelete;
-import com.kinder.kinder_ielts.constant.Role;
-import com.kinder.kinder_ielts.constant.RollCallStatus;
-import com.kinder.kinder_ielts.constant.ViewStatus;
+import com.kinder.kinder_ielts.constant.*;
 import com.kinder.kinder_ielts.dto.Error;
 import com.kinder.kinder_ielts.dto.request.roll_call.SearchRollCallRequest;
 import com.kinder.kinder_ielts.dto.request.roll_call.UpdateRollCallRequest;
@@ -11,14 +8,15 @@ import com.kinder.kinder_ielts.dto.request.roll_call.UpdateRollCallsRequest;
 import com.kinder.kinder_ielts.dto.response.roll_call.RollCallResponse;
 import com.kinder.kinder_ielts.entity.*;
 import com.kinder.kinder_ielts.entity.id.RollCallId;
+import com.kinder.kinder_ielts.entity.join_entity.ClassroomStudent;
+import com.kinder.kinder_ielts.entity.join_entity.ClassroomWeeklySchedule;
 import com.kinder.kinder_ielts.exception.BadRequestException;
 import com.kinder.kinder_ielts.exception.NotFoundException;
 import com.kinder.kinder_ielts.response_message.ClassroomMessage;
 import com.kinder.kinder_ielts.response_message.StudyScheduleMessage;
-import com.kinder.kinder_ielts.service.base.BaseRollCallService;
-import com.kinder.kinder_ielts.service.base.BaseStudentService;
-import com.kinder.kinder_ielts.service.base.BaseStudyScheduleService;
+import com.kinder.kinder_ielts.service.base.*;
 import com.kinder.kinder_ielts.util.CompareUtil;
+import com.kinder.kinder_ielts.util.DateUtil;
 import com.kinder.kinder_ielts.util.SecurityContextHolderUtil;
 import jakarta.persistence.criteria.*;
 import lombok.RequiredArgsConstructor;
@@ -31,12 +29,16 @@ import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class RollCallServiceImpl {
+    private final BaseClassroomStudentService baseClassroomStudentService;
+    private final BaseClassroomService baseClassroomService;
     private final BaseRollCallService baseRollCallService;
     private final BaseStudyScheduleService baseStudyScheduleService;
     private final BaseStudentService baseStudentService;
@@ -227,7 +229,7 @@ public class RollCallServiceImpl {
     }
 
     public List<RollCallResponse> getByStudentIdAndClassId(String studentId, String classId, Boolean includeForAdmin, String failMessage) {
-        List<StudySchedule> studySchedules = baseStudyScheduleService.findByClassId(classId, IsDelete.NOT_DELETED, ViewStatus.VIEW).stream().toList();
+        List<StudySchedule> studySchedules = baseStudyScheduleService.findByClassIdWithViewStatus(classId, IsDelete.NOT_DELETED, ViewStatus.VIEW).stream().toList();
         if (studySchedules.isEmpty()) {
             throw new NotFoundException(failMessage, Error.build(StudyScheduleMessage.NOT_EXIST, List.of(classId)));
         }
@@ -246,5 +248,25 @@ public class RollCallServiceImpl {
         }
 
         return rollCalls.stream().map(rollCall -> new RollCallResponse(rollCall, includeForAdmin, false)).toList();
+    }
+
+    public List<RollCallResponse> getRollCallByClassId(String classId, Boolean includeForAdmin, String failMessage) {
+        Classroom classroom = baseClassroomService.get(classId, IsDelete.NOT_DELETED, failMessage);
+        Set<StudySchedule> studySchedules = baseStudyScheduleService.findByClassId(classId, IsDelete.NOT_DELETED, null);
+        List<ClassroomStudent> classroomStudents = baseClassroomStudentService.findByClassroomId(classId, IsDelete.NOT_DELETED);
+        List<RollCall> rollCalls = baseRollCallService.findByClassId(classId, IsDelete.NOT_DELETED, failMessage);
+
+        if (rollCalls.size() == (studySchedules.size() * classroomStudents.size()))
+            return rollCalls.stream()
+                    .map(rollCall -> new RollCallResponse(rollCall, false, false))
+                    .sorted(Comparator.comparing((RollCallResponse rc) -> rc.getStudySchedule().getPlace())
+                            .thenComparing(rc -> rc.getStudent().getFirstName()))
+                    .toList();
+
+        List<RollCall> futureRollCall = new ArrayList<>();
+
+        ZonedDateTime zonedDateTime = rollCalls.get(rollCalls.size() - 1).getStudySchedule().getFromTime();
+
+        return null;
     }
 }

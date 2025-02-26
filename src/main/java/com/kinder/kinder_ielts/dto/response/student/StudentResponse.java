@@ -8,10 +8,12 @@ import com.kinder.kinder_ielts.dto.response.constant.IsDeletedResponse;
 import com.kinder.kinder_ielts.entity.Student;
 import com.kinder.kinder_ielts.util.name.NameUtil;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.ZonedDateTime;
 
 @Getter
+@NoArgsConstructor
 public class StudentResponse{
     private AccountResponse account;
     private String fullName;

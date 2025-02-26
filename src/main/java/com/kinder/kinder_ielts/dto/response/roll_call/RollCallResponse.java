@@ -7,7 +7,9 @@ import com.kinder.kinder_ielts.dto.response.StatusResponse;
 import com.kinder.kinder_ielts.dto.response.student.StudentResponse;
 import com.kinder.kinder_ielts.dto.response.study_schedule.StudyScheduleResponse;
 import com.kinder.kinder_ielts.entity.RollCall;
+import lombok.Getter;
 
+@Getter
 public class RollCallResponse {
     public final StudentResponse student;
     public final StudyScheduleResponse studySchedule;

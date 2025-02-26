@@ -12,10 +12,10 @@ public enum DateOfWeek implements StatusEnum{
     SATURDAY ("Thứ bảy", 7),
     SUNDAY ("Chủ nhật", 8);
     private String vietnamese;
-    private int number;
+    private int value;
 
-    DateOfWeek(String vietnamese, int number) {
+    DateOfWeek(String vietnamese, int value) {
         this.vietnamese = vietnamese;
-        this.number = number;
+        this.value = value;
     }
 }

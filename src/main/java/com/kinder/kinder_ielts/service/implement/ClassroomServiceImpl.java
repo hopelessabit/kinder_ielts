@@ -135,7 +135,7 @@ public class ClassroomServiceImpl implements ClassroomService {
                                                            Classroom classroom) {
         ZonedDateTime currentDate = startDate;
         List<ZonedDateTime> zonedDateTimes = new ArrayList<>();
-        List<DayOfWeek> mappedSchedules = schedules.stream().map(schedule -> DayOfWeek.of(schedule.getNumber())).toList();
+        List<DayOfWeek> mappedSchedules = schedules.stream().map(schedule -> DayOfWeek.of(schedule.getValue())).toList();
 
         while (zonedDateTimes.size() < slots) {
             DayOfWeek currentDayOfWeek = currentDate.getDayOfWeek();
@@ -144,6 +144,8 @@ public class ClassroomServiceImpl implements ClassroomService {
             }
             currentDate = currentDate.plusDays(1);
         }
+
+        classroom.setEndDate(zonedDateTimes.get(zonedDateTimes.size() - 1));
 
         Set<StudySchedule> studySchedules = new HashSet<>();
 
@@ -226,7 +228,7 @@ public class ClassroomServiceImpl implements ClassroomService {
     public ClassroomResponse getInfo(String id) {
         log.info("Fetching basic info for Classroom ID: {}", id);
         Classroom classroom = baseClassroomService.get(id, IsDelete.NOT_DELETED, ClassroomMessage.NOT_FOUND);
-        classroom.setStudySchedules(baseStudyScheduleService.findByClassId(id, IsDelete.NOT_DELETED, ViewStatus.VIEW));
+        classroom.setStudySchedules(baseStudyScheduleService.findByClassIdWithViewStatus(id, IsDelete.NOT_DELETED, ViewStatus.VIEW));
         classroom.setClassroomTutors(baseClassroomTutorService.getByClassroomId(id, IsDelete.NOT_DELETED));
         ClassroomResponse response = ClassroomResponse.infoWithDetails(classroom);
         log.info("Successfully fetched classroom info for ID: {}", id);

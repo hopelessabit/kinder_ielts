@@ -46,6 +46,9 @@ public class Classroom extends BaseEntity {
     @Column(name = "start_date", nullable = true)
     private ZonedDateTime startDate;
 
+    @Column(name = "end_date", nullable = true)
+    private ZonedDateTime endDate;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "course_id")
     private Course course;

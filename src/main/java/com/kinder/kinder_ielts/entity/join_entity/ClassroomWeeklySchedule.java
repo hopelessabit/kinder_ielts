@@ -35,4 +35,8 @@ public class ClassroomWeeklySchedule extends BaseEntity {
         this.setCreateTime(currentTime);
         this.setIsDeleted(IsDelete.NOT_DELETED);
     }
+
+    public static DateOfWeek getDateOfWeek(ClassroomWeeklySchedule classroomWeeklySchedule) {
+        return classroomWeeklySchedule.getId().getDayOfWeek();
+    }
 }

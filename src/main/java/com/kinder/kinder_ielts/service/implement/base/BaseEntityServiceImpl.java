@@ -227,6 +227,9 @@ public abstract class BaseEntityServiceImpl<T, ID> implements BaseEntityService<
     public Page<T> get(Specification<T> specification){
         return getRepository().findAll(specification);
     }
+    public Page<T> get(Specification<T> specification, Pageable pageable){
+        return getRepository().findAll(specification, pageable);
+    }
 
 
 }
