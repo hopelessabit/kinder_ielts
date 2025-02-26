@@ -4,6 +4,7 @@ import com.kinder.kinder_ielts.constant.ViewStatus;
 import com.kinder.kinder_ielts.dto.ResponseData;
 import com.kinder.kinder_ielts.dto.request.classroom.CreateClassroomRequest;
 import com.kinder.kinder_ielts.dto.request.classroom.UpdateClassroomRequest;
+import com.kinder.kinder_ielts.dto.request.classroom.UpdateClassroomStudentRequest;
 import com.kinder.kinder_ielts.dto.request.classroom.UpdateClassroomTutorRequest;
 import com.kinder.kinder_ielts.dto.response.classroom.ClassroomResponse;
 import com.kinder.kinder_ielts.response_message.ClassroomMessage;
@@ -69,12 +70,12 @@ public class ClassroomController {
         return ResponseUtil.getResponse(() -> classroomService.updateClassroomTutor(id, request, CourseMessage.UPDATE_TUTORS_FAILED), CourseMessage.UPDATE_TUTORS_SUCCESSFULLY);
     }
 
-//    @PatchMapping("/{id}/students")
-//    @SecurityRequirement(name = "Bearer")
-//    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR')")
-//    public ResponseEntity<ResponseData<Integer>> modifyStudents(@PathVariable String id, @RequestBody UpdateCourseStudent request){
-//        return ResponseUtil.getResponse(() -> classroomService.updateCourseStudent(id, request, CourseMessage.UPDATE_STUDENTS_FAILED), CourseMessage.UPDATE_STUDENTS_SUCCESSFULLY);
-//    }
+    @PatchMapping("/{id}/students")
+    @SecurityRequirement(name = "Bearer")
+    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR')")
+    public ResponseEntity<ResponseData<Integer>> modifyStudents(@PathVariable String id, @RequestBody UpdateClassroomStudentRequest request){
+        return ResponseUtil.getResponse(() -> classroomService.updateClassroomStudent(id, request, CourseMessage.UPDATE_STUDENTS_FAILED), CourseMessage.UPDATE_STUDENTS_SUCCESSFULLY);
+    }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR')")

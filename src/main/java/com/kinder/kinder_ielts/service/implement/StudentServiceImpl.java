@@ -3,11 +3,16 @@ import com.kinder.kinder_ielts.constant.IsDelete;
 import com.kinder.kinder_ielts.dto.request.student.CreateStudentRequest;
 import com.kinder.kinder_ielts.dto.response.student.StudentResponse;
 import com.kinder.kinder_ielts.entity.Account;
+import com.kinder.kinder_ielts.entity.Classroom;
+import com.kinder.kinder_ielts.entity.Course;
 import com.kinder.kinder_ielts.entity.Student;
 import com.kinder.kinder_ielts.entity.join_entity.CourseStudent;
 import com.kinder.kinder_ielts.mapper.ModelMapper;
-import com.kinder.kinder_ielts.service.base.BaseAccountService;
-import com.kinder.kinder_ielts.service.base.BaseStudentService;
+import com.kinder.kinder_ielts.response_message.ClassroomMessage;
+import com.kinder.kinder_ielts.response_message.CourseMessage;
+import com.kinder.kinder_ielts.response_message.CourseStudentMessage;
+import com.kinder.kinder_ielts.service.base.*;
+import com.kinder.kinder_ielts.util.SecurityContextHolderUtil;
 import jakarta.persistence.criteria.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,8 +20,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,12 +33,30 @@ import java.util.List;
 public class StudentServiceImpl {
     private final BaseStudentService baseStudentService;
     private final BaseAccountService baseAccountService;
+    private final BaseCourseService baseCourseService;
+    private final BaseClassroomService baseClassroomService;
+    private final BaseCourseStudentService baseCourseStudentService;
+    private final BaseClassroomStudentService baseClassroomStudentService;
 
     public StudentResponse createStudent(CreateStudentRequest request, String failMessage) {
-        Student student = ModelMapper.map(request);
+        Account creator = SecurityContextHolderUtil.getAccount();
+        ZonedDateTime currentTime = ZonedDateTime.now();
+        Student student = ModelMapper.map(request, currentTime, creator);
         Account account = baseAccountService.create(student.getAccount(), failMessage);
         student.setAccount(account);
         baseStudentService.saveStudent(student);
+
+        if (request.getAddToCourseId() != null ){
+            Course course = baseCourseService.get(request.getAddToCourseId(), IsDelete.NOT_DELETED, CourseMessage.NOT_FOUND);
+            if (request.getAddToClassroomId() == null){
+                baseCourseStudentService.create(student, course, creator, currentTime);
+            } else {
+                baseCourseStudentService.create(student, course, creator, currentTime);
+                Classroom classroom = baseClassroomService.get(request.getAddToClassroomId(), IsDelete.NOT_DELETED, ClassroomMessage.NOT_FOUND);
+                baseClassroomStudentService.create(student, classroom, creator, currentTime);
+            }
+        }
+
         Student thisStudent = baseStudentService.get(student.getId(), IsDelete.NOT_DELETED, failMessage);
         return StudentResponse.detail(thisStudent);
     }

@@ -2,12 +2,14 @@ package com.kinder.kinder_ielts.service.implement.base;
 
 import com.kinder.kinder_ielts.constant.IsDelete;
 import com.kinder.kinder_ielts.entity.Account;
+import com.kinder.kinder_ielts.entity.Classroom;
+import com.kinder.kinder_ielts.entity.Student;
 import com.kinder.kinder_ielts.entity.id.ClassStudentId;
 import com.kinder.kinder_ielts.entity.join_entity.ClassroomStudent;
 import com.kinder.kinder_ielts.repository.BaseEntityRepository;
 import com.kinder.kinder_ielts.repository.ClassroomStudentRepository;
+import com.kinder.kinder_ielts.response_message.ClassroomStudentMessage;
 import com.kinder.kinder_ielts.service.base.BaseClassroomStudentService;
-import com.kinder.kinder_ielts.service.base.BaseEntityService;
 
 import com.kinder.kinder_ielts.util.SecurityContextHolderUtil;
 import lombok.RequiredArgsConstructor;
@@ -69,5 +71,10 @@ public class BaseClassroomStudentServiceImpl extends BaseEntityServiceImpl<Class
     @Override
     public List<ClassroomStudent> findByClassroomId(String classId, IsDelete isDelete) {
         return classroomStudentRepository.findById_ClassIdAndIsDeleted(classId, isDelete);
+    }
+
+    @Override
+    public void create(Student student, Classroom classroom, Account creator, ZonedDateTime currentTime) {
+        create(new ClassroomStudent(classroom, student, creator, currentTime), ClassroomStudentMessage.CREATE_FAILED);
     }
 }

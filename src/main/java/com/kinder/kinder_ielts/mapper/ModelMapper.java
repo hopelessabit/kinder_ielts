@@ -220,10 +220,7 @@ public class ModelMapper {
         return templateClassroomLink;
     }
 
-    public static Student map(CreateStudentRequest request) {
-        Account creator = SecurityContextHolderUtil.getAccount();
-        ZonedDateTime currentTime = ZonedDateTime.now();
-
+    public static Student map(CreateStudentRequest request, ZonedDateTime currentTime, Account creator) {
         Account account = new Account();
         account.setId(IdUtil.generateId());
         account.setUsername(request.getUsername());
