@@ -240,6 +240,7 @@ public class ModelMapper {
         student.setFirstName(nameParts.firstName);
         student.setMiddleName(nameParts.middleName);
         student.setLastName(nameParts.lastName);
+        student.setFullName(request.getName());
         student.setEmail(request.getEmail());
         student.setCreateBy(creator);
         student.setCreateTime(currentTime);

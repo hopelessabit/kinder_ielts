@@ -48,6 +48,11 @@ public class Student extends BaseEntity {
     @Column(name = "last_name")
     private String lastName;
 
+    @Size(max = 255)
+    @Nationalized
+    @Column(name = "full_name", nullable = false)
+    private String fullName;
+
     @Size(max = 500)
     @NotNull
     @Nationalized

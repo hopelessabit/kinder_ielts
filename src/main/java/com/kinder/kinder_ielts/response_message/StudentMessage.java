@@ -12,4 +12,6 @@ public class StudentMessage {
     public static final String UNAVAILABLE = "Cấp độ học không khả dụng";
 
     public static final String STUDENT_IS_DELETED = "Học sinh đã bị xóa";
+    public static final String INFO_UPDATED = "Cập nhật thông tin học sinh thành công";
+    public static final String INFO_UPDATE_FAILED = "Cập nhật thông tin học sinh thất bại";
 }

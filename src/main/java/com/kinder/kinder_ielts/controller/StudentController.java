@@ -1,6 +1,7 @@
 package com.kinder.kinder_ielts.controller;
 import com.kinder.kinder_ielts.dto.ResponseData;
 import com.kinder.kinder_ielts.dto.request.student.CreateStudentRequest;
+import com.kinder.kinder_ielts.dto.request.student.UpdateStudentInfoRequest;
 import com.kinder.kinder_ielts.dto.response.student.StudentResponse;
 import com.kinder.kinder_ielts.response_message.StudentMessage;
 import com.kinder.kinder_ielts.service.implement.StudentServiceImpl;
@@ -29,8 +30,9 @@ public class StudentController {
     @PreAuthorize("hasAnyAuthority('ADMIN', 'MODERATOR', 'TUTOR')")
     public ResponseEntity<ResponseData<Page<StudentResponse>>> searchStudent(@RequestParam(required = false) List<String> courseIds,
                                                                             @RequestParam(required = false) List<String> classIds,
+                                                                            @RequestParam(required = false) String name,
                                                                             Pageable pageable) {
-        return ResponseUtil.getResponse(() -> studentService.search(courseIds, classIds, pageable), StudentMessage.FOUND_SUCCESSFULLY);
+        return ResponseUtil.getResponse(() -> studentService.search(courseIds, classIds, name, pageable), StudentMessage.FOUND_SUCCESSFULLY);
     }
 
 
@@ -39,5 +41,11 @@ public class StudentController {
     @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR')")
     public ResponseEntity<ResponseData<StudentResponse>> createStudent(@RequestBody CreateStudentRequest request){
         return ResponseUtil.getResponse(() -> studentService.createStudent(request, StudentMessage.CREATE_FAILED), StudentMessage.CREATED);
+    }
+
+    @PutMapping("/info/{studentId}")
+    @PreAuthorize("hasAnyAuthority('STUDENT', 'ADMIN', 'MODERATOR')")
+    public ResponseEntity<ResponseData<StudentResponse>> updateInfo(@RequestParam String studentId, @RequestBody UpdateStudentInfoRequest request){
+        return ResponseUtil.getResponse(() -> studentService.updateInfo(studentId, request, StudentMessage.INFO_UPDATE_FAILED), StudentMessage.INFO_UPDATED);
     }
 }

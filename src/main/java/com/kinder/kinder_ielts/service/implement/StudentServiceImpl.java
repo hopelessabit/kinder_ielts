@@ -1,6 +1,7 @@
 package com.kinder.kinder_ielts.service.implement;
 import com.kinder.kinder_ielts.constant.IsDelete;
 import com.kinder.kinder_ielts.dto.request.student.CreateStudentRequest;
+import com.kinder.kinder_ielts.dto.request.student.UpdateStudentInfoRequest;
 import com.kinder.kinder_ielts.dto.response.student.StudentResponse;
 import com.kinder.kinder_ielts.entity.Account;
 import com.kinder.kinder_ielts.entity.Classroom;
@@ -10,17 +11,17 @@ import com.kinder.kinder_ielts.entity.join_entity.CourseStudent;
 import com.kinder.kinder_ielts.mapper.ModelMapper;
 import com.kinder.kinder_ielts.response_message.ClassroomMessage;
 import com.kinder.kinder_ielts.response_message.CourseMessage;
-import com.kinder.kinder_ielts.response_message.CourseStudentMessage;
 import com.kinder.kinder_ielts.service.base.*;
+import com.kinder.kinder_ielts.util.CompareUtil;
 import com.kinder.kinder_ielts.util.SecurityContextHolderUtil;
+import com.kinder.kinder_ielts.util.name.NameParts;
+import com.kinder.kinder_ielts.util.name.NameUtil;
 import jakarta.persistence.criteria.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.web.config.EnableSpringDataWebSupport;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
@@ -61,21 +62,33 @@ public class StudentServiceImpl {
         return StudentResponse.detail(thisStudent);
     }
 
-    public Page<StudentResponse> search(List<String> courseIds, List<String> classIds, Pageable pageable) {
-        Specification<Student> spec = createStudentSearchingspecification(courseIds, classIds);
+    public Page<StudentResponse> search(List<String> courseIds, List<String> classIds, String name, Pageable pageable) {
+        Specification<Student> spec = createStudentSearchingspecification(courseIds, classIds, name);
 
         Page<Student> studentPage = baseStudentService.get(spec, pageable);
         return studentPage.map(StudentResponse::info);
     }
 
-    private Specification<Student> createStudentSearchingspecification(List<String> courseIds, List<String> classIds) {
+    private Specification<Student> createStudentSearchingspecification(List<String> courseIds, List<String> classIds, String name) {
         return (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
             addDistinct(courseIds, classIds, query);
-            addCourseIds(courseIds, criteriaBuilder, root, predicates, query);
-            addClassIds(classIds, criteriaBuilder, root, predicates, query);
+
+            if (courseIds != null && classIds != null)
+                addClassIds(classIds, criteriaBuilder, root, predicates, query);
+            else if (courseIds != null)
+                addCourseIds(courseIds, criteriaBuilder, root, predicates, query);
+
+            addStudentName(name, criteriaBuilder, root, predicates);
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
+    }
+
+    private void addStudentName(String name, CriteriaBuilder criteriaBuilder, Root<Student> root, List<Predicate> predicates) {
+        if (name == null || name.trim().isEmpty())
+            return;
+
+        predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("fullName")), "%" + name.toLowerCase() + "%"));
     }
 
     private void addDistinct(List<String> courseIds, List<String> classIds, CriteriaQuery<?> query) {
@@ -84,7 +97,7 @@ public class StudentServiceImpl {
     }
 
     private void addCourseIds(List<String> courseIds, CriteriaBuilder criteriaBuilder, Root<Student> root, List<Predicate> predicates, CriteriaQuery<?> query) {
-        if (courseIds == null || courseIds.isEmpty())
+        if (courseIds.isEmpty())
             return;
 
         Join<Student, CourseStudent> courseStudentJoin = root.join("courseStudents");
@@ -96,7 +109,7 @@ public class StudentServiceImpl {
     }
 
     private void addClassIds(List<String> classIds, CriteriaBuilder criteriaBuilder, Root<Student> root, List<Predicate> predicates, CriteriaQuery<?> query) {
-        if (classIds == null || classIds.isEmpty())
+        if (classIds.isEmpty())
             return;
 
         Join<Student, CourseStudent> courseStudentJoin = root.join("courseStudents");
@@ -104,5 +117,22 @@ public class StudentServiceImpl {
             predicates.add(criteriaBuilder.equal(courseStudentJoin.get("class").get("id"), classIds.get(0)));
         else
             predicates.add(courseStudentJoin.get("class").get("id").in(classIds));
+    }
+
+    public StudentResponse updateInfo(String studentId, UpdateStudentInfoRequest request, String failMessage) {
+        Student student = baseStudentService.get(studentId, IsDelete.NOT_DELETED, failMessage);
+        if (request.name != null){
+            NameParts nameParts =  NameUtil.splitName(request.name);
+            student.setFirstName(CompareUtil.compare(nameParts.firstName, student.getFirstName()));
+            student.setMiddleName(CompareUtil.compare(nameParts.middleName, student.getMiddleName()));
+            student.setLastName(CompareUtil.compare(nameParts.lastName, student.getLastName()));
+            student.setFullName(CompareUtil.compare(request.name, student.getFullName()));
+        }
+        student.setEmail(CompareUtil.compare(request.email, student.getEmail()));
+        student.setPhone(CompareUtil.compare(request.phone, student.getPhone()));
+        student.setCitizenIdentification(CompareUtil.compare(request.citizenIdentification, student.getCitizenIdentification()));
+        student.setDob(CompareUtil.compare(request.dob, student.getDob()));
+        student.setCountry(CompareUtil.compare(request.country, student.getCountry()));
+        return StudentResponse.info(baseStudentService.update(student, failMessage));
     }
 }

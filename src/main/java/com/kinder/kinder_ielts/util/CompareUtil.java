@@ -13,6 +13,8 @@ public class CompareUtil {
      * @return The non-null value.
      */
     public static <T> T compare(T value, T fallbackValue) {
-        return Objects.requireNonNullElse(value, fallbackValue);
+        if (value != null)
+            return value;
+        else return fallbackValue;
     }
 }
