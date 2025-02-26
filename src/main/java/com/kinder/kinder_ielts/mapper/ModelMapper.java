@@ -223,7 +223,6 @@ public class ModelMapper {
     public static Student map(CreateStudentRequest request, ZonedDateTime currentTime, Account creator) {
         Account account = new Account();
         account.setId(IdUtil.generateId());
-        account.setUsername(request.getUsername());
         account.setPassword(PasswordUtil.hashPassword(request.getPassword()));
         //TODO: set default avatar
         account.setRole(Role.STUDENT);
@@ -242,9 +241,11 @@ public class ModelMapper {
         student.setLastName(nameParts.lastName);
         student.setFullName(request.getName());
         student.setEmail(request.getEmail());
+        student.setPhone(request.getPhone());
         student.setCreateBy(creator);
         student.setCreateTime(currentTime);
 
+        account.setUsername(nameParts.firstName + nameParts.lastName + request.getPhone().substring(request.getPhone().length() -5));
         return student;
     }
 }

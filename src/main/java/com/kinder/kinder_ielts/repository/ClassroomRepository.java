@@ -35,4 +35,6 @@ where sm.id = :studyMaterialId
             "WHERE c.id = :classroomId " +
             "AND (sm.privacyStatus = 'PUBLIC' OR sms.id = :studentId)")
     Optional<Classroom> findByIdWithStudentId(String classroomId, String studentId);
+
+    List<Classroom> findByCourse_Id(String id);
 }

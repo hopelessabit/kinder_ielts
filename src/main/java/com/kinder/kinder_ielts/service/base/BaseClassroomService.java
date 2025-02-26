@@ -1,9 +1,13 @@
 package com.kinder.kinder_ielts.service.base;
 
+import com.kinder.kinder_ielts.constant.IsDelete;
 import com.kinder.kinder_ielts.entity.Classroom;
+import jakarta.validation.constraints.Size;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+
+import java.util.List;
 
 /**
  * Service interface for managing {@link Classroom} entities.
@@ -19,4 +23,6 @@ public interface BaseClassroomService extends BaseEntityService<Classroom, Strin
     Classroom getByStudyMaterialId(String studyMaterialId);
 
     Classroom getByIdWithStudentId(String classroomId, String studentId, String failMessage);
+
+    List<Classroom> getByCourseId(String id, IsDelete isDelete, String s);
 }

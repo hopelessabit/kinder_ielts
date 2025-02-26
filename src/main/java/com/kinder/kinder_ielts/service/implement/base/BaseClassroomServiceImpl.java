@@ -95,4 +95,9 @@ public class BaseClassroomServiceImpl extends BaseEntityServiceImpl<Classroom, S
         return classroomRepository.findByIdWithStudentId(classroomId, studentId)
                 .orElseThrow(() -> new NotFoundException(failMessage));
     }
+
+    @Override
+    public List<Classroom> getByCourseId(String courseId, IsDelete isDelete, String s) {
+        return classroomRepository.findByCourse_Id(courseId);
+    }
 }

@@ -1,5 +1,6 @@
 package com.kinder.kinder_ielts.service.implement;
 import com.kinder.kinder_ielts.constant.IsDelete;
+import com.kinder.kinder_ielts.dto.request.tutor.CreateTutorRequest;
 import com.kinder.kinder_ielts.dto.response.tutor.TutorResponse;
 import com.kinder.kinder_ielts.entity.Tutor;
 import com.kinder.kinder_ielts.service.base.BaseTutorService;
@@ -23,5 +24,11 @@ public class TutorServiceImpl {
         List<Tutor> tutors = baseTutorService.get(isDeleted, failMessage);
 
         return tutors.stream().map(tutor -> new TutorResponse(tutor, includeExtendDetails)).toList();
+    }
+
+    public TutorResponse create(CreateTutorRequest request, String failMessage){
+//        Tutor tutor = baseTutorService.create(request, failMessage);
+//        return new TutorResponse(tutor, true);
+        return null;
     }
 }

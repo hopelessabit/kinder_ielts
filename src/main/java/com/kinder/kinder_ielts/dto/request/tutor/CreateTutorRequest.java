@@ -1,13 +1,12 @@
-package com.kinder.kinder_ielts.dto.request.student;
+package com.kinder.kinder_ielts.dto.request.tutor;
+
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
-@Setter
-public class CreateStudentRequest {
+public class CreateTutorRequest {
     private String name;
     private String email;
-    private String phone;
+    private String username;
     private String password;
     private String addToCourseId;
     private String addToClassroomId;
