@@ -1,4 +1,14 @@
 package com.kinder.kinder_ielts.service.implement;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
+
 import com.kinder.kinder_ielts.constant.IsDelete;
 import com.kinder.kinder_ielts.dto.request.student.CreateStudentRequest;
 import com.kinder.kinder_ielts.dto.request.student.UpdateStudentInfoRequest;
@@ -12,23 +22,24 @@ import com.kinder.kinder_ielts.entity.join_entity.CourseStudent;
 import com.kinder.kinder_ielts.mapper.ModelMapper;
 import com.kinder.kinder_ielts.response_message.ClassroomMessage;
 import com.kinder.kinder_ielts.response_message.CourseMessage;
-import com.kinder.kinder_ielts.service.base.*;
+import com.kinder.kinder_ielts.service.base.BaseAccountService;
+import com.kinder.kinder_ielts.service.base.BaseClassroomService;
+import com.kinder.kinder_ielts.service.base.BaseClassroomStudentService;
+import com.kinder.kinder_ielts.service.base.BaseCourseService;
+import com.kinder.kinder_ielts.service.base.BaseCourseStudentService;
+import com.kinder.kinder_ielts.service.base.BaseStudentService;
 import com.kinder.kinder_ielts.util.CompareUtil;
 import com.kinder.kinder_ielts.util.SecurityContextHolderUtil;
 import com.kinder.kinder_ielts.util.name.NameParts;
 import com.kinder.kinder_ielts.util.name.NameUtil;
-import jakarta.persistence.criteria.*;
+
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.stereotype.Service;
-
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -72,6 +83,9 @@ public class StudentServiceImpl {
         List<String> studentIds = studentPage.getContent().stream().map(Student::getId).toList();
 
         List<ClassroomStudent> classroomStudents = baseClassroomStudentService.getByStudentIds(studentIds);
+        if (classroomStudents.isEmpty()){
+            return studentPage.map(StudentResponse::info);
+        }
         List<String> belongToClassIds = classroomStudents.stream().map(cs -> cs.getClassroom().getId()).distinct().toList();
 
         List<Classroom> classrooms = baseClassroomService.get(belongToClassIds, List.of(IsDelete.NOT_DELETED), ClassroomMessage.NOT_FOUND);
@@ -79,6 +93,8 @@ public class StudentServiceImpl {
         List<StudentResponse> studentResponses = new ArrayList<>();
         for (Student student: studentPage.getContent()){
             List<ClassroomStudent> classroomStudents1 = classroomStudents.stream().filter(cs -> cs.getStudent().getId().equals(student.getId())).toList();
+            if (classroomStudents1.isEmpty())
+                studentResponses.add(StudentResponse.info(student));
             List<Classroom> belongToClasses = classrooms.stream().filter(classroom -> classroomStudents1.stream().anyMatch(cs -> cs.getClassroom().getId().equals(classroom.getId()))).toList();
             studentResponses.add(StudentResponse.withCourses(student, belongToClasses));
         }
