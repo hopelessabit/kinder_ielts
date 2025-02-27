@@ -93,8 +93,10 @@ public class StudentServiceImpl {
         List<StudentResponse> studentResponses = new ArrayList<>();
         for (Student student: studentPage.getContent()){
             List<ClassroomStudent> classroomStudents1 = classroomStudents.stream().filter(cs -> cs.getStudent().getId().equals(student.getId())).toList();
-            if (classroomStudents1.isEmpty())
+            if (classroomStudents1.isEmpty()){
                 studentResponses.add(StudentResponse.info(student));
+                continue;
+            }
             List<Classroom> belongToClasses = classrooms.stream().filter(classroom -> classroomStudents1.stream().anyMatch(cs -> cs.getClassroom().getId().equals(classroom.getId()))).toList();
             studentResponses.add(StudentResponse.withCourses(student, belongToClasses));
         }
