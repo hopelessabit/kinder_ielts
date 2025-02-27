@@ -245,7 +245,8 @@ public class ModelMapper {
         student.setCreateBy(creator);
         student.setCreateTime(currentTime);
 
-        account.setUsername(nameParts.firstName.toLowerCase() + nameParts.lastName.toLowerCase() + request.getPhone().substring(request.getPhone().length() -4));
+        NameParts namePartsNoDiacritics = NameUtil.removeDiacritics(nameParts);
+        account.setUsername(namePartsNoDiacritics.firstName.toLowerCase() + namePartsNoDiacritics.lastName.toLowerCase() + request.getPhone().substring(request.getPhone().length() -4));
         student.setAccount(account);
         return student;
     }
@@ -289,7 +290,8 @@ public class ModelMapper {
                     })
                     .toList());
         }
-        account.setUsername("t_" + nameParts.firstName + nameParts.lastName);
+        NameParts namePartsNoDiacritics = NameUtil.removeDiacritics(nameParts);
+        account.setUsername("t_" + namePartsNoDiacritics.firstName + namePartsNoDiacritics.lastName);
         tutor.setAccount(account);
         return tutor;
     }

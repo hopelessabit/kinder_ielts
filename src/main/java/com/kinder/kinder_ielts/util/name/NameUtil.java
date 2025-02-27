@@ -5,6 +5,9 @@ import com.kinder.kinder_ielts.entity.Account;
 import com.kinder.kinder_ielts.entity.Student;
 import com.kinder.kinder_ielts.entity.Tutor;
 
+import java.text.Normalizer;
+import java.util.regex.Pattern;
+
 public class NameUtil {
     public static NameParts splitName(String fullName) {
         if (fullName == null || fullName.trim().isEmpty()) {
@@ -42,5 +45,21 @@ public class NameUtil {
         if (student.getFirstName() != null)
             fullName.append(" ").append(student.getFirstName());
         return fullName.toString();
+    }
+
+    public static String removeDiacritics(String str) {
+        if (str == null) return null;
+        String normalized = Normalizer.normalize(str, Normalizer.Form.NFD);
+        Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+        return pattern.matcher(normalized).replaceAll("").replace("Đ", "D").replace("đ", "d");
+    }
+
+    public static NameParts removeDiacritics(NameParts nameParts) {
+        if (nameParts == null) return null;
+        return new NameParts(
+                removeDiacritics(nameParts.firstName),
+                removeDiacritics(nameParts.middleName),
+                removeDiacritics(nameParts.lastName)
+        );
     }
 }
