@@ -7,7 +7,10 @@ import com.kinder.kinder_ielts.entity.id.CourseStudentId;
 import com.kinder.kinder_ielts.entity.join_entity.CourseStudent;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 
 public interface BaseCourseStudentService extends BaseEntityService<CourseStudent, CourseStudentId>{
     public void create(Student student, Course course, Account creator, ZonedDateTime currentTime);
+
+    List<CourseStudent> getByStudentIds(List<String> studentIds);
 }

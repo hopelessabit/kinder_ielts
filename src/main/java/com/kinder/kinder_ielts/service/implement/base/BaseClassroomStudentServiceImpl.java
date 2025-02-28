@@ -80,6 +80,6 @@ public class BaseClassroomStudentServiceImpl extends BaseEntityServiceImpl<Class
 
     @Override
     public List<ClassroomStudent> getByStudentIds(List<String> studentIds) {
-        return classroomStudentRepository.findById_StudentIdIn(studentIds);
+        return classroomStudentRepository.findById_StudentIdInAndIsDeleted(studentIds, IsDelete.NOT_DELETED);
     }
 }

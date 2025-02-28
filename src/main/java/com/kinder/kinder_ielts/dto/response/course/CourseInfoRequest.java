@@ -5,6 +5,7 @@ import com.kinder.kinder_ielts.dto.response.course_level.CourseLevelResponse;
 import com.kinder.kinder_ielts.entity.Course;
 import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -22,7 +23,7 @@ public class CourseInfoRequest {
                 ? course.getClassrooms().stream()
                 .map(ClassInfoResponse::info)
                 .toList()
-                : null;
+                : new ArrayList<>();
     }
 
     public static CourseInfoRequest info(Course course) {

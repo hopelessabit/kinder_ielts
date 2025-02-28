@@ -56,4 +56,9 @@ public class BaseCourseStudentServiceImpl extends BaseEntityServiceImpl<CourseSt
     public void create(Student student, Course course, Account creator, ZonedDateTime currentTime) {
         create(new CourseStudent(course, student, creator, currentTime), CourseStudentMessage.CREATE_FAILED);
     }
+
+    @Override
+    public List<CourseStudent> getByStudentIds(List<String> studentIds) {
+        return courseStudentRepository.findByStudentIdInAndIsDeleted(studentIds, IsDelete.NOT_DELETED);
+    }
 }

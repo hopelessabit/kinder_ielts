@@ -10,7 +10,6 @@ import com.kinder.kinder_ielts.entity.Classroom;
 import com.kinder.kinder_ielts.entity.Course;
 import com.kinder.kinder_ielts.entity.Student;
 import com.kinder.kinder_ielts.util.name.NameUtil;
-import jdk.jfr.Frequency;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -79,7 +78,19 @@ public class StudentResponse{
         return new StudentResponse(student, true);
     }
 
-    public static StudentResponse withCourses(Student student, List<Classroom> classrooms) {
+    public static StudentResponse withCourses(Student student, List<Course> courses){
+        return withCourses(student, courses, false);
+    }
+
+    public static StudentResponse withCourses(Student student, List<Course> courses, boolean autoIncludeAllClassInCourse){
+        StudentResponse response = new StudentResponse(student, false);
+        if (!autoIncludeAllClassInCourse)
+            courses.forEach(course -> course.setClassrooms(null));
+        response.courses = courses.stream().map(CourseInfoRequest::info).toList();
+        return response;
+    }
+
+    public static StudentResponse withCoursesFromClass(Student student, List<Classroom> classrooms) {
         StudentResponse response = new StudentResponse(student, false);
 
         List<Course> courses = classrooms.stream().map(Classroom::getCourse).distinct().toList();

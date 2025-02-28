@@ -6,6 +6,7 @@ import com.kinder.kinder_ielts.entity.join_entity.ClassroomStudent;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 
 @Repository
@@ -33,4 +34,6 @@ public interface ClassroomStudentRepository extends BaseEntityRepository<Classro
     List<ClassroomStudent> findById_ClassIdAndIsDeleted(String classId, IsDelete isDeleted);
 
     List<ClassroomStudent> findById_StudentIdIn(List<String> studentIds);
+
+    List<ClassroomStudent> findById_StudentIdInAndIsDeleted(Collection<String> studentIds, IsDelete isDeleted);
 }
