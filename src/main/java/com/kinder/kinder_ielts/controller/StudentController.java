@@ -44,7 +44,7 @@ public class StudentController {
 
     @PutMapping("/info/{studentId}")
     @PreAuthorize("hasAnyAuthority('STUDENT', 'ADMIN', 'MODERATOR')")
-    public ResponseEntity<ResponseData<StudentResponse>> updateInfo(@RequestParam String studentId, @RequestBody UpdateStudentInfoRequest request){
+    public ResponseEntity<ResponseData<StudentResponse>> updateInfo(@PathVariable String studentId, @RequestBody UpdateStudentInfoRequest request){
         return ResponseUtil.getResponse(() -> studentService.updateInfo(studentId, request, StudentMessage.INFO_UPDATE_FAILED), StudentMessage.INFO_UPDATED);
     }
 }
