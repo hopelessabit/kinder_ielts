@@ -36,4 +36,8 @@ public interface ClassroomStudentRepository extends BaseEntityRepository<Classro
     List<ClassroomStudent> findById_StudentIdIn(List<String> studentIds);
 
     List<ClassroomStudent> findById_StudentIdInAndIsDeleted(Collection<String> studentIds, IsDelete isDeleted);
+
+    List<ClassroomStudent> findById_StudentIdInAndId_ClassIdInAndIsDeleted(List<String> studentIds, List<String> classIds, IsDelete isDelete);
+
+    List<ClassroomStudent> findDistinctById_StudentIdInAndClassroom_Course_IdInAndIsDeleted(Collection<String> studentIds, Collection<String> ids, IsDelete isDeleted);
 }

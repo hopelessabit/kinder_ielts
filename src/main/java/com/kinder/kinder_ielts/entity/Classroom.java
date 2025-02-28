@@ -6,10 +6,7 @@ import com.kinder.kinder_ielts.entity.join_entity.ClassroomTutor;
 import com.kinder.kinder_ielts.entity.join_entity.ClassroomWeeklySchedule;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.Nationalized;
 
 import java.time.OffsetTime;
@@ -49,8 +46,14 @@ public class Classroom extends BaseEntity {
     @Column(name = "end_date", nullable = true)
     private ZonedDateTime endDate;
 
+    @Column(name = "course_id", insertable = false, updatable = false) // Prevents conflict with @ManyToOne
+    private String courseId;
+
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "course_id")
+    @JoinColumn(
+            name = "course_id",
+            nullable = false
+    )
     private Course course;
 
     @OneToMany(mappedBy = "classroom", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
@@ -64,4 +67,13 @@ public class Classroom extends BaseEntity {
 
     @OneToMany(mappedBy = "classroom", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<ClassroomWeeklySchedule> weeklySchedule;
+
+    @Override
+    public String toString() {
+        return "Classroom{" +
+                "id='" + id + '\'' +
+                ", code='" + code + '\'' +
+                ", courseId='" + courseId + '\'' +
+                '}';
+    }
 }

@@ -21,4 +21,8 @@ public interface BaseClassroomStudentService extends BaseEntityService<Classroom
     void create(Student student, Classroom classroom, Account creator, ZonedDateTime currentTime);
 
     List<ClassroomStudent> getByStudentIds(List<String> studentIds);
+
+    List<ClassroomStudent> getByStudentIdsAndClassIds(List<String> studentIds, List<String> classIds);
+
+    List<ClassroomStudent> getByStudentIdsAndCourseIds(List<String> studentIds, List<String> courseIds);
 }

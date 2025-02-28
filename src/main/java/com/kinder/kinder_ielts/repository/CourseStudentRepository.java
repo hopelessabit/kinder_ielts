@@ -11,4 +11,6 @@ import java.util.List;
 @Repository
 public interface CourseStudentRepository extends BaseEntityRepository<CourseStudent, CourseStudentId> {
     List<CourseStudent> findByStudentIdInAndIsDeleted(List<String> studentIds, IsDelete isDelete);
+
+    List<CourseStudent> findByStudentIdInAndCourseIdInAndIsDeleted(List<String> studentIds, List<String> courseIds, IsDelete isDelete);
 }

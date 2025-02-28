@@ -9,10 +9,7 @@ import com.kinder.kinder_ielts.entity.join_entity.CourseStudent;
 import com.kinder.kinder_ielts.entity.join_entity.CourseTutor;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.Nationalized;
 
 import java.math.BigDecimal;
@@ -72,4 +69,12 @@ public class  Course extends BaseEntity {
 
     @OneToMany(mappedBy = "course", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TemplateClassroom> templates;
+
+    @Override
+    public String toString() {
+        return "Course{" +
+                "description='" + description + '\'' +
+                ", id='" + id + '\'' +
+                '}';
+    }
 }

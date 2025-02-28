@@ -3,6 +3,8 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.kinder.kinder_ielts.entity.id.ClassStudentId;
+import com.kinder.kinder_ielts.entity.id.CourseStudentId;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -80,37 +82,64 @@ public class StudentServiceImpl {
 
         Page<Student> studentPage = baseStudentService.get(spec, pageable);
 
+        if (studentPage.getContent().isEmpty())
+            return studentPage.map(StudentResponse::info);
+
         List<String> studentIds = studentPage.getContent().stream().map(Student::getId).toList();
 
         List<CourseStudent> courseStudents = baseCourseStudentService.getByStudentIds(studentIds);
-        if (courseStudents.isEmpty()){
-            return studentPage.map(st -> StudentResponse.withCourses(st, new ArrayList<>()));
-        }
-        List<Course> courses = baseCourseService.get(courseStudents.stream().map(cs -> cs.getId().getCourseId()).distinct().toList(), List.of(IsDelete.NOT_DELETED), CourseMessage.NOT_FOUND);
-
+        List<Course> courses = new ArrayList<>();
+        if (!courseStudents.isEmpty())
+            courses = baseCourseService.get(courseStudents.stream().map(CourseStudent::getId).map(CourseStudentId::getCourseId).distinct().toList(), List.of(IsDelete.NOT_DELETED), CourseMessage.NOT_FOUND);
         List<ClassroomStudent> classroomStudents = baseClassroomStudentService.getByStudentIds(studentIds);
-        if (classroomStudents.isEmpty())
-            return new PageImpl<>(mapStudentResponse(studentPage, courseStudents, courses), pageable, studentPage.getTotalElements());
+        List<Classroom> classrooms = new ArrayList<>();
+        if (!classroomStudents.isEmpty())
+            classrooms = baseClassroomService.get(classroomStudents.stream().map(ClassroomStudent::getId).map(ClassStudentId::getClassId).distinct().toList(), List.of(IsDelete.NOT_DELETED), ClassroomMessage.NOT_FOUND);
 
-        List<String> belongToClassIds = classroomStudents.stream().map(cs -> cs.getClassroom().getId()).distinct().toList();
-
-        List<Classroom> classrooms = baseClassroomService.get(belongToClassIds, List.of(IsDelete.NOT_DELETED), ClassroomMessage.NOT_FOUND);
+        if (courses.isEmpty())
+            return studentPage.map(student -> StudentResponse.withCourses(student, new ArrayList<>()));
+        if (courseStudents.isEmpty())
+            return studentPage.map(student -> StudentResponse.withCourses(student, new ArrayList<>()));
 
         List<StudentResponse> studentResponses = new ArrayList<>();
-        for (Student student: studentPage.getContent()){
-            List<ClassroomStudent> classroomStudents1 = classroomStudents.stream().filter(cs -> cs.getStudent().getId().equals(student.getId())).toList();
-            if (classroomStudents1.isEmpty()){
+        if (classrooms.isEmpty()){
+            for (Student student: studentPage.getContent()){
                 List<CourseStudent> courseStudents1 = courseStudents.stream().filter(cs -> cs.getStudent().getId().equals(student.getId())).toList();
                 if (courseStudents1.isEmpty()){
                     studentResponses.add(StudentResponse.withCourses(student, new ArrayList<>()));
                     continue;
                 }
-                List<Course> courses1 = courses.stream().filter(course -> courseStudents1.stream().anyMatch(cs -> cs.getCourse().getId().equals(course.getId()))).toList();
+                List<String> courseIds1 = courseStudents1.stream().map(cs -> cs.getCourse().getId()).toList();
+                List<Course> courses1 = courses.stream().filter(course -> courseIds1.stream().anyMatch(cid1 -> cid1.equals(course.getId()))).toList();
+                studentResponses.add(StudentResponse.withCourses(student, courses1));
+            }
+            return new PageImpl<>(studentResponses, pageable, studentPage.getTotalElements());
+        }
+
+        for (Student student: studentPage.getContent()){
+            List<ClassroomStudent> classroomStudents1 = classroomStudents.stream().filter(cs -> cs.getStudent().getId().equals(student.getId())).toList();
+
+            if (classroomStudents1.isEmpty()){
+                List<CourseStudent> courseStudents1 = courseStudents.stream().filter(cs -> cs.getStudent().getId().equals(student.getId())).toList();
+                List<String> courseIds1 = courseStudents1.stream().map(cs -> cs.getCourse().getId()).toList();
+                List<Course> courses1 = courses.stream().filter(course -> courseIds1.stream().anyMatch(cs -> cs.equals(course.getId()))).toList();
+
                 studentResponses.add(StudentResponse.withCourses(student, courses1));
                 continue;
             }
-            List<Classroom> belongToClasses = classrooms.stream().filter(classroom -> classroomStudents1.stream().anyMatch(cs -> cs.getClassroom().getId().equals(classroom.getId()))).toList();
-            studentResponses.add(StudentResponse.withCoursesFromClass(student, belongToClasses));
+
+            List<String> classroomIds1 = classroomStudents1.stream().map(ClassroomStudent::getId).map(ClassStudentId::getClassId).toList();
+            List<Classroom> classrooms1 = classrooms.stream().filter(classroom -> classroomIds1.stream().anyMatch(cid1 -> cid1.equals(classroom.getId()))).toList();
+
+            List<CourseStudent> courseStudents1 = courseStudents.stream().filter(cs -> cs.getStudent().getId().equals(student.getId())).toList();
+            List<String> courseIds1 = courseStudents1.stream().map(cs -> cs.getCourse().getId()).toList();
+            List<Course> courses1 = courses.stream().filter(course -> courseIds1.stream().anyMatch(cs -> cs.equals(course.getId()))).toList();
+            for (Course course : courses1){
+                List<Classroom> classrooms2 = classrooms1.stream().filter(classroom -> classroom.getCourseId().equals(course.getId())).toList();
+                course.setClassrooms(classrooms2);
+            }
+
+            studentResponses.add(StudentResponse.withCourses(student, courses1));
         }
 
         return new PageImpl<>(studentResponses, pageable, studentPage.getTotalElements());
@@ -139,6 +168,8 @@ public class StudentServiceImpl {
                 addClassIds(classIds, criteriaBuilder, root, predicates, query);
             else if (courseIds != null)
                 addCourseIds(courseIds, criteriaBuilder, root, predicates, query);
+            else if (classIds != null)
+                addClassIds(classIds, criteriaBuilder, root, predicates, query);
 
             addStudentName(name, criteriaBuilder, root, predicates);
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
@@ -173,11 +204,11 @@ public class StudentServiceImpl {
         if (classIds.isEmpty())
             return;
 
-        Join<Student, CourseStudent> courseStudentJoin = root.join("courseStudents");
+        Join<Student, ClassroomStudent> classroomStudentJoin = root.join("classroomStudents");
         if (classIds.size() == 1)
-            predicates.add(criteriaBuilder.equal(courseStudentJoin.get("class").get("id"), classIds.get(0)));
+            predicates.add(criteriaBuilder.equal(classroomStudentJoin.get("classroom").get("id"), classIds.get(0)));
         else
-            predicates.add(courseStudentJoin.get("class").get("id").in(classIds));
+            predicates.add(classroomStudentJoin.get("classroom").get("id").in(classIds));
     }
 
     public StudentResponse updateInfo(String studentId, UpdateStudentInfoRequest request, String failMessage) {

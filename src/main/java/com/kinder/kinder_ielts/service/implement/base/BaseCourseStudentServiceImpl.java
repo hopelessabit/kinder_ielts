@@ -61,4 +61,8 @@ public class BaseCourseStudentServiceImpl extends BaseEntityServiceImpl<CourseSt
     public List<CourseStudent> getByStudentIds(List<String> studentIds) {
         return courseStudentRepository.findByStudentIdInAndIsDeleted(studentIds, IsDelete.NOT_DELETED);
     }
+
+    public List<CourseStudent> getByStudentIdsAndCourseIds(List<String> studentIds, List<String> courseIds) {
+        return courseStudentRepository.findByStudentIdInAndCourseIdInAndIsDeleted(studentIds, courseIds, IsDelete.NOT_DELETED);
+    }
 }

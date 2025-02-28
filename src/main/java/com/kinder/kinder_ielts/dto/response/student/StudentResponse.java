@@ -84,8 +84,6 @@ public class StudentResponse{
 
     public static StudentResponse withCourses(Student student, List<Course> courses, boolean autoIncludeAllClassInCourse){
         StudentResponse response = new StudentResponse(student, false);
-        if (!autoIncludeAllClassInCourse)
-            courses.forEach(course -> course.setClassrooms(null));
         response.courses = courses.stream().map(CourseInfoRequest::info).toList();
         return response;
     }
