@@ -9,4 +9,6 @@ public class TutorMessage {
     public static final String NOT_FOUND = "Không tìm thấy giảng viên";
     public static final String CREATE_FAILED = "Tạo giảng viên thất bại";
     public static final String PARTIALLY_NOT_FOUND = "Một số giảng viên không tìm thấy hoặc đã bị xóa";
+    public static final String UPDATE_FAILED = "Cập nhật thông tin giảng viên thất bại";
+    public static final String UPDATED = "Cập nhật thông tin giảng viên thành công";
 }

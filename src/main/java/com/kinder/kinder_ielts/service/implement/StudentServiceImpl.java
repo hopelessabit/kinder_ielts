@@ -123,7 +123,7 @@ public class StudentServiceImpl {
                 List<CourseStudent> courseStudents1 = courseStudents.stream().filter(cs -> cs.getStudent().getId().equals(student.getId())).toList();
                 List<String> courseIds1 = courseStudents1.stream().map(cs -> cs.getCourse().getId()).toList();
                 List<Course> courses1 = courses.stream().filter(course -> courseIds1.stream().anyMatch(cs -> cs.equals(course.getId()))).toList();
-
+                courses1.forEach(course -> course.setClassrooms(new ArrayList<>()));
                 studentResponses.add(StudentResponse.withCourses(student, courses1));
                 continue;
             }

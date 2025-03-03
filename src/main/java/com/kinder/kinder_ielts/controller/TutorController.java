@@ -3,6 +3,7 @@ package com.kinder.kinder_ielts.controller;
 import com.kinder.kinder_ielts.constant.IsDelete;
 import com.kinder.kinder_ielts.dto.ResponseData;
 import com.kinder.kinder_ielts.dto.request.tutor.CreateTutorRequest;
+import com.kinder.kinder_ielts.dto.request.tutor.UpdateTutorInfoRequest;
 import com.kinder.kinder_ielts.dto.response.tutor.TutorResponse;
 import com.kinder.kinder_ielts.response_message.TutorMessage;
 import com.kinder.kinder_ielts.service.implement.TutorServiceImpl;
@@ -53,5 +54,10 @@ public class TutorController {
         Boolean finalIncludeExtendDetails = includeExtendDetails;
         IsDelete finalIsDelete = isDelete;
         return ResponseUtil.getResponse(() -> tutorService.getAllTutor(finalIncludeExtendDetails, finalIsDelete, TutorMessage.NOT_FOUND), TutorMessage.FOUND_SUCCESSFULLY);
+    }
+
+    @PutMapping("/info/{tutorId}")
+    public ResponseEntity<ResponseData<TutorResponse>> updateInfo(@PathVariable String tutorId, @RequestBody UpdateTutorInfoRequest request) {
+        return ResponseUtil.getResponse(() -> tutorService.updateInfo(tutorId, request, TutorMessage.UPDATE_FAILED), TutorMessage.UPDATED);
     }
 }
