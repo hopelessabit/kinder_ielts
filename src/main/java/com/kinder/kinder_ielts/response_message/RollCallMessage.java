@@ -18,4 +18,8 @@ public class RollCallMessage {
 
     public static final String UPDATE_SUCCESSFULLY = "Cập nhật thông tin điểm danh học thành công";
     public static final String UPDATE_FAILED = "Cập nhật thông tin điểm danh học thất bại";
+    public static final String STUDENT_IS_MISSING_IN_REQUEST = "Thiếu thông tin sinh viên trong request";
+    public static final String REQUEST_IS_EMPTY = "Request rỗng";
+    public static final String REQUEST_IS_MISSING = "Request thiếu thông tin";
+    public static final String CREATE_SUCCESSFULLY = "Tạo thông tin điểm danh học thành công";
 }

@@ -7,6 +7,7 @@ import com.kinder.kinder_ielts.dto.request.classroom.link.CreateClassroomLinkReq
 import com.kinder.kinder_ielts.dto.request.course.CreateCourseRequest;
 import com.kinder.kinder_ielts.dto.request.homework.CreateHomeworkRequest;
 import com.kinder.kinder_ielts.dto.request.material_link.CreateMaterialLinkRequest;
+import com.kinder.kinder_ielts.dto.request.roll_call.RollCallRequest;
 import com.kinder.kinder_ielts.dto.request.student.CreateStudentRequest;
 import com.kinder.kinder_ielts.dto.request.study_material.CreateStudyMaterialRequest;
 import com.kinder.kinder_ielts.dto.request.study_schedule.CreateStudyScheduleRequest;
@@ -19,6 +20,7 @@ import com.kinder.kinder_ielts.dto.request.tutor.CreateTutorRequest;
 import com.kinder.kinder_ielts.dto.request.warm_up_test.CreateWarmUpTestRequest;
 import com.kinder.kinder_ielts.entity.*;
 import com.kinder.kinder_ielts.entity.course_template.*;
+import com.kinder.kinder_ielts.entity.id.RollCallId;
 import com.kinder.kinder_ielts.util.IdUtil;
 import com.kinder.kinder_ielts.util.PasswordUtil;
 import com.kinder.kinder_ielts.util.SecurityContextHolderUtil;
@@ -294,5 +296,16 @@ public class ModelMapper {
         account.setUsername("t_" + namePartsNoDiacritics.firstName + namePartsNoDiacritics.lastName);
         tutor.setAccount(account);
         return tutor;
+    }
+
+    public static RollCall map(RollCallRequest request, Student student, StudySchedule studySchedule, Account creator, ZonedDateTime currentTime) {
+        RollCall rollCall = new RollCall();
+        rollCall.setNote(request.note);
+        rollCall.setId(RollCallId.from(student, studySchedule));
+        rollCall.setStudent(student);
+        rollCall.setStudySchedule(studySchedule);
+        rollCall.setStatus(request.status);
+        rollCall.initForNew(creator, currentTime);
+        return rollCall;
     }
 }

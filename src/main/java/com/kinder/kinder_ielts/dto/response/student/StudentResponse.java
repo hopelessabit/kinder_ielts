@@ -1,6 +1,7 @@
 package com.kinder.kinder_ielts.dto.response.student;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.kinder.kinder_ielts.dto.response.BaseEntityResponse;
 import com.kinder.kinder_ielts.dto.response.account.AccountResponse;
 import com.kinder.kinder_ielts.dto.response.account.SubAccountResponse;
 import com.kinder.kinder_ielts.dto.response.constant.CountryResponse;
@@ -30,15 +31,7 @@ public class StudentResponse{
     private String lastName;
     private CountryResponse country;
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private ZonedDateTime createTime;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private SubAccountResponse createBy;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private ZonedDateTime modifyTime;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private SubAccountResponse modifyBy;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private IsDeletedResponse isDeleted;
+    private BaseEntityResponse extendDetail;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<CourseInfoRequest> courses;
 
@@ -57,17 +50,8 @@ public class StudentResponse{
     }
 
     public void mapSubInfo(Student student , boolean includeInfoForAdmin) {
-        if (includeInfoForAdmin) {
-            this.createTime = student.getCreateTime();
-
-            this.modifyTime = student.getModifyTime();
-
-            this.createBy = SubAccountResponse.from(student.getCreateBy());
-
-            this.modifyBy = SubAccountResponse.from(student.getModifyBy());
-
-            this.isDeleted = IsDeletedResponse.from(student.getIsDeleted());
-        }
+        if (includeInfoForAdmin)
+            this.extendDetail = BaseEntityResponse.from(student);
     }
 
     public static StudentResponse info(Student student) {

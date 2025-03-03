@@ -60,4 +60,9 @@ public abstract class BaseEntity {
         this.modifyBy = modifier;
         this.modifyTime = modifyTime;
     }
+
+    public void updateAudit(){
+        this.modifyBy = (Account) SecurityContextHolderUtil.getAccount();
+        this.modifyTime = ZonedDateTime.now();
+    }
 }

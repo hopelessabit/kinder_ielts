@@ -11,6 +11,8 @@ import lombok.Getter;
 
 @Getter
 public class RollCallResponse {
+    public final String studentId;
+    public final String studyScheduleId;
     public final StudentResponse student;
     public final StudyScheduleResponse studySchedule;
     public final StatusResponse<RollCallStatus> status;
@@ -19,6 +21,8 @@ public class RollCallResponse {
     public BaseEntityResponse extendDetail;
 
     public RollCallResponse(RollCall rollCall, boolean includeForAdmin, boolean includeStudySchedule) {
+        this.studentId = rollCall.getId().getStudentId();
+        this.studyScheduleId = rollCall.getId().getStudyScheduleId();
         this.note = rollCall.getNote();
         this.student = StudentResponse.info(rollCall.getStudent());
         this.studySchedule = includeStudySchedule ? StudyScheduleResponse.info(rollCall.getStudySchedule()) : null;

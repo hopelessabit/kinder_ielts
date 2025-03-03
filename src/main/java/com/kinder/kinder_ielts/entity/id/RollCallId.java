@@ -1,5 +1,7 @@
 package com.kinder.kinder_ielts.entity.id;
 
+import com.kinder.kinder_ielts.entity.Student;
+import com.kinder.kinder_ielts.entity.StudySchedule;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EmbeddedId;
@@ -20,4 +22,8 @@ public class RollCallId implements Serializable {
     private String studentId;
     @Column(name = "study_schedule_id")
     private String studyScheduleId;
+
+    public static RollCallId from(Student student, StudySchedule studySchedule) {
+        return new RollCallId(student.getId(), studySchedule.getId());
+    }
 }

@@ -2,21 +2,23 @@ package com.kinder.kinder_ielts.service.implement;
 
 import com.kinder.kinder_ielts.constant.*;
 import com.kinder.kinder_ielts.dto.Error;
+import com.kinder.kinder_ielts.dto.request.roll_call.CreateRollCallsRequest;
 import com.kinder.kinder_ielts.dto.request.roll_call.SearchRollCallRequest;
-import com.kinder.kinder_ielts.dto.request.roll_call.UpdateRollCallRequest;
+import com.kinder.kinder_ielts.dto.request.roll_call.RollCallRequest;
 import com.kinder.kinder_ielts.dto.request.roll_call.UpdateRollCallsRequest;
 import com.kinder.kinder_ielts.dto.response.roll_call.RollCallResponse;
 import com.kinder.kinder_ielts.entity.*;
 import com.kinder.kinder_ielts.entity.id.RollCallId;
 import com.kinder.kinder_ielts.entity.join_entity.ClassroomStudent;
-import com.kinder.kinder_ielts.entity.join_entity.ClassroomWeeklySchedule;
 import com.kinder.kinder_ielts.exception.BadRequestException;
 import com.kinder.kinder_ielts.exception.NotFoundException;
+import com.kinder.kinder_ielts.mapper.ModelMapper;
 import com.kinder.kinder_ielts.response_message.ClassroomMessage;
+import com.kinder.kinder_ielts.response_message.RollCallMessage;
+import com.kinder.kinder_ielts.response_message.StudentMessage;
 import com.kinder.kinder_ielts.response_message.StudyScheduleMessage;
 import com.kinder.kinder_ielts.service.base.*;
 import com.kinder.kinder_ielts.util.CompareUtil;
-import com.kinder.kinder_ielts.util.DateUtil;
 import com.kinder.kinder_ielts.util.SecurityContextHolderUtil;
 import jakarta.persistence.criteria.*;
 import lombok.RequiredArgsConstructor;
@@ -99,8 +101,6 @@ public class RollCallServiceImpl {
 
     private Specification<RollCall> createRollCallSpecification(String searchStudent, String searchModifier, String searchClassroom, String studyScheduleId, List<RollCallStatus> statuses, IsDelete isDelete) {
         return (root, query, criteriaBuilder) -> {
-            query.distinct(true);
-
             List<Predicate> predicates = new ArrayList<>();
 
             // Add search conditions dynamically
@@ -122,6 +122,9 @@ public class RollCallServiceImpl {
                 predicates.add(root.get("status").in(statuses));
 
             predicates.add(criteriaBuilder.equal(root.get("isDeleted"), isDelete));
+
+            assert query != null;
+            query.distinct(true);
 
             return criteriaBuilder.and(predicates.toArray(Predicate[]::new));
         };
@@ -159,12 +162,12 @@ public class RollCallServiceImpl {
         );
     }
 
-    public RollCallResponse updateRollCall(String studyScheduleId, UpdateRollCallRequest request, String failMessage){
+    public RollCallResponse updateRollCall(String studyScheduleId, RollCallRequest request, String failMessage){
         RollCall rollCall = baseRollCallService.get(new RollCallId(request.studentId, studyScheduleId), IsDelete.NOT_DELETED, failMessage);
 
         rollCall.setNote(CompareUtil.compare(request.note.trim(), rollCall.getNote()));
         rollCall.setStatus(CompareUtil.compare(request.status, rollCall.getStatus()));
-        rollCall.updateAudit(SecurityContextHolderUtil.getAccount(), ZonedDateTime.now());
+        rollCall.updateAudit();
 
         baseRollCallService.update(rollCall, failMessage);
 
@@ -175,18 +178,21 @@ public class RollCallServiceImpl {
         List<RollCall> rollCalls = baseRollCallService.findByStudyScheduleId(studyScheduleId, IsDelete.NOT_DELETED, failMessage);
         Account modifier = SecurityContextHolderUtil.getAccount();
         ZonedDateTime currentTime = ZonedDateTime.now();
-
+        List<RollCall> updatedRollCalls = new ArrayList<>();
+        if (request.rollCalls == null || request.rollCalls.isEmpty())
+            throw new BadRequestException(failMessage, Error.build(RollCallMessage.REQUEST_IS_EMPTY));
         for (RollCall rollCall : rollCalls){
-            UpdateRollCallRequest updateRollCallRequest = request.rollCalls.stream()
+            RollCallRequest rollCallRequest = request.rollCalls.stream()
                     .filter(rq -> rq.studentId.equals(rollCall.getId().getStudentId()))
                     .findFirst()
                     .orElseThrow(() -> new BadRequestException(failMessage, Error.build(StudyScheduleMessage.ROLL_CALL_NOT_EXIST, List.of(rollCall.getId().getStudentId()))));
 
-            rollCall.setNote(CompareUtil.compare(updateRollCallRequest.note.trim(), rollCall.getNote()));
-            rollCall.setStatus(CompareUtil.compare(updateRollCallRequest.status, rollCall.getStatus()));
+            rollCall.setNote(CompareUtil.compare(rollCallRequest.note.trim(), rollCall.getNote()));
+            rollCall.setStatus(CompareUtil.compare(rollCallRequest.status, rollCall.getStatus()));
             rollCall.updateAudit(modifier, currentTime);
+            updatedRollCalls.add(rollCall);
         }
-        List<RollCall> result = baseRollCallService.update(rollCalls, failMessage);
+        List<RollCall> result = baseRollCallService.update(updatedRollCalls, failMessage);
         return result.stream().map(RollCallResponse::info).toList();
     }
 
@@ -250,7 +256,7 @@ public class RollCallServiceImpl {
         return rollCalls.stream().map(rollCall -> new RollCallResponse(rollCall, includeForAdmin, false)).toList();
     }
 
-    public List<RollCallResponse> getRollCallByClassId(String classId, Boolean includeForAdmin, String failMessage) {
+    public List<RollCallResponse> getAllByClassId(String classId, Boolean includeForAdmin, String failMessage) {
         Classroom classroom = baseClassroomService.get(classId, IsDelete.NOT_DELETED, failMessage);
         Set<StudySchedule> studySchedules = baseStudyScheduleService.findByClassId(classId, IsDelete.NOT_DELETED, null);
         List<ClassroomStudent> classroomStudents = baseClassroomStudentService.findByClassroomId(classId, IsDelete.NOT_DELETED);
@@ -263,10 +269,66 @@ public class RollCallServiceImpl {
                             .thenComparing(rc -> rc.getStudent().getFirstName()))
                     .toList();
 
-        List<RollCall> futureRollCall = new ArrayList<>();
+        if (rollCalls.isEmpty()) {
+            for (StudySchedule studySchedule : studySchedules) {
+                for (ClassroomStudent classroomStudent : classroomStudents) {
+                    rollCalls.add(new RollCall(classroomStudent.getStudent(), studySchedule));
+                }
+            }
 
-        ZonedDateTime zonedDateTime = rollCalls.get(rollCalls.size() - 1).getStudySchedule().getFromTime();
+            return rollCalls.stream()
+                    .sorted(Comparator.comparing((RollCall rc) -> rc.getStudySchedule().getPlace())
+                            .thenComparing(rc -> rc.getStudent().getFirstName()))
+                    .map(rollCall -> new RollCallResponse(rollCall, includeForAdmin, false))
+                    .toList();
+        }
+        List<StudySchedule> futureStudySchedules = studySchedules.stream()
+                .filter(studySchedule -> studySchedule.getFromTime().isAfter(rollCalls.get(rollCalls.size()-1).getStudySchedule().getFromTime()))
+                .toList();
 
-        return null;
+        for (StudySchedule studySchedule : futureStudySchedules){
+            rollCalls.stream()
+                    .filter(rollCall -> rollCall.getId().getStudyScheduleId().equals(studySchedule.getId()))
+                    .forEach(rollCalls::add);
+        }
+
+        return rollCalls.stream()
+                .sorted(Comparator.comparing((RollCall rc) -> rc.getStudySchedule().getPlace())
+                        .thenComparing(rc -> rc.getStudent().getFirstName()))
+                .map(rollCall -> new RollCallResponse(rollCall, includeForAdmin, false))
+                .toList();
+    }
+
+    public List<RollCallResponse> createRollCalls(String studyScheduleId, CreateRollCallsRequest request, String failMessage) {
+        StudySchedule studySchedule = baseStudyScheduleService.get(studyScheduleId, IsDelete.NOT_DELETED, failMessage);
+        List<RollCall> rollCalls = new ArrayList<>();
+        Account creator = SecurityContextHolderUtil.getAccount();
+        ZonedDateTime currentTime = ZonedDateTime.now();
+        List<Student> students = baseStudentService.getByClassId(studySchedule.getClassroom().getId());
+
+        if (students.isEmpty())
+            return List.of();
+
+        if (request.getRollCalls() == null || request.getRollCalls().isEmpty())
+            throw new BadRequestException(failMessage, Error.build(RollCallMessage.REQUEST_IS_EMPTY));
+
+        if (request.getRollCalls().size() != students.size()){
+            List<String> missingStudentIds = new ArrayList<>();
+            for (Student student: students){
+                if (request.getRollCalls().stream().noneMatch(rq -> rq.studentId.equals(student.getId())))
+                    missingStudentIds.add(student.getId());
+            }
+            throw new BadRequestException(failMessage, Error.build(RollCallMessage.STUDENT_IS_MISSING_IN_REQUEST, missingStudentIds));
+        }
+
+        for (Student student: students){
+            RollCallRequest detailRequest = request.getRollCalls().stream()
+                    .filter(rq -> rq.studentId.equals(student.getId()))
+                    .findFirst().get();
+            rollCalls.add(ModelMapper.map(detailRequest, student, studySchedule, creator, currentTime));
+        }
+
+        List<RollCall> result = baseRollCallService.create(rollCalls, failMessage);
+        return result.stream().map(RollCallResponse::info).toList();
     }
 }

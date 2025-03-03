@@ -19,9 +19,9 @@ public interface StudentRepository extends BaseEntityRepository<Student, String>
 
     @Query(value = """
     SELECT DISTINCT s.* FROM student s
-    inner join classroom_student cs on s.id = cs.student_id
-    where sc.classroom_id = :classId
-    and sc.is_deleted = :isDelete
+    inner join class_student cs on s.id = cs.student_id
+    where cs.class_id = :classId
+    and cs.is_deleted = :isDelete
 """, nativeQuery = true)
     List<Student> findAllByClassId(String classId, IsDelete isDelete);
 

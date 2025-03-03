@@ -48,9 +48,20 @@ public class RollCall extends BaseEntity {
         this.student = student;
         this.studySchedule = studySchedule;
         this.id = new RollCallId(student.getId(), studySchedule.getId());
-        this.status = RollCallStatus.NOT_TAKEN;
+        this.status = RollCallStatus.NOT_YET;
         this.setIsDeleted(IsDelete.NOT_DELETED);
         this.setCreateBy(new Account("0"));
         this.setCreateTime(student.getCreateTime());
+    }
+
+    @Override
+    public String   toString() {
+        return "RollCall{" +
+                "id=" + id +
+                ", status=" + status +
+                ", note='" + note + '\'' +
+                ", student=" + student +
+                ", studySchedule=" + studySchedule +
+                '}';
     }
 }

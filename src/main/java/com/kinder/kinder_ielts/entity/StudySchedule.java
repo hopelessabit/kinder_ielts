@@ -73,4 +73,12 @@ public class StudySchedule extends BaseEntity {
     }
 
     public StudySchedule() {}
+
+    @Override
+    public String toString() {
+        return "StudySchedule{" +
+                "place=" + place +
+                ", id='" + id + '\'' +
+                '}';
+    }
 }
