@@ -611,6 +611,7 @@ public class ClassroomServiceImpl implements ClassroomService {
                 .toList();
 
         classroomStudents.addAll(newClassroomStudents);
+        baseClassroomStudentService.create(newClassroomStudents, failMessage);
         log.info("[ADD CLASSROOM STUDENTS] Successfully added {} new students.", newClassroomStudents.size());
 
         return newClassroomStudents.size();
