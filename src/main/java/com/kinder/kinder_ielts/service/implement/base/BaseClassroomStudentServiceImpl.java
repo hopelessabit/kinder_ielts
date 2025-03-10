@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -76,6 +77,17 @@ public class BaseClassroomStudentServiceImpl extends BaseEntityServiceImpl<Class
     @Override
     public void create(Student student, Classroom classroom, Account creator, ZonedDateTime currentTime) {
         create(new ClassroomStudent(classroom, student, creator, currentTime), ClassroomStudentMessage.CREATE_FAILED);
+    }
+
+    @Override
+    public List<ClassroomStudent> create(List<Student> students, Classroom classroom, Account creator, ZonedDateTime currentTime, String failMessage) {
+        List<ClassroomStudent> classroomStudents = new ArrayList<>();
+
+        for (Student student : students) {
+            classroomStudents.add(new ClassroomStudent(classroom, student, creator, currentTime));
+        }
+
+        return create(classroomStudents, failMessage);
     }
 
     @Override

@@ -50,7 +50,8 @@ public class ClassroomServiceImpl implements ClassroomService {
     private final BaseCourseTutorService baseCourseTutorService;
     private final BaseClassroomTutorService baseClassroomTutorService;
     private final BaseStudyScheduleService baseStudyScheduleService;
-    private BaseClassroomStudentService baseClassroomStudentService;
+    private final BaseClassroomStudentService baseClassroomStudentService;
+    private final BaseStudentService baseStudentService;
 
 
     /**
@@ -599,19 +600,10 @@ public class ClassroomServiceImpl implements ClassroomService {
                 .filter(studentId -> !existingClassroomStudentIds.contains(studentId))
                 .toList();
 
-        // Add New Students
-        List<ClassroomStudent> newClassroomStudents = newStudentIds.stream()
-                .map(studentId -> new ClassroomStudent(classroom,
-                        courseStudents.stream()
-                                .filter(courseStudent -> courseStudent.getId().getStudentId().equals(studentId))
-                                .findFirst()
-                                .orElseThrow(() -> new BadRequestException(failMessage, Error.build("Student not found: " + studentId)))
-                                .getStudent(),
-                        actor, currentTime))
-                .toList();
+        List<Student> students = baseStudentService.get(newStudentIds, AccountStatus.ACTIVE, failMessage);
 
+        List<ClassroomStudent> newClassroomStudents =  baseClassroomStudentService.create(students, classroom, actor, currentTime, failMessage);
         classroomStudents.addAll(newClassroomStudents);
-        baseClassroomStudentService.create(newClassroomStudents, failMessage);
         log.info("[ADD CLASSROOM STUDENTS] Successfully added {} new students.", newClassroomStudents.size());
 
         return newClassroomStudents.size();
