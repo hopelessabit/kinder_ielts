@@ -3,7 +3,7 @@ package com.kinder.kinder_ielts.constant;
 import lombok.Getter;
 
 @Getter
-public enum RollCallStatus implements StatusEnum {
+public enum RollCallStatus implements IEnumerate {
     NOT_TAKEN("Chưa điểm danh"),
     ABSENT ("Vắng mặt"),
     PASSED("Đã quá thời gian điểm danh"),

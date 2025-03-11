@@ -3,7 +3,7 @@ package com.kinder.kinder_ielts.constant;
 import lombok.Getter;
 
 @Getter
-public enum HomeworkStatus implements StatusEnum {
+public enum HomeworkStatus implements IEnumerate {
     NOT_ASSIGNED("Chưa giao bài tập"),
     ASSIGNED("Đã giao bài tập");
     private final String vietnamese;

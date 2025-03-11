@@ -5,6 +5,7 @@ import com.kinder.kinder_ielts.entity.Classroom;
 import com.kinder.kinder_ielts.entity.Student;
 import com.kinder.kinder_ielts.entity.base.BaseEntity;
 import com.kinder.kinder_ielts.entity.id.ClassStudentId;
+import com.kinder.kinder_ielts.util.SecurityContextHolderUtil;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -44,13 +45,25 @@ public class ClassroomStudent extends BaseEntity {
 
     public ClassroomStudent(String classId, String studentId, ZonedDateTime assignedDate) {
         this.id = new ClassStudentId(classId, studentId);
+        this.classroom = new Classroom(classId);
+        this.student = new Student(studentId);
         this.assignedDate = assignedDate;
+        this.initForNew(SecurityContextHolderUtil.getAccount(), ZonedDateTime.now());
+    }
+
+    public ClassroomStudent(String classId, String studentId, Account creator, ZonedDateTime currentTime) {
+        this.id = new ClassStudentId(classId, studentId);
+        this.classroom = new Classroom(classId);
+        this.student = new Student(studentId);
+        this.assignedDate = currentTime;
+        this.initForNew(creator, currentTime);
     }
 
     public ClassroomStudent(Classroom classroom, Student student, Account actor, ZonedDateTime currentTime) {
         this.id = new ClassStudentId(classroom.getId(), student.getId());
         this.classroom = classroom;
         this.student = student;
+        this.assignedDate = currentTime;
         this.initForNew(actor, currentTime);
     }
 }

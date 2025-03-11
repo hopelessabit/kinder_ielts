@@ -76,4 +76,8 @@ public class Classroom extends BaseEntity {
                 ", courseId='" + courseId + '\'' +
                 '}';
     }
+
+    public Classroom(String id) {
+        this.id = id;
+    }
 }

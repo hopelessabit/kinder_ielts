@@ -10,6 +10,7 @@ import com.kinder.kinder_ielts.dto.request.classroom.CreateClassroomRequest;
 import com.kinder.kinder_ielts.entity.*;
 import com.kinder.kinder_ielts.entity.course_template.TemplateClassroom;
 import com.kinder.kinder_ielts.entity.course_template.TemplateStudySchedule;
+import com.kinder.kinder_ielts.entity.id.CourseStudentId;
 import com.kinder.kinder_ielts.entity.id.CourseTutorId;
 import com.kinder.kinder_ielts.entity.join_entity.*;
 import com.kinder.kinder_ielts.exception.BadRequestException;
@@ -538,7 +539,7 @@ public class ClassroomServiceImpl implements ClassroomService {
 
         // Perform removal of students
         log.info("[UPDATE CLASSROOM STUDENTS] Performing student removal...");
-        int removeCount = performRemoveStudent(classroomStudents, request.getRemove(), failMessage);
+        int removeCount = performRemoveStudent(classroomStudents, request.getRemove(),actor, currentTime, failMessage);
         log.info("[UPDATE CLASSROOM STUDENTS] Student removal completed. Removed: {}", removeCount);
 
         // Perform addition of students
@@ -556,6 +557,7 @@ public class ClassroomServiceImpl implements ClassroomService {
      */
     protected int performAddStudent(Classroom classroom, List<CourseStudent> courseStudents, List<ClassroomStudent> classroomStudents,
                                     List<String> studentIds, Account actor, ZonedDateTime currentTime, String failMessage) {
+        int result = 0;
         if (studentIds == null || studentIds.isEmpty()) {
             log.info("[ADD CLASSROOM STUDENTS] No students to add.");
             return 0;
@@ -563,8 +565,13 @@ public class ClassroomServiceImpl implements ClassroomService {
 
         log.info("[ADD CLASSROOM STUDENTS] Requested student IDs to add: {}", studentIds);
 
+        List<CourseStudent> isExistedCourseStudent = courseStudents.stream()
+                .filter(courseStudent -> studentIds.contains(courseStudent.getId().getStudentId()))
+                .toList();
+
         // Validate Student Availability in Course
-        Set<String> courseStudentIds = courseStudents.stream()
+        Set<String> courseStudentIds = isExistedCourseStudent.stream()
+                .filter(courseStudent -> courseStudent.getIsDeleted().equals(IsDelete.NOT_DELETED))
                 .map(courseStudent -> courseStudent.getId().getStudentId())
                 .collect(Collectors.toSet());
 
@@ -575,44 +582,52 @@ public class ClassroomServiceImpl implements ClassroomService {
         if (!unavailableStudentIds.isEmpty()) {
             log.error("[ADD CLASSROOM STUDENTS] Some students are not available in the course: {}", unavailableStudentIds);
             throw new BadRequestException(failMessage, Error.build(
-                    "Some students are not available in this course. Student IDs: " + unavailableStudentIds, unavailableStudentIds));
+                    "Some of the students are not in course: ",
+                    unavailableStudentIds));
         }
 
-        // Validate Deleted Students
-        List<String> deletedStudentIds = courseStudents.stream()
-                .filter(courseStudent -> studentIds.contains(courseStudent.getId().getStudentId()))
-                .filter(courseStudent -> courseStudent.getIsDeleted().equals(IsDelete.DELETED))
-                .map(courseStudent -> courseStudent.getId().getStudentId())
+        List<ClassroomStudent> existedClassroomStudents = classroomStudents.stream()
+                .filter(classroomStudent -> studentIds.contains(classroomStudent.getId().getStudentId()))
                 .toList();
 
-        if (!deletedStudentIds.isEmpty()) {
-            log.error("[ADD CLASSROOM STUDENTS] Some students are marked as deleted: {}", deletedStudentIds);
-            throw new BadRequestException(failMessage, Error.build(
-                    "Some students are marked as deleted. Student IDs: " + deletedStudentIds, deletedStudentIds));
+        if (!existedClassroomStudents.isEmpty()){
+            List<ClassroomStudent> isDeletedClassroomStudents = existedClassroomStudents.stream()
+                    .filter(classroomStudent -> classroomStudent.getIsDeleted().equals(IsDelete.DELETED))
+                    .toList();
+
+            isDeletedClassroomStudents.forEach(classroomStudent -> {
+                classroomStudent.setIsDeleted(IsDelete.NOT_DELETED);
+                classroomStudent.updateAudit(actor, currentTime);
+            });
+
+            result += baseClassroomStudentService.update(isDeletedClassroomStudents, failMessage).size();
         }
 
         // Separate already existing and new students in the classroom
-        Set<String> existingClassroomStudentIds = classroomStudents.stream()
+        Set<String> existingClassroomStudentIds = existedClassroomStudents.stream()
                 .map(classroomStudent -> classroomStudent.getId().getStudentId())
                 .collect(Collectors.toSet());
 
         List<String> newStudentIds = studentIds.stream()
                 .filter(studentId -> !existingClassroomStudentIds.contains(studentId))
                 .toList();
+        if (!newStudentIds.isEmpty()) {
+            List<Student> students = baseStudentService.get(newStudentIds, AccountStatus.ACTIVE, failMessage);
 
-        List<Student> students = baseStudentService.get(newStudentIds, AccountStatus.ACTIVE, failMessage);
+            List<ClassroomStudent> newClassroomStudents =  baseClassroomStudentService.create(students, classroom, actor, currentTime, failMessage);
 
-        List<ClassroomStudent> newClassroomStudents =  baseClassroomStudentService.create(students, classroom, actor, currentTime, failMessage);
-        classroomStudents.addAll(newClassroomStudents);
-        log.info("[ADD CLASSROOM STUDENTS] Successfully added {} new students.", newClassroomStudents.size());
+            result += newClassroomStudents.size();
+            log.info("[ADD CLASSROOM STUDENTS] Successfully added {} new students.", newClassroomStudents.size());
 
-        return newClassroomStudents.size();
+        }
+        return result;
     }
 
     /**
      * Remove students from the classroom.
      */
-    protected int performRemoveStudent(List<ClassroomStudent> classroomStudents, List<String> studentIds, String failMessage) {
+    protected int performRemoveStudent(List<ClassroomStudent> classroomStudents, List<String> studentIds,
+                                       Account actor, ZonedDateTime currentTime, String failMessage) {
         if (studentIds == null || studentIds.isEmpty()) {
             log.info("[REMOVE CLASSROOM STUDENTS] No students to remove.");
             return 0;
@@ -627,11 +642,24 @@ public class ClassroomServiceImpl implements ClassroomService {
         if (removeClassroomStudents.isEmpty()) {
             log.warn("[REMOVE CLASSROOM STUDENTS] No matching students found to remove.");
             return 0;
+        } else if (removeClassroomStudents.size() != studentIds.size()) {
+            List<String> notFoundStudentIds = studentIds.stream()
+                    .filter(studentId -> removeClassroomStudents.stream()
+                            .noneMatch(classroomStudent -> classroomStudent.getId().getStudentId().equals(studentId)))
+                    .toList();
+
+            log.error("[REMOVE CLASSROOM STUDENTS] Some students are not found: {}", notFoundStudentIds);
+            throw new BadRequestException(failMessage, Error.build(
+                    "Some students are not found in the classroom: ",
+                    notFoundStudentIds));
         }
 
-        baseClassroomStudentService.remove(removeClassroomStudents.stream()
-                .map(ClassroomStudent::getId)
-                .toList(), failMessage);
+        removeClassroomStudents.forEach(classroomStudent -> {
+            classroomStudent.setIsDeleted(IsDelete.DELETED);
+            classroomStudent.updateAudit(actor, currentTime);
+        });
+
+        baseClassroomStudentService.update(removeClassroomStudents, failMessage);
 
         classroomStudents.removeAll(removeClassroomStudents);
         log.info("[REMOVE CLASSROOM STUDENTS] Successfully removed {} students.", removeClassroomStudents.size());
