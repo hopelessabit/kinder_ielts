@@ -195,8 +195,10 @@ public class StudentServiceImpl {
         Join<Student, CourseStudent> courseStudentJoin = root.join("courseStudents");
         if (courseIds.size() == 1){
             predicates.add(criteriaBuilder.equal(courseStudentJoin.get("course").get("id"), courseIds.get(0)));
+            predicates.add(criteriaBuilder.equal(courseStudentJoin.get("isDeleted"), IsDelete.NOT_DELETED));
         } else {
             predicates.add(courseStudentJoin.get("course").get("id").in(courseIds));
+            predicates.add(criteriaBuilder.equal(courseStudentJoin.get("isDeleted"), IsDelete.NOT_DELETED));
         }
     }
 
@@ -205,10 +207,14 @@ public class StudentServiceImpl {
             return;
 
         Join<Student, ClassroomStudent> classroomStudentJoin = root.join("classroomStudents");
-        if (classIds.size() == 1)
+        if (classIds.size() == 1){
             predicates.add(criteriaBuilder.equal(classroomStudentJoin.get("classroom").get("id"), classIds.get(0)));
-        else
+            predicates.add(criteriaBuilder.equal(classroomStudentJoin.get("isDeleted"), IsDelete.NOT_DELETED));
+        }
+        else{
             predicates.add(classroomStudentJoin.get("classroom").get("id").in(classIds));
+            predicates.add(criteriaBuilder.equal(classroomStudentJoin.get("isDeleted"), IsDelete.NOT_DELETED));
+        }
     }
 
     public StudentResponse updateInfo(String studentId, UpdateStudentInfoRequest request, String failMessage) {
