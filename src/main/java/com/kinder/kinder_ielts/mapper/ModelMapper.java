@@ -226,7 +226,8 @@ public class ModelMapper {
     public static Student map(CreateStudentRequest request, ZonedDateTime currentTime, Account creator) {
         Account account = new Account();
         account.setId(IdUtil.generateId());
-        account.setPassword(PasswordUtil.hashPassword(request.getPassword()));
+        //TODO: generate password
+        account.setPassword(PasswordUtil.hashPassword("1"));
         //TODO: set default avatar
         account.setRole(Role.STUDENT);
         account.setIsDeleted(IsDelete.NOT_DELETED);
