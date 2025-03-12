@@ -10,7 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity(name = "test_single_answers")
-public class TestSingleAnswer extends BaseEntity {
+public class TestAnswer extends BaseEntity {
     @Id
     @Size(max = 255)
     @Column(name = "id", nullable = false)
@@ -19,7 +19,7 @@ public class TestSingleAnswer extends BaseEntity {
     @Column(name = "detail", length = 1000, columnDefinition = "nvarchar")
     private String detail;
 
-    @Column(name = "question_id", nullable = false)
+    @Column(name = "question_id", nullable = false, insertable = false, updatable = false)
     private String questionId;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -27,6 +27,13 @@ public class TestSingleAnswer extends BaseEntity {
     private TestQuestion question;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "is_correct", length = 10, columnDefinition = "varchar")
+    @Column(name = "is_correct", length = 10, columnDefinition = "varchar", nullable = true)
     private IsCorrect isCorrect;
+
+    @Column(name = "place", nullable = false)
+    private Integer place;
+
+    @Column(name = "correct_place")
+    private Integer correctPlace;
+
 }

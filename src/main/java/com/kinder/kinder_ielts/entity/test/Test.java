@@ -28,5 +28,4 @@ public class Test extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private ViewStatus viewStatus;
 
-//    private Set<>
 }
