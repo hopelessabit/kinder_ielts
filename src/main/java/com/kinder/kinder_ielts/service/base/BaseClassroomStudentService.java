@@ -27,4 +27,6 @@ public interface BaseClassroomStudentService extends BaseEntityService<Classroom
     List<ClassroomStudent> getByStudentIdsAndClassIds(List<String> studentIds, List<String> classIds);
 
     List<ClassroomStudent> getByStudentIdsAndCourseIds(List<String> studentIds, List<String> courseIds);
+
+    List<ClassroomStudent> getByStudentIdsAndCourseId(List<String> studentIds, String courseId);
 }

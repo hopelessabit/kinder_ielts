@@ -104,4 +104,9 @@ public class BaseClassroomStudentServiceImpl extends BaseEntityServiceImpl<Class
     public List<ClassroomStudent> getByStudentIdsAndCourseIds(List<String> studentIds, List<String> courseIds) {
         return classroomStudentRepository.findDistinctById_StudentIdInAndClassroom_Course_IdInAndIsDeleted(studentIds, courseIds, IsDelete.NOT_DELETED);
     }
+
+    @Override
+    public List<ClassroomStudent> getByStudentIdsAndCourseId(List<String> studentIds, String courseId) {
+        return classroomStudentRepository.findDistinctById_StudentIdInAndClassroom_CourseIdAndIsDeleted(studentIds, courseId, IsDelete.NOT_DELETED);
+    }
 }

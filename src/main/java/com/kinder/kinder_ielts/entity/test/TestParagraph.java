@@ -1,4 +1,4 @@
 package com.kinder.kinder_ielts.entity.test;
 
-public class TestType {
+public class TestParagraph {
 }

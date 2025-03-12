@@ -64,10 +64,8 @@ public class StudentServiceImpl {
 
         if (request.getAddToCourseId() != null ){
             Course course = baseCourseService.get(request.getAddToCourseId(), IsDelete.NOT_DELETED, CourseMessage.NOT_FOUND);
-            if (request.getAddToClassroomId() == null){
-                baseCourseStudentService.create(student, course, creator, currentTime);
-            } else {
-                baseCourseStudentService.create(student, course, creator, currentTime);
+            baseCourseStudentService.create(student, course, creator, currentTime);
+            if (request.getAddToClassroomId() != null){
                 Classroom classroom = baseClassroomService.get(request.getAddToClassroomId(), IsDelete.NOT_DELETED, ClassroomMessage.NOT_FOUND);
                 baseClassroomStudentService.create(student, classroom, creator, currentTime);
             }

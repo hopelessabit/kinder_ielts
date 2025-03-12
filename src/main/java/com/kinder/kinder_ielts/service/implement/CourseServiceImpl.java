@@ -11,6 +11,7 @@ import com.kinder.kinder_ielts.dto.request.course.UpdateCourseTutors;
 import com.kinder.kinder_ielts.dto.response.course.CourseResponse;
 import com.kinder.kinder_ielts.entity.*;
 import com.kinder.kinder_ielts.entity.id.CourseStudentId;
+import com.kinder.kinder_ielts.entity.join_entity.ClassroomStudent;
 import com.kinder.kinder_ielts.entity.join_entity.CourseStudent;
 import com.kinder.kinder_ielts.entity.join_entity.CourseTutor;
 import com.kinder.kinder_ielts.exception.BadRequestException;
@@ -46,6 +47,7 @@ public class CourseServiceImpl implements CourseService {
     private final BaseTutorService baseTutorService;
     private final BaseStudentService baseStudentService;
     private final BaseCourseLevelService baseCourseLevelService;
+    private final BaseClassroomStudentService baseClassroomStudentService;
 
     /**
      * Create a new Course.
@@ -415,6 +417,16 @@ public class CourseServiceImpl implements CourseService {
 
         // Add updated students back
         courseStudents.addAll(existingStudentsMap.values());
+
+        List<ClassroomStudent> classroomStudents = baseClassroomStudentService.getByStudentIdsAndCourseId(studentIds, courseStudents.get(0).getId().getCourseId());
+        if (!classroomStudents.isEmpty()){
+            classroomStudents.forEach(classroomStudent -> {
+                classroomStudent.setIsDeleted(IsDelete.DELETED);
+                classroomStudent.setModifyBy(actor);
+                classroomStudent.setModifyTime(currentTime);
+            });
+            baseClassroomStudentService.update(classroomStudents, failMessage);
+        }
 
         log.info("[REMOVE STUDENTS] Successfully marked {} students as removed.", existingStudentsMap.size());
 
