@@ -15,4 +15,24 @@ public enum Role {
     Role(String vietnamese){
         this.vietnamese = vietnamese;
     }
+
+    public boolean isUser() {
+        return this == USER;
+    }
+
+    public boolean isStudent() {
+        return this == STUDENT;
+    }
+
+    public boolean isAdmin() {
+        return this == ADMIN;
+    }
+
+    public boolean isModerator() {
+        return this == MODERATOR;
+    }
+
+    public boolean isTutor() {
+        return this == TUTOR;
+    }
 }

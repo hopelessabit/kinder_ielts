@@ -57,6 +57,12 @@ public class BaseStudyScheduleServiceImpl extends BaseEntityServiceImpl<StudySch
     }
 
     @Override
+    public List<StudySchedule> findByClassIdWithViewStatusForStudent(String classroomId, String studentId, IsDelete isDelete, ViewStatus viewStatus) {
+        List<StudySchedule> studySchedules = studyScheduleRepository.findByClassroomIdForStudent(classroomId, studentId, isDelete, viewStatus);
+        return null;
+    }
+
+    @Override
     public Set<StudySchedule> findByClassId(String classId, IsDelete isDelete, List<ViewStatus> statuses) {
         if (statuses == null || statuses.isEmpty())
             return studyScheduleRepository.findByClassroom_IdAndIsDeletedOrderByFromTimeAsc(classId, isDelete);

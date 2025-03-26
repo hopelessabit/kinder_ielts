@@ -55,6 +55,9 @@ public class StudySchedule extends BaseEntity {
     @OneToMany(mappedBy = "beLongTo", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<StudyMaterial> studyMaterials;
 
+    @Column(name = "class_id", insertable = false, updatable = false)
+    private String classId;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "class_id", nullable = false)
     private Classroom classroom;

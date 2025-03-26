@@ -24,4 +24,15 @@ WHERE sm.study_schedule_id = :studyScheduleId
   AND sm.is_deleted = :isDeleted
 """, nativeQuery = true)
     Page<StudyMaterial> findByStudyScheduleIdAndIsDeleted(String studyScheduleId, IsDelete isDelete, Pageable pageable);
+
+    @Query(value = """
+SELECT sm
+FROM study_material sm
+LEFT JOIN study_material_student sms ON sm.id = sms.study_material_id
+WHERE sm.study_schedule_id = :studyScheduleId
+  AND sm.is_deleted = :isDeleted
+  AND (sm.privacy_status = 'PUBLIC' OR sms.student_id = :studentId)
+""", nativeQuery = true)
+    List<StudyMaterial> findByStudyScheduleIdAndStudentIdAndIsDeleted(String studyScheduleId, String studentId, IsDelete isDelete);
+
 }

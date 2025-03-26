@@ -4,14 +4,10 @@ import com.kinder.kinder_ielts.constant.ViewStatus;
 import com.kinder.kinder_ielts.dto.request.study_schedule.CreateStudyScheduleRequest;
 import com.kinder.kinder_ielts.dto.request.study_schedule.UpdateStudyScheduleRequest;
 import com.kinder.kinder_ielts.dto.response.study_schedule.StudyScheduleResponse;
-import com.kinder.kinder_ielts.entity.Account;
-import com.kinder.kinder_ielts.entity.Classroom;
-import com.kinder.kinder_ielts.entity.StudySchedule;
+import com.kinder.kinder_ielts.entity.*;
 import com.kinder.kinder_ielts.mapper.ModelMapper;
 import com.kinder.kinder_ielts.response_message.StudyScheduleMessage;
-import com.kinder.kinder_ielts.service.base.BaseAccountService;
-import com.kinder.kinder_ielts.service.base.BaseClassroomService;
-import com.kinder.kinder_ielts.service.base.BaseStudyScheduleService;
+import com.kinder.kinder_ielts.service.base.*;
 import com.kinder.kinder_ielts.util.CompareUtil;
 import com.kinder.kinder_ielts.util.SecurityContextHolderUtil;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +24,10 @@ public class StudyScheduleServiceImpl {
     private final BaseStudyScheduleService baseStudyScheduleService;
     private final BaseAccountService baseAccountService;
     private final BaseClassroomService baseClassroomService;
+    private final BaseStudyMaterialService baseStudyMaterialService;
+    private final BaseClassroomLinkService baseClassroomLinkService;
+    private final BaseWarmUpTestService baseWarmUpTestService;
+    private final BaseHomeworkService baseHomeworkService;
     public StudyScheduleResponse createStudySchedule(String classroomId, CreateStudyScheduleRequest request, String failMessage) {
         StudySchedule studySchedule = ModelMapper.map(request);
 
@@ -42,8 +42,19 @@ public class StudyScheduleServiceImpl {
         return StudyScheduleResponse.detailWithDetail(baseStudyScheduleService.create(studySchedule, failMessage));
     }
 
-    public StudyScheduleResponse getInfoWithDetail(String id) {
-        return StudyScheduleResponse.infoWithDetail(baseStudyScheduleService.get(id, IsDelete.NOT_DELETED, StudyScheduleMessage.NOT_FOUND));
+    public StudyScheduleResponse getInfoWithDetail(String studyScheuldeId) {
+        Account account = SecurityContextHolderUtil.getAccount();
+
+        StudySchedule studySchedule = baseStudyScheduleService.get(studyScheuldeId, IsDelete.NOT_DELETED, StudyScheduleMessage.NOT_FOUND);
+        List<StudyMaterial> studyMaterials = baseStudyMaterialService.getByStudyScheduleIdAndStudentId(studyScheuldeId, account.getId(), IsDelete.NOT_DELETED, StudyScheduleMessage.NOT_FOUND);
+        List<ClassroomLink> classroomLinks = baseClassroomLinkService.findByStudyScheduleIdAndViewStatusAndIsDeleted(studyScheuldeId, ViewStatus.VIEW, IsDelete.NOT_DELETED, StudyScheduleMessage.NOT_FOUND);
+        List<WarmUpTest> warmUpTests = baseWarmUpTestService.getByStudyScheduleIdAndStudentId(studyScheuldeId, account.getId(), ViewStatus.VIEW, IsDelete.NOT_DELETED, StudyScheduleMessage.NOT_FOUND);
+        List<Homework> homeworks = baseHomeworkService.getByStudyScheduleIdAndStudentId(studyScheuldeId, account.getId(), ViewStatus.VIEW, IsDelete.NOT_DELETED, StudyScheduleMessage.NOT_FOUND);
+        studySchedule.setStudyMaterials(studyMaterials);
+        studySchedule.setClassroomLinks(classroomLinks);
+        studySchedule.setWarmUpTests(warmUpTests);
+        studySchedule.setHomework(homeworks);
+        return StudyScheduleResponse.infoWithDetail(studySchedule);
     }
 
     public List<StudyScheduleResponse> getAllInfo() {

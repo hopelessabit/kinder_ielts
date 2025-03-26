@@ -10,11 +10,11 @@ import com.kinder.kinder_ielts.dto.request.classroom.CreateClassroomRequest;
 import com.kinder.kinder_ielts.entity.*;
 import com.kinder.kinder_ielts.entity.course_template.TemplateClassroom;
 import com.kinder.kinder_ielts.entity.course_template.TemplateStudySchedule;
-import com.kinder.kinder_ielts.entity.id.CourseStudentId;
 import com.kinder.kinder_ielts.entity.id.CourseTutorId;
 import com.kinder.kinder_ielts.entity.join_entity.*;
 import com.kinder.kinder_ielts.exception.BadRequestException;
 import com.kinder.kinder_ielts.exception.NotFoundException;
+import com.kinder.kinder_ielts.exception.UnAuthorizeException;
 import com.kinder.kinder_ielts.mapper.ModelMapper;
 import com.kinder.kinder_ielts.response_message.ClassroomMessage;
 import com.kinder.kinder_ielts.response_message.CourseMessage;
@@ -670,5 +670,16 @@ public class ClassroomServiceImpl implements ClassroomService {
     public ClassroomResponse test(){
 //        return ClassroomResponse.detailWithDetails(baseClassroomService.getByIdWithStudentId("8RdF-205013", "4", "Not found"));
         return ClassroomResponse.detailWithDetails(baseClassroomService.getByIdWithStudentId("Fuz3-124601", "0", "Not found"));
+    }
+
+    public ClassroomResponse getInfoForStudent(String classroomId, String studentId, String failMessage) {
+        Account actor = SecurityContextHolderUtil.getAccount();
+        if (actor.getRole().equals(Role.STUDENT) && !studentId.equals(actor.getId()))
+            throw UnAuthorizeException.unAuthorize();
+
+        Classroom classroom = baseClassroomService.get(classroomId, IsDelete.NOT_DELETED, failMessage);
+        List<StudySchedule> studySchedules = baseStudyScheduleService.findByClassIdWithViewStatusForStudent(classroomId, studentId, IsDelete.NOT_DELETED, ViewStatus.VIEW);
+
+        return null;
     }
 }

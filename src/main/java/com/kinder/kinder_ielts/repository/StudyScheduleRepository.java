@@ -3,6 +3,7 @@ package com.kinder.kinder_ielts.repository;
 import com.kinder.kinder_ielts.constant.IsDelete;
 import com.kinder.kinder_ielts.constant.ViewStatus;
 import com.kinder.kinder_ielts.entity.StudySchedule;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
@@ -23,4 +24,17 @@ public interface StudyScheduleRepository extends BaseEntityRepository<StudySched
     Set<StudySchedule> findByClassroom_IdAndIsDeletedAndStatusIn(String id, IsDelete isDeleted, Collection<ViewStatus> statuses);
 
     Set<StudySchedule> findByClassroom_IdAndIsDeletedAndStatusInOrderByFromTimeAsc(String id, IsDelete isDeleted, Collection<ViewStatus> statuses);
+
+    @Query(value = """
+SELECT ss
+FROM study_schedule ss
+join fetch ss.classroomLinks cl
+join fetch ss.warmUpTests wt
+join fetch ss.homework hw
+join fetch ss.studyMaterials sm
+WHERE ss.classId = :classroomId
+  AND ss.isDeleted = :isDeleted
+  AND ss.status = :status
+""")
+    List<StudySchedule> findByClassroomIdForStudent(String classroomId, String studentId, IsDelete isDelete, ViewStatus viewStatus);
 }

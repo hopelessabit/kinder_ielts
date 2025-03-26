@@ -1,5 +1,6 @@
 package com.kinder.kinder_ielts.controller;
 
+import com.kinder.kinder_ielts.constant.HomeworkStatus;
 import com.kinder.kinder_ielts.dto.ResponseData;
 import com.kinder.kinder_ielts.dto.request.homework.CreateHomeworkRequest;
 import com.kinder.kinder_ielts.dto.request.homework.ModifyHomeworkPrivacyStatusRequest;
@@ -52,9 +53,15 @@ public class HomeworkController {
         return ResponseUtil.getResponse(() -> homeworkService.changeViewStatus(homeworkId, HomeworkMessage.VIEW_STATUS_UPDATE_FAILED), HomeworkMessage.VIEW_STATUS_UPDATED);
     }
 
-    @PatchMapping("/{homeworkId}")
+    @PatchMapping("/{homeworkId}/privacy-status")
     @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR','TUTOR')")
     public ResponseEntity<ResponseData<HomeworkResponse>> changePrivacyStatus(@PathVariable String homeworkId, @RequestBody ModifyHomeworkPrivacyStatusRequest request){
         return ResponseUtil.getResponse(() -> homeworkService.updateHomeworkPrivacyStatus(homeworkId, request, HomeworkMessage.PRIVACY_STATUS_UPDATE_FAILED), HomeworkMessage.PRIVACY_STATUS_UPDATED);
+    }
+
+    @PatchMapping("/{homeworkId}/assign-status")
+    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR','TUTOR')")
+    public ResponseEntity<ResponseData<HomeworkResponse>> assignHomework(@PathVariable String homeworkId, @RequestBody HomeworkStatus status){
+        return ResponseUtil.getResponse(() -> homeworkService.assignHomework(homeworkId, status, HomeworkMessage.ASSIGN_FAILED), HomeworkMessage.ASSIGNED);
     }
 }

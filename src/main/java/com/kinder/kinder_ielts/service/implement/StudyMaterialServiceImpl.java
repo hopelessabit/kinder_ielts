@@ -11,7 +11,7 @@ import com.kinder.kinder_ielts.dto.response.study_material.StudyMaterialResponse
 import com.kinder.kinder_ielts.entity.*;
 import com.kinder.kinder_ielts.entity.join_entity.ClassroomStudent;
 import com.kinder.kinder_ielts.exception.BadRequestException;
-import com.kinder.kinder_ielts.exception.UnauthorizeException;
+import com.kinder.kinder_ielts.exception.UnAuthorizeException;
 import com.kinder.kinder_ielts.mapper.ModelMapper;
 import com.kinder.kinder_ielts.response_message.BaseMessage;
 import com.kinder.kinder_ielts.response_message.ClassroomMessage;
@@ -30,7 +30,6 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -58,14 +57,14 @@ public class StudyMaterialServiceImpl {
         if (account.getRole().equals(Role.TUTOR)
                 && baseClassroomService.getByStudyMaterialId(studyMaterialId) == null
         )
-            throw new UnauthorizeException(failMessage, Error.build(BaseMessage.NOT_ALLOW));
+            throw new UnAuthorizeException(failMessage, Error.build(BaseMessage.NOT_ALLOW));
 
         StudyMaterial studyMaterial = baseStudyMaterialService.get(studyMaterialId, IsDelete.NOT_DELETED, failMessage);
         if (account.getRole().equals(Role.STUDENT)
                 && studyMaterial.getPrivacyStatus().equals(StudyMaterialStatus.PRIVATE)
                 && studyMaterial.getStudyMaterialsForStudents().stream().noneMatch(a -> a.getId().equals(account.getId()))
         ) {
-            throw new UnauthorizeException(failMessage, Error.build(BaseMessage.NOT_ALLOW));
+            throw new UnAuthorizeException(failMessage, Error.build(BaseMessage.NOT_ALLOW));
         }
 
         if (account.getRole().equals(Role.ADMIN) || account.getRole().equals(Role.TUTOR)) {

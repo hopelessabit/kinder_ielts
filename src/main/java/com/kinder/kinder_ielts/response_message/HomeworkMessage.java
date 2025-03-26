@@ -22,4 +22,6 @@ public class HomeworkMessage {
     public static final String VIEW_STATUS_UPDATED = "Cập nhật trạng thái hiển thị bài tập thành công";
     public static final String PRIVACY_STATUS_UPDATE_FAILED = "Cập nhật trạng thái riêng tư cho bài tập thất bại";
     public static final String PRIVACY_STATUS_UPDATED = "Cập nhật trạng thái riêng tư cho bài tập thành công";
+    public static final String ASSIGNED = "Đã giao bài tập";
+    public static final String ASSIGN_FAILED = "Giao bài tập thất bại";
 }

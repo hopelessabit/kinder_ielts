@@ -1,6 +1,7 @@
 package com.kinder.kinder_ielts.service.implement.base;
 
 import com.kinder.kinder_ielts.constant.IsDelete;
+import com.kinder.kinder_ielts.constant.ViewStatus;
 import com.kinder.kinder_ielts.entity.Account;
 import com.kinder.kinder_ielts.entity.MaterialLink;
 import com.kinder.kinder_ielts.entity.StudyMaterial;
@@ -64,5 +65,13 @@ public class BaseStudyMaterialServiceImpl extends BaseEntityServiceImpl<StudyMat
     @Override
     public Page<StudyMaterial> getByStudyScheduleId(String studyScheduleId, Pageable pageable, IsDelete isDelete) {
         return studyMaterialRepository.findByStudyScheduleIdAndIsDeleted(studyScheduleId, isDelete, pageable);
+    }
+
+    @Override
+    public List<StudyMaterial> getByStudyScheduleIdAndStudentId(String studyScheduleId, String studentId, IsDelete isDelete, String notFound) {
+        List<StudyMaterial> studyMaterials = studyMaterialRepository.findByStudyScheduleIdAndStudentIdAndIsDeleted(studyScheduleId, studentId, isDelete);
+        return studyMaterials.stream()
+                .filter(studyMaterial -> studyMaterial.getViewStatus().equals(ViewStatus.VIEW))
+                .toList();
     }
 }

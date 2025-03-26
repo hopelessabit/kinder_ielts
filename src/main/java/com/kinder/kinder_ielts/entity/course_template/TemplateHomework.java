@@ -2,6 +2,7 @@ package com.kinder.kinder_ielts.entity.course_template;
 
 import com.kinder.kinder_ielts.constant.HomeworkPrivacyStatus;
 import com.kinder.kinder_ielts.constant.HomeworkStatus;
+import com.kinder.kinder_ielts.constant.HomeworkSubmitAllowLateStatus;
 import com.kinder.kinder_ielts.constant.ViewStatus;
 import com.kinder.kinder_ielts.entity.base.BaseEntity;
 import jakarta.persistence.*;
@@ -38,6 +39,11 @@ public class TemplateHomework extends BaseEntity {
     @Size(max = 11)
     @Column(name = "status")
     private HomeworkStatus status;
+
+    @Enumerated(EnumType.STRING)
+    @Size(max = 9)
+    @Column(name = "submit_allow_late_status")
+    private HomeworkSubmitAllowLateStatus submitAllowLateStatus;
 
     @Enumerated(EnumType.STRING)
     @Size(max = 7)

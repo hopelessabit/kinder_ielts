@@ -18,4 +18,8 @@ public class StudentHomeworkId implements Serializable {
 
     @Column(name = "homework_id")
     private String homeworkId;
+
+    public static StudentHomeworkId of(String studentId, String homeworkId) {
+        return new StudentHomeworkId(studentId, homeworkId);
+    }
 }

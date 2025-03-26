@@ -87,10 +87,11 @@ public interface BaseEntityService<T, ID> {
     /**
      * Delete many entities by its IDs.
      *
-     * @param ids The list of entity IDs to delete.
+     * @param ids     The list of entity IDs to delete.
      * @param message Custom error message for exceptions.
+     * @return
      */
-    void delete(List<ID> ids, String message);
+    int delete(List<ID> ids, String message);
 
     /**
      * Physically remove an entity by its ID.
@@ -103,10 +104,11 @@ public interface BaseEntityService<T, ID> {
     /**
      * Physically remove many entities by their IDs.
      *
-     * @param ids The list of entity IDs to remove.
+     * @param ids     The list of entity IDs to remove.
      * @param message Custom error message for exceptions.
+     * @return
      */
-    void remove(List<ID> ids, String message);
+    int remove(List<ID> ids, String message);
 
     /**
      * Physically remove many entities by their IDs.

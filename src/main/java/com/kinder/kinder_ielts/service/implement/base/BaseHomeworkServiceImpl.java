@@ -1,6 +1,7 @@
 package com.kinder.kinder_ielts.service.implement.base;
 
 import com.kinder.kinder_ielts.constant.IsDelete;
+import com.kinder.kinder_ielts.constant.ViewStatus;
 import com.kinder.kinder_ielts.entity.Account;
 import com.kinder.kinder_ielts.entity.Homework;
 import com.kinder.kinder_ielts.repository.HomeworkRepository;
@@ -51,5 +52,10 @@ public class BaseHomeworkServiceImpl extends BaseEntityServiceImpl<Homework, Str
             homework.setIsDeleted(IsDelete.DELETED);
             homework.updateAudit(modifier, currentTime);
         }
+    }
+
+    @Override
+    public List<Homework> getByStudyScheduleIdAndStudentId(String studyScheduleId, String studentId, ViewStatus viewStatus, IsDelete isDelete, String notFound) {
+        return homeworkRepository.findByStudyScheduleIdAndStudentIdAndIsDeleted(studyScheduleId, studentId, viewStatus, isDelete);
     }
 }

@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -163,13 +162,14 @@ public abstract class BaseEntityServiceImpl<T, ID> implements BaseEntityService<
     }
 
     //Delete entities
-    public void delete(List<ID> ids, String message){
+    public int delete(List<ID> ids, String message){
         log.info("Deleting {} with IDs: {}", getEntityName(), ids);
         List<T> entities = get(ids, null, null);
         entities.forEach(this::markAsDeleted);
         try {
-            getRepository().saveAll(entities);
+            List<T> deleted = getRepository().saveAll(entities);
             log.info("Successfully deleted {} with IDs: {}", getEntityName(), ids);
+            return deleted.size();
         } catch (Exception e) {
             log.error("Error deleting {}: {}", getEntityName(), e.getMessage());
             throw new SqlException(message, Error.build("Error deleting " + getEntityName() + "s", Map.of("cause", e.getMessage())));
@@ -189,13 +189,14 @@ public abstract class BaseEntityServiceImpl<T, ID> implements BaseEntityService<
         }
     }
 
-    public void remove(List<ID> ids, String message){
+    public int remove(List<ID> ids, String message){
         log.info("Remove {} with IDs: {}", getEntityName(), ids);
         List<T> entities = get(ids, List.of(IsDelete.NOT_DELETED, IsDelete.DELETED), message);
         entities.forEach(this::markAsDeleted);
         try {
             getRepository().saveAll(entities);
             log.info("Successfully removed {} with IDs: {}", getEntityName(), ids);
+            return entities.size();
         } catch (Exception e) {
             log.error("Error removing {}: {}", getEntityName(), e.getMessage());
             throw new SqlException(message, Error.build("Error removing " + getEntityName() + "s", Map.of("cause", e.getMessage())));

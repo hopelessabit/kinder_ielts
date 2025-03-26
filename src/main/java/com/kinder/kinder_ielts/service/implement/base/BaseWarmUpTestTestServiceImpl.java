@@ -53,4 +53,9 @@ public class BaseWarmUpTestTestServiceImpl extends BaseEntityServiceImpl<WarmUpT
             warmUpTest.updateAudit(modifier, currentTime);
         }
     }
+
+    @Override
+    public List<WarmUpTest> getByStudyScheduleIdAndStudentId(String studyScheduleId, String studentId, ViewStatus view, IsDelete isDelete, String notFound) {
+        return warmUpTestRepository.findByStudyScheduleIdAndStudentIdAndIsDeleted(studyScheduleId, studentId, view, isDelete);
+    }
 }

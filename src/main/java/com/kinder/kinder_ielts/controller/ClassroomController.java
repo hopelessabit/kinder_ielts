@@ -56,12 +56,18 @@ public class ClassroomController {
     }
 
     @GetMapping("/detail/{id}")
-    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR', 'TUTOR')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR', 'TUTOR', 'STUDENT')")
     public ResponseEntity<ResponseData<ClassroomResponse>> getDetail(@PathVariable String id, @RequestParam(required = false) IsDelete isDelete, @RequestParam(required = false) List<ViewStatus> studyScheduleStatuses){
         return ResponseUtil.getResponse(() -> classroomService.getDetail(id,
                         isDelete == null ? IsDelete.NOT_DELETED : isDelete,
                         studyScheduleStatuses),
                 ClassroomMessage.FOUND_SUCCESSFULLY);
+    }
+
+    @GetMapping("/info/{classroomId}")
+    @PreAuthorize("hasAnyAuthority('ADMIN','MODERATOR', 'TUTOR', 'STUDENT')")
+    public ResponseEntity<ResponseData<ClassroomResponse>> getInfoForStudent(@PathVariable String classroomId, @RequestParam(required = false) String studentId, @RequestParam(required = false) IsDelete isDelete){
+        return ResponseUtil.getResponse(() -> classroomService.getInfoForStudent(classroomId, studentId, ClassroomMessage.NOT_FOUND), ClassroomMessage.FOUND_SUCCESSFULLY);
     }
 
     @PatchMapping("/{id}/tutors")

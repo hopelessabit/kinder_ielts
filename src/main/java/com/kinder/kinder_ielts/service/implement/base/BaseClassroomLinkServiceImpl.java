@@ -51,4 +51,9 @@ public class BaseClassroomLinkServiceImpl extends BaseEntityServiceImpl<Classroo
             classroomLink.updateAudit(modifier, currentTime);
         }
     }
+    
+    @Override
+    public List<ClassroomLink> findByStudyScheduleIdAndViewStatusAndIsDeleted(String studyScheduleId, ViewStatus viewStatus, IsDelete isDelete, String notFound) {
+        return classroomLinkrepository.findByStudyScheduleIdAndViewStatusAndIsDeleted(studyScheduleId, viewStatus, isDelete);
+    }
 }

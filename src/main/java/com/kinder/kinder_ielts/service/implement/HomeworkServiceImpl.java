@@ -165,4 +165,52 @@ public class HomeworkServiceImpl implements HomeworkService {
         homework.updateAudit(SecurityContextHolderUtil.getAccount(), ZonedDateTime.now());
         return HomeworkResponse.detail(baseHomeworkService.update(homework, failMessage));
     }
+
+    public HomeworkResponse assignHomework(String homeworkId, HomeworkStatus status, String assignFailed) {
+        Homework homework = baseHomeworkService.get(homeworkId, IsDelete.NOT_DELETED, assignFailed);
+
+        if (status.equals(homework.getStatus()))
+            return HomeworkResponse.detail(homework);
+
+        Account modifier = SecurityContextHolderUtil.getAccount();
+        ZonedDateTime modifyTime = ZonedDateTime.now();
+        homework.setStatus(status);
+        homework.updateAudit(modifier, modifyTime);
+
+        homework.updateAudit(SecurityContextHolderUtil.getAccount(), ZonedDateTime.now());
+        HomeworkResponse result = HomeworkResponse.detail(baseHomeworkService.update(homework, assignFailed));
+
+        int modifiedStudentHomeworks = updateStudentHomework(homework, assignFailed, modifier, modifyTime);
+        log.debug("Updated {} student homeworks for homework ID: {}", modifiedStudentHomeworks, homeworkId);
+
+        return result;
+    }
+
+    public int updateStudentHomework(Homework homework, String failMessage, Account actor, ZonedDateTime currentTime){
+        List<StudentHomework> studentHomeworks = baseStudentHomeworkService.getByHomeworkId(homework.getId(), failMessage);
+        List<StudentHomework> deletedStudentHomeworks = studentHomeworks.stream().filter(studentHomework -> studentHomework.getIsDeleted().equals(IsDelete.DELETED)).toList();
+        if (homework.getStatus().equals(HomeworkStatus.NOT_ASSIGNED)){
+            if (studentHomeworks.isEmpty())
+                return 0;
+            return baseStudentHomeworkService.remove(studentHomeworks.stream().map(StudentHomework::getId).toList(), failMessage);
+        }
+
+        List<ClassroomStudent> classroomStudents = baseClassroomStudentService.getClassRoomStudentsByHomeworkId(homework.getId(), IsDelete.NOT_DELETED, ClassroomMessage.NOT_FOUND);
+        List<String> studentIds = classroomStudents.stream().map(classroomStudent -> classroomStudent.getId().getStudentId()).toList();
+
+        if (studentHomeworks.isEmpty()){
+            List<StudentHomework> newStudentHomeworks = studentIds.stream()
+                    .map(studentId -> new StudentHomework(studentId, homework, actor, currentTime))
+                    .toList();
+
+            return baseStudentHomeworkService.create(newStudentHomeworks, failMessage).size();
+        }
+
+        List<StudentHomework> validDeletedStudentHomework = deletedStudentHomeworks.stream().filter(studentHomework -> studentIds.contains(studentHomework.getId().getStudentId())).toList();
+        validDeletedStudentHomework.forEach(studentHomework -> {
+            studentHomework.setIsDeleted(IsDelete.NOT_DELETED);
+            studentHomework.updateAudit(actor, currentTime);
+        });
+        return baseStudentHomeworkService.update(validDeletedStudentHomework, failMessage).size();
+    }
 }
